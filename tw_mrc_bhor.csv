@@ -1,0 +1,10 @@
+site,horizon_type,tension_kPa,grav_moist
+BARR,B,33,0.38
+BONA,B,33,0.24
+HEAL,B,33,0.22
+BARR,B,150,0.33
+BONA,B,150,0.16
+HEAL,B,150,0.15
+BARR,B,400,0.22
+BONA,B,400,0.12
+HEAL,B,400,0.12
