@@ -24,7 +24,10 @@ ggplot(ghg_csv, aes(x=TRT, y=gain_ug_per_gOC, fill=DAY)) + geom_boxplot()
 
 ggplot(ghg_csv, aes(x=Site, y=gain_ug_per_gOC, fill=DAY)) + geom_boxplot()
 
-ggplot(ghg_csv, aes(x=Site, y=ug_13C_g_soil, fill=TRT)) + geom_boxplot()
+ggplot(ghg_csv, aes(x=DAY, y=gain_ug_per_gOC, fill=Site)) + geom_boxplot()
+
+ggplot(ghg_csv, aes(x=DAY, y=gain_ug_per_gOC, fill=TRT)) + geom_boxplot()
+
 
 ################
 
