@@ -4,6 +4,8 @@
 #load data
 sommos_csv = read.csv("processed/horizon_processed4.csv")
 
+
+
 #select data
 barrow = sommos_csv$site=="BARR"
 healy = sommos_csv$site=="HEAL"
@@ -49,3 +51,22 @@ p <- ggplot() +
   geom_line(data = as.data.frame(barrow), aes(y = top_depth.cm, x= clay.gg, color = site))
 
 p
+
+###########
+
+plot(activelayer_dat)
+
+p <- ggplot() +
+  
+  geom_line(data = activelayer_dat, aes(x = Def1, y = depth_m, color = site_pos)) +
+  
+  scale_y_reverse()
+  
+ # scale_y_continuous(trans = "reverse", breaks = (activelayer_dat$depth_m))
+
+p
+
+p + facet_grid(. ~ site_pos)
+
+
+

@@ -1,0 +1,16 @@
+# Erin Rooney
+
+activelayer_dat = read.csv("processed/activelayer_8172020.csv")
+al_dat = activelayer_dat$activelayer
+activelayer_temp = read.csv("activelayer_dat.csv")
+
+p = ggplot(activelayer_dat, aes(y = activelayer, color = site, fill = site)) +
+  GeomBar
+p
+
+p + facet_grid(. ~ site)
+
+
+plot("site", "activelayer")
+
+plot(activelayer_dat)
