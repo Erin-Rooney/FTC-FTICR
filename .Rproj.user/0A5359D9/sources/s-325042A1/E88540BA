@@ -3,7 +3,7 @@
     "path": "~/R/R/R Datasets/FTC_transect/code/ER-24-poissonregression.R",
     "project_path": "code/ER-24-poissonregression.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "1348433700",
     "contents": "",
     "dirty": false,
     "created": 1597683005107.0,
@@ -11,15 +11,15 @@
     "relative_order": 3,
     "properties": {
         "tempName": "Untitled1",
-        "cursorPosition": "49,0",
-        "scrollLine": "32"
+        "cursorPosition": "63,21",
+        "scrollLine": "38"
     },
     "folds": "",
-    "lastKnownWriteTime": 1597688502,
+    "lastKnownWriteTime": 1597782685,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1597688502187,
+    "last_content_update": 1597782685892,
     "read_only": false,
     "read_only_alternatives": []
 }

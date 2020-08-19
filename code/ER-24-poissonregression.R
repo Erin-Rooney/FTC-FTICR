@@ -61,6 +61,8 @@ summary(poisson.model)
 poisson.model2 <- glm(Def1 ~ site_pos + depth_m + season, ftc_dat, family = poisson(link = "log"))
 summary(poisson.model2)
 
+anova(poisson.model2)
+
 # generalized linear models general structure
 #poisson.model3 <- glm(Def1 ~ site_pos + depth_pos, ftc_dat, family = poisson(link = "log"))
 #summary(poisson.model3)
