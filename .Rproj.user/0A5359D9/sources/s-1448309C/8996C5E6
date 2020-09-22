@@ -3,22 +3,22 @@
     "path": "~/R/R/R Datasets/FTC_transect/code/ER-13-GHGftc.R",
     "project_path": "code/ER-13-GHGftc.R",
     "type": "r_source",
-    "hash": "1028981275",
+    "hash": "774108628",
     "contents": "",
     "dirty": false,
     "created": 1597185613396.0,
     "source_on_save": false,
     "relative_order": 3,
     "properties": {
-        "cursorPosition": "6,17",
+        "cursorPosition": "8,25",
         "scrollLine": "0"
     },
-    "folds": "",
-    "lastKnownWriteTime": 1597183739,
+    "folds": "21|17|34|0|\n36|24|56|0|\n72|5|84|0|\n",
+    "lastKnownWriteTime": 1600815781,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1597183739,
+    "last_content_update": 1600815781821,
     "read_only": false,
     "read_only_alternatives": []
 }
