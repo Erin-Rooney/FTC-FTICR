@@ -6,12 +6,13 @@
 # load data---------------------------------
 ghg_csv = read.csv("processed/ghg_ftc.csv")
 ghg_csv2 = read.csv("processed/ghg_depth.csv")
-ftc_dat = read.csv("finaldat.csv")
+ftc_dat = read.csv("processed/FTC_quant_inprocess.csv")
 
 ###
 library(dplyr)
 library(tidyr)
 str(ghg_csv2)
+str(ftc_dat)
 levels(as.factor(ghg_csv2$trmt))
 #mutate(TRT = factor(TRT, levels = c("CON", "FTC")))
 
@@ -58,6 +59,11 @@ strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
 
 library(ggplot2)
 library(soilpalettes)
+library(soilDB)
+library(aqp)
+library(sharpshootR)
+library(sp)
+library(ggridges)
 
 # gain in C ggplot----------------------------------------
 ggplot(ghg_csv, aes(x=TRT, y=gain_ug_per_gOC, fill=DAY)) + geom_boxplot() 
@@ -68,6 +74,47 @@ ggplot(ghg_csv, aes(x=Site, y=gain_ug_per_gOC, fill=DAY)) + geom_boxplot()
 ggplot(ghg_csv, aes(x=DAY, y=gain_ug_per_gOC, fill=Site)) + geom_boxplot()
 
 ggplot(ghg_csv, aes(x=DAY, y=gain_ug_per_gOC, fill=TRT)) + geom_boxplot()
+
+
+# FT quant ggplots---------------------------------------
+
+#boxplots
+ggplot(ftc_dat, aes(x = def1, y = depth_cm, fill = site)) + geom_boxplot() + theme_er() +
+  scale_fill_manual (values = soil_palette("gley", 2)) + facet_grid(season~.)
+
+#dotplots failed
+ggplot() + geom_dotplot(data = ftc_dat, aes(y = depth_m, x = Def1, color = site)) + theme_er() +
+  scale_color_manual (values = soil_palette("gley", 2)) + facet_wrap(season~.)
+
+ggplot(ftc_dat, aes(x=def1, y=depth_cm, fill=site))
+
+#ridge and grid plots
+ggplot(ftc_dat, aes(x = def1, y = depth_cm, color = season)) +
+stat_bin2d( mapping = NULL, data = NULL, geom = "tile", position = "identity" + bins = 30 + binwidth = NULL + drop = TRUE)
+
+ggplot(ftc_dat, aes(x = def1, y = site, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
+  stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
+  scale_fill_viridis_c(name = "Tail probablity", direction = -1) + theme_er() + facet_grid(season~.)
+
+ggplot(ftc_dat, aes(x = def1, y = site, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
+  stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
+  scale_fill_viridis_c(name = "Tail probablity", direction = -1) + theme_er() + scale_x_continuous(limits = c(-5, 30)) + facet_grid(season~.)
+
+ggplot(ftc_dat, aes(x = def1, y = site, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
+  stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
+  scale_fill_viridis_c(name = "Tail probablity", direction = -1) + theme_er() + scale_x_continuous(limits = c(-5, 30)) + facet_grid(season~.)
+
+#raster plots
+
+ggplot(ftc_dat, aes(x = depth_cm, y = site, fill = def1)) +
+  geom_raster(hjust = 0, vjust = 0) + theme_er() + facet_grid(season~.)
+
+cars <- ggplot(ftc_dat, aes(depth_cm, factor(site)))
+
+cars + stat_bin2d(aes(fill= after_stat(count)), binwidth = c(3,1)) + theme_er() + facet_grid(season~.)
+
+ggplot(ftc_dat, aes(x = depth_cm, y = site, height = def1)) +
+  geom_density_ridges(stat = "identity") + theme_er() + facet_grid(season~.)
 
 
 # aov-------------------------------------------
