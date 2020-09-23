@@ -4,11 +4,12 @@
 # GHG FTC C12 and C13 data
 
 # load data---------------------------------
-ghg_csv = read.csv("processed/ghg_ftc.csv")
+#ghg_csv = read.csv("processed/ghg_ftc.csv")
 ghg_csv2 = read.csv("processed/ghg_depth.csv")
 ftc_dat = read.csv("processed/FTC_quant_inprocess.csv")
 
-###
+# set data frames-----------------------------
+
 library(dplyr)
 library(tidyr)
 str(ghg_csv2)
@@ -16,23 +17,6 @@ str(ftc_dat)
 levels(as.factor(ghg_csv2$trmt))
 #mutate(TRT = factor(TRT, levels = c("CON", "FTC")))
 
-#
-
-str(ghg_csv2)
-
-# set data frames-----------------------------
-
-#I don't know what I'm doing here.
-
-toolik = ghg_csv$Site=="TOOL"
-healy = ghg_csv$Site=="HEALY"
-control = ghg_csv$TRT=="CON"
-ftc = ghg_csv$TRT=="FTC"
-DAY
-Day_1 = ghg_csv$DAY=="1"
-Day_4 = ghg_csv$DAY=="4"
-Day_7 = ghg_csv$DAY=="7"
-Day_14 = ghg_csv$DAY=="14"
 
 # ggplot set up-----------------------------------
 theme_er <- function() {  # this for all the elements common across plots
@@ -66,14 +50,14 @@ library(sp)
 library(ggridges)
 
 # gain in C ggplot----------------------------------------
-ggplot(ghg_csv, aes(x=TRT, y=gain_ug_per_gOC, fill=DAY)) + geom_boxplot() 
+ggplot(ghg_csv2, aes(x=trmt, y=gain_ug_g_oc, fill=day)) + geom_boxplot() 
 
 
-ggplot(ghg_csv, aes(x=Site, y=gain_ug_per_gOC, fill=DAY)) + geom_boxplot()
+ggplot(ghg_csv2, aes(x=site, y=gain_ug_g_oc, fill=day)) + geom_boxplot()
 
-ggplot(ghg_csv, aes(x=DAY, y=gain_ug_per_gOC, fill=Site)) + geom_boxplot()
+ggplot(ghg_csv2, aes(x=day, y=gain_ug_g_oc, fill=site)) + geom_boxplot()
 
-ggplot(ghg_csv, aes(x=DAY, y=gain_ug_per_gOC, fill=TRT)) + geom_boxplot()
+ggplot(ghg_csv, aes(x=day, y=gain_ug_g_oc, fill=site)) + geom_boxplot()
 
 
 # FT quant ggplots---------------------------------------
@@ -82,8 +66,8 @@ ggplot(ghg_csv, aes(x=DAY, y=gain_ug_per_gOC, fill=TRT)) + geom_boxplot()
 ggplot(ftc_dat, aes(x = def1, y = depth_cm, fill = site)) + geom_boxplot() + theme_er() +
   scale_fill_manual (values = soil_palette("gley", 2)) + facet_grid(season~.)
 
-#dotplots failed
-ggplot() + geom_dotplot(data = ftc_dat, aes(y = depth_m, x = Def1, color = site)) + theme_er() +
+#dotplots all failed
+ggplot() + geom_dotplot(data = ftc_dat, aes(y = depth_m, x = def1, color = site)) + theme_er() +
   scale_color_manual (values = soil_palette("gley", 2)) + facet_wrap(season~.)
 
 ggplot(ftc_dat, aes(x=def1, y=depth_cm, fill=site))
@@ -104,6 +88,9 @@ ggplot(ftc_dat, aes(x = def1, y = site, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
   stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
   scale_fill_viridis_c(name = "Tail probablity", direction = -1) + theme_er() + scale_x_continuous(limits = c(-5, 30)) + facet_grid(season~.)
 
+ggplot(ftc_dat, aes(x = depth_cm, y = site, height = def1)) +
+  geom_density_ridges(stat = "identity") + theme_er() + facet_grid(season~.)
+
 #raster plots
 
 ggplot(ftc_dat, aes(x = depth_cm, y = site, fill = def1)) +
@@ -113,37 +100,37 @@ cars <- ggplot(ftc_dat, aes(depth_cm, factor(site)))
 
 cars + stat_bin2d(aes(fill= after_stat(count)), binwidth = c(3,1)) + theme_er() + facet_grid(season~.)
 
-ggplot(ftc_dat, aes(x = depth_cm, y = site, height = def1)) +
-  geom_density_ridges(stat = "identity") + theme_er() + facet_grid(season~.)
-
-
 # aov-------------------------------------------
 
-ghg_aov1 = aov(data = ghg_csv, gain_ug_per_gOC ~ Site)
+ghg_aov1 = aov(data = ghg_csv2, gain_ug_g_oc ~ site)
 summary(ghg_aov1)
 
 
-ghg_aov2 = aov(data = ghg_csv, gain_ug_per_gOC ~ DAY)
+ghg_aov2 = aov(data = ghg_csv2, gain_ug_g_oc ~ day)
 summary(ghg_aov2)
 
 
-ghg_aov3 = aov(data = ghg_csv, gain_ug_per_gOC ~ Site*DAY)
+ghg_aov3 = aov(data = ghg_csv2, gain_ug_g_oc ~ site*day)
 summary(ghg_aov3)
 
 # C/g soil ggplot-------------------------------------
 
 
-ggplot(ghg_csv, aes(x=Site, y=ug_12C_g_soil, fill=DAY)) + 
+ggplot(ghg_csv2, aes(x=site, y=gain_ug_g_oc, fill=day)) + 
   geom_boxplot() + theme_er() + 
   scale_fill_manual (values = soil_palette("redox", 4)) 
 
 ###
 
-ggplot(ghg_csv, aes(x=Site, y=ug_12C_g_soil, fill=DAY)) + 
+ggplot(ghg_csv2, aes(x=site, y=gain_ug_g_oc, fill=day)) + 
   geom_boxplot() + theme_er() + 
   scale_fill_manual (values = soil_palette("redox", 4)) 
 
-ggplot(ghg_csv, aes(x = DAY, y = ug_12C_g_soil, color = Site)) +
+
+
+# Old failed ggplots----------------------------------------
+
+ggplot(ghg_csv2, aes(x = day, y = gain_ug_g_oc, color = day)) +
   geom_dotplot() +
   xlab("Day") +
   ylab("CO2 AVG") +
