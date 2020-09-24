@@ -20,25 +20,25 @@ levels(as.factor(ghg_csv2$trmt))
 
 # ggplot set up-----------------------------------
 theme_er <- function() {  # this for all the elements common across plots
-theme_bw() %+replace%
-theme(legend.position = "top",
-legend.key=element_blank(),
-legend.title = element_blank(),
-legend.text = element_text(size = 12),
-legend.key.size = unit(1.5, 'lines'),
-panel.border = element_rect(color="black",size=2, fill = NA),
-plot.title = element_text(hjust = 0.5, size = 14),
-plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
-axis.text = element_text(size = 12, color = "black"),
-axis.title = element_text(size = 12, face = "bold", color = "black"),
-# formatting for facets
-panel.background = element_blank(),
-strip.background = element_rect(colour="white", fill="white"), #facet formatting
-panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
-panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
-strip.text.x = element_text(size=12, face="bold"), #facet labels
-strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
-)
+  theme_bw() %+replace%
+    theme(legend.position = "top",
+          legend.key=element_blank(),
+          legend.title = element_blank(),
+          legend.text = element_text(size = 12),
+          legend.key.size = unit(1.5, 'lines'),
+          panel.border = element_rect(color="black",size=2, fill = NA),
+          plot.title = element_text(hjust = 0.5, size = 14),
+          plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
+          axis.text = element_text(size = 12, color = "black"),
+          axis.title = element_text(size = 12, face = "bold", color = "black"),
+          # formatting for facets
+          panel.background = element_blank(),
+          strip.background = element_rect(colour="white", fill="white"), #facet formatting
+          panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
+          panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
+          strip.text.x = element_text(size=12, face="bold"), #facet labels
+          strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
+    )
 }
 
 library(ggplot2)
@@ -95,6 +95,32 @@ ggplot(ftc_dat, aes(x = depth_cm, y = site, height = def1)) +
 
 ggplot(ftc_dat, aes(x = depth_cm, y = site, fill = def1)) +
   geom_raster(hjust = 0, vjust = 0) + theme_er() + facet_grid(season~.)
+
+# bubble plot with depth on y axis
+ftc_dat %>% 
+  filter(duration==24 & mag.vec==1.5) %>% 
+  ggplot(aes(y = depth_cm, x = site, size = def1, color = def1))+
+  #geom_jitter()+
+  geom_point(position = position_jitter(width = 0.3))+
+  scale_y_reverse()+
+  # scale_size_continuous()+
+  scale_color_gradient(low = "blue", high = "red")+
+  facet_grid(~season)
+
+# heatmap
+ftc_dat %>% 
+  filter(depth_cm<100 ) %>% 
+  ggplot(aes(y = depth_cm, x = site, fill = def1))+
+  geom_tile()+
+  scale_y_reverse()+
+  coord_fixed(ratio=1/2)
+
+
+
+
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile()
+
 
 cars <- ggplot(ftc_dat, aes(depth_cm, factor(site)))
 
