@@ -67,10 +67,21 @@ fticr_data =
   dplyr::select(-Mass,-formula, -presence,Mass,formula,presence) %>% 
   # now we want only peaks that are in 3 of the 5 replicates
   # group by the treatment levels  
-  group_by(treatment, sat_level,formula) %>% 
-  dplyr::mutate(n = n(),
-                presence = mean(presence)) %>% 
-  filter(n>2) 
+  # group_by(treatment, sat_level,formula) %>% 
+  # dplyr::mutate(n = n(),
+  #              presence = mean(presence)) %>% 
+  # filter(n>2) 
 
 
 
+meta_formula = 
+  fticr_meta %>% 
+  dplyr::select(Mass, formula) %>% 
+  group_by(formula) %>% 
+  dplyr::mutate(n = n())
+
+
+## OUTPUTS
+write.csv(fticr_data,"fticr_data.csv", row.names = FALSE)
+write.csv(fticr_meta,"fticr_meta.csv", row.names = FALSE)
+write.csv(meta_hcoc,"fticr_meta_hcoc.csv", row.names = FALSE)
