@@ -7,6 +7,7 @@
 #ghg_csv = read.csv("processed/ghg_ftc.csv")
 ghg_csv2 = read.csv("processed/ghg_depth.csv")
 ftc_dat = read.csv("processed/FTC_quant_inprocess.csv")
+ftc_fulldat = read.csv("processed/final_dat2.csv")
 
 # set data frames-----------------------------
 
@@ -14,7 +15,12 @@ library(dplyr)
 library(tidyr)
 str(ghg_csv2)
 str(ftc_dat)
+str(ftc_fulldat)
 levels(as.factor(ghg_csv2$trmt))
+levels(as.factor(ftc_fulldat$site)) 
+      mutate(site = factor (site, levels = c("BARR", "TOOL", "BONA", "HEAL")))
+      
+      
 #mutate(TRT = factor(TRT, levels = c("CON", "FTC")))
 
 
@@ -98,6 +104,18 @@ ggplot(ftc_dat, aes(x = depth_cm, y = site, fill = def1)) +
 
 # bubble plot with depth on y axis
 ftc_dat %>% 
+  filter(duration==24 & mag.vec==1.5 & depth_cm<70) %>%
+  ggplot(aes(y = depth_cm, x = site, size = def1, color = def1))+
+  #geom_jitter()+
+  geom_point(position = position_jitter(width = 0.2))+
+  scale_y_reverse()+
+  # scale_size_continuous()+
+  scale_color_gradient(low = "blue", high = "red")+
+  ggtitle("Freeze Thaw Cycle Frequency") +
+  theme_er() +
+  facet_grid(~season)
+
+ftc_dat %>% 
   filter(duration==24 & mag.vec==1.5) %>% 
   ggplot(aes(y = depth_cm, x = site, size = def1, color = def1))+
   #geom_jitter()+
@@ -105,7 +123,36 @@ ftc_dat %>%
   scale_y_reverse()+
   # scale_size_continuous()+
   scale_color_gradient(low = "blue", high = "red")+
+  theme_er() +
   facet_grid(~season)
+
+ftc_fulldat %>% 
+  filter(duration==24 & mag.vec==1.5) %>% 
+  ggplot(aes(y = depth_cm, x = site, size = Def1, color = Def1))+
+  #geom_jitter()+
+  geom_point(position = position_jitter(width = 0.2))+
+  scale_y_reverse()+
+  ggtitle("Freeze Thaw Gradient Across Seasons") +
+  scale_size_continuous(1) +
+  scale_color_gradient(low = "blue", high = "red")+
+  theme_er() +
+  facet_grid(~season)
+
+
+# bubble plot with depth on y axis
+ghg_csv2 %>% 
+  filter(mid > 0) %>% 
+  ggplot(aes(y = mid, x = site, size = gain_ug_g_oc, color = gain_ug_g_oc))+
+  #geom_jitter()+
+  geom_point(position = position_jitter(width = 0.2))+
+  scale_y_reverse() +
+  coord_cartesian(ylim = c(70,0)) +
+  # scale_size_continuous()
+  scale_color_gradient(low = "blue", high = "yellow")+
+  ggtitle("Respiration (ug per g OC)") +
+  theme_er() +
+  facet_grid(~trmt)
+
 
 # heatmap
 ftc_dat %>% 
