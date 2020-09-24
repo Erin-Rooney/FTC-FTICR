@@ -81,10 +81,10 @@ fticr_data =
   # dplyr::mutate(n = n(),
   #              presence = mean(presence)) %>% 
   # filter(n>2) 
-
-
-
-meta_formula = 
+  
+  
+  
+  meta_formula = 
   fticr_meta %>% 
   dplyr::select(Mass, formula) %>% 
   group_by(formula) %>% 
@@ -106,4 +106,3 @@ meta_hcoc  = read.csv("processed/fticr_meta_hcoc.csv")
 # Relative Abundance------------------------------
 
 
-  

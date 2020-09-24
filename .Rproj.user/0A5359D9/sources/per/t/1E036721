@@ -1,0 +1,24 @@
+{
+    "id": "1E036721",
+    "path": "~/R/R/R Datasets/FTC_transect/code/fticr_kp.R",
+    "project_path": "code/fticr_kp.R",
+    "type": "r_source",
+    "hash": "1645757813",
+    "contents": "",
+    "dirty": false,
+    "created": 1600984051585.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "cursorPosition": "108,2",
+        "scrollLine": "67"
+    },
+    "folds": "92|26|98|0|\n99|12|104|0|\n",
+    "lastKnownWriteTime": 1600987071,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1600987071182,
+    "read_only": false,
+    "read_only_alternatives": []
+}

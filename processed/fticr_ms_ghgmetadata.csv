@@ -1,0 +1,31 @@
+﻿Lab ID,Site,Rep,Top Depth,Bottom Depth,Treatment,Morph,Material,Corresponding RO
+GHG 2,HEALY,1,12,24,CON,Oa/Oejj,Organic,"RO 47, RO 64"
+GHG 1,HEALY,3,16,30,CON,Oa/Ajj,Organic,RO 34
+GHG 18,HEALY,1,24,33,CON,B/Oajj,Upper Mineral,RO 50
+GHG 21,HEALY,2,28,34,CON,B/Oajj,Upper Mineral,RO 60
+GHG 30,HEALY,3,30,38,CON,A,Upper Mineral,RO 44
+GHG 3,HEALY,3,40,54,CON,Bw,Lower Mineral,"RO 65, RO 76"
+GHG 11,HEALY,1,12,24,FTC,Oa/Oejj,Organic,"RO 45, RO 52"
+GHG 12,HEALY,3,16,30,FTC,Oa/Ajj,Organic,RO 07
+GHG 20,HEALY,1,24,33,FTC,B/Oajj,Upper Mineral,RO 43
+GHG 13,HEALY,2,28,34,FTC,B/Oajj,Upper Mineral,RO 20
+GHG 15,HEALY,3,30,38,FTC,A,Upper Mineral,RO 12
+GHG 9,HEALY,3,40,54,FTC,Bw,Lower Mineral,"RO 71, 78"
+GHG 5,TOOL,2,28,38,CON,Bw,Upper Mineral,RO 69
+GHG 8,TOOL,1,30,40,CON,Oea/Bw,Organic,RO 35
+GHG 17,TOOL,2,38,44,CON,Bjj,Upper Mineral,RO 01
+GHG 6,TOOL,1,40,50,CON,Bw,Upper Mineral,RO 67
+GHG 4,TOOL,3,41,50,CON,Bw,Upper Mineral,RO 66
+GHG 26,TOOL,2,44,58,CON,BC/Oajj,Lower Mineral,"RO 03, RO 18"
+GHG 25,TOOL,1,50,60,CON,Bw,Lower Mineral,RO 75
+GHG 7,TOOL,3,50,58,CON,B/Oajj,Lower Mineral,RO 61
+GHG 24,TOOL,1,60,67,CON,C,Lower Mineral,RO 72
+GHG 28,TOOL,2,28,38,FTC,Bw,Upper Mineral,RO 70
+GHG 23,TOOL,1,30,40,FTC,Oea/Bw,Organic,RO 53
+GHG 22,TOOL,2,38,44,FTC,Bjj,Upper Mineral,RO 17
+GHG 16,TOOL,1,40,50,FTC,Bw,Upper Mineral,RO 68
+GHG 14,TOOL,3,41,50,FTC,Bw,Upper Mineral,RO 73
+GHG 10,TOOL,2,44,58,FTC,BC/Oajj,Lower Mineral,"RO 38, RO 41"
+GHG 27,TOOL,1,50,60,FTC,Bw,Lower Mineral,RO 74
+GHG 19,TOOL,3,50,58,FTC,B/Oajj,Lower Mineral,RO 15
+GHG 29,TOOL,1,60,67,FTC,C,Lower Mineral,RO 79
