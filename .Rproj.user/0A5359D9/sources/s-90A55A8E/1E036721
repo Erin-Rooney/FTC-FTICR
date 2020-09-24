@@ -3,22 +3,22 @@
     "path": "~/R/R/R Datasets/FTC_transect/code/fticr_kp.R",
     "project_path": "code/fticr_kp.R",
     "type": "r_source",
-    "hash": "1645757813",
+    "hash": "4292307656",
     "contents": "",
     "dirty": false,
     "created": 1600984051585.0,
     "source_on_save": false,
     "relative_order": 3,
     "properties": {
-        "cursorPosition": "108,2",
-        "scrollLine": "67"
+        "cursorPosition": "13,3",
+        "scrollLine": "2"
     },
-    "folds": "92|26|98|0|\n99|12|104|0|\n",
-    "lastKnownWriteTime": 1600987071,
+    "folds": "93|26|99|0|\n100|12|105|0|\n",
+    "lastKnownWriteTime": 1600987299,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1600987071182,
+    "last_content_update": 1600987299484,
     "read_only": false,
     "read_only_alternatives": []
 }

@@ -4,6 +4,7 @@
 # Load libraries-------------------------------
 library(tidyverse)
 library(reshape2)
+library(dplyr)
 
 # Load data------------------------------------
 report = read.csv("processed/Lybrand Alaska Sept 2019 Report_Colorcoded.csv")
