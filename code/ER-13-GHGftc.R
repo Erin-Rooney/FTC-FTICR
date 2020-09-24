@@ -98,6 +98,7 @@ ggplot(ftc_dat, aes(x = depth_cm, y = site, fill = def1)) +
 
 # bubble plot with depth on y axis
 ftc_dat %>% 
+  filter(duration==24 & mag.vec==1.5) %>% 
   ggplot(aes(y = depth_cm, x = site, size = def1, color = def1))+
   #geom_jitter()+
   geom_point(position = position_jitter(width = 0.3))+
@@ -108,7 +109,7 @@ ftc_dat %>%
 
 # heatmap
 ftc_dat %>% 
-  filter(depth_cm<100) %>% 
+  filter(depth_cm<100 ) %>% 
   ggplot(aes(y = depth_cm, x = site, fill = def1))+
   geom_tile()+
   scale_y_reverse()+
