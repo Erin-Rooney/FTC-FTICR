@@ -8,6 +8,7 @@
 ghg_csv2 = read.csv("processed/ghg_depth.csv")
 ftc_dat = read.csv("processed/FTC_quant_inprocess.csv")
 ftc_fulldat = read.csv("processed/final_dat2.csv")
+sommos_oc = read.csv("processed/oc_sommos_neonoc.csv")
 
 # set data frames-----------------------------
 
@@ -16,6 +17,7 @@ library(tidyr)
 str(ghg_csv2)
 str(ftc_dat)
 str(ftc_fulldat)
+str(sommos_oc)
 levels(as.factor(ghg_csv2$trmt))
 levels(as.factor(ftc_fulldat$site)) 
       mutate(site = factor (site, levels = c("BARR", "TOOL", "BONA", "HEAL")))
@@ -152,6 +154,18 @@ ghg_csv2 %>%
   ggtitle("Respiration (ug per g OC)") +
   theme_er() +
   facet_grid(~trmt)
+
+sommos_oc %>% 
+  filter(mid > 0) %>% 
+  ggplot(aes(y = mid, x = site, size = OC.g100g, color = OC.g100g))+
+  #geom_jitter()+
+  geom_point(position = position_jitter(width = 0.2))+
+  scale_y_reverse() +
+  coord_cartesian(ylim = c(70,0)) +
+  # scale_size_continuous()
+  scale_color_gradient(low = "purple", high = "yellow")+
+  ggtitle("Organic Carbon Content, g per 100g") +
+  theme_er() 
 
 
 # heatmap
