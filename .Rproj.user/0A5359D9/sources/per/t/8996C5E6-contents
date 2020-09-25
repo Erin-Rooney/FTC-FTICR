@@ -9,15 +9,21 @@ ghg_csv2 = read.csv("processed/ghg_depth.csv")
 ftc_dat = read.csv("processed/FTC_quant_inprocess.csv")
 ftc_fulldat = read.csv("processed/final_dat2.csv")
 sommos_oc = read.csv("processed/oc_sommos_neonoc.csv")
+probe_loc = read.csv("processed/Probe Locations.csv")
 
 # set data frames-----------------------------
 
 library(dplyr)
+library(ggplot2)
+library(maps)
+require(maps)
+require(viridis)
 library(tidyr)
 str(ghg_csv2)
 str(ftc_dat)
 str(ftc_fulldat)
 str(sommos_oc)
+str(probe_loc)
 levels(as.factor(ghg_csv2$trmt))
 levels(as.factor(ftc_fulldat$site)) 
       mutate(site = factor (site, levels = c("BARR", "TOOL", "BONA", "HEAL")))
@@ -99,12 +105,12 @@ ggplot(ftc_dat, aes(x = def1, y = site, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
 ggplot(ftc_dat, aes(x = depth_cm, y = site, height = def1)) +
   geom_density_ridges(stat = "identity") + theme_er() + facet_grid(season~.)
 
-#raster plots
+#raster plots----------------------------------------------
 
 ggplot(ftc_dat, aes(x = depth_cm, y = site, fill = def1)) +
   geom_raster(hjust = 0, vjust = 0) + theme_er() + facet_grid(season~.)
 
-# bubble plot with depth on y axis
+# bubble plot with depth on y axis---------------------------------
 ftc_dat %>% 
   filter(duration==24 & mag.vec==1.5 & depth_cm<70) %>%
   ggplot(aes(y = depth_cm, x = site, size = def1, color = def1))+
@@ -141,7 +147,7 @@ ftc_fulldat %>%
   facet_grid(~season)
 
 
-# bubble plot with depth on y axis
+# bubble plot with depth on y axis--------------------------------------
 ghg_csv2 %>% 
   filter(mid > 0) %>% 
   ggplot(aes(y = mid, x = site, size = gain_ug_g_oc, color = gain_ug_g_oc))+
@@ -167,8 +173,55 @@ sommos_oc %>%
   ggtitle("Organic Carbon Content, g per 100g") +
   theme_er() 
 
+# Map plots---------------------------------------------------------------
 
-# heatmap
+library("rnaturalearth")
+library("rnaturalearthdata")
+library("sf")
+library("ggspatial")
+install.packages(c("cowplot", "googleway", "ggplot2", "ggrepel", 
+                   "ggspatial", "libwgeom", "sf", "rnaturalearth", "rnaturalearthdata"))
+
+mainstates <- map_data("state")
+
+ggplot(data = mainstates) +
+  geom_sf() 
+
+ggplot() + 
+  geom_polygon( data=MainStates, aes(x=long, y=lat, group=group),
+                color="black", fill="lightblue" )
+
+usa <- subset(world, admin == "United States of America")
+(mainland <- ggplot(data = usa) +
+    geom_sf(fill = "cornsilk") +
+    coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), ylim = c(-2300000, 
+                                                                       730000)))
+data(map.states)
+
+ggplot(map.states, aes(long, lat,group=group)) + geom_polygon()
+
+
+
+
+world <- ne_countries(scale='medium',returnclass = 'sf')
+class(world)
+
+ggplot(data = world) +
+  geom_sf()
+
+usa <- subset(world, admin == "United States of America")
+(mainland <- ggplot(data = usa) +
+    geom_sf(fill = "cornsilk") +
+    coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), ylim = c(-2300000, 
+                                                                       730000)))
+
+(alaska <- ggplot(data = usa) +
+    geom_sf(fill = "cornsilk") +
+    coord_sf(crs = st_crs(3467), xlim = c(-2400000, 1600000), ylim = c(200000, 
+                                                                       2500000), expand = FALSE, datum = NA))
+
+
+# heatmap--------------------------------------------------------------
 ftc_dat %>% 
   filter(depth_cm<100 ) %>% 
   ggplot(aes(y = depth_cm, x = site, fill = def1))+

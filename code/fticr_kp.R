@@ -14,7 +14,7 @@ report2 = read.csv("processed/Lybrand Alaska CHCl3 Sept 2019 Report_Colorcoded.c
 fticr_report = 
   report %>% 
   # filter appropriate mass range
-  filter(Mass>200 & Mass<900) %>% 
+  filter('Mass'>200 & 'Mass'<900) %>% 
   # remove isotopes
   filter(C13==0) %>% 
   # remove peaks without C assignment
@@ -22,7 +22,7 @@ fticr_report =
 
 fticr_report2 =
   report %>%
-  filter(Mass>200 & Mass<900) %>%
+  filter('Mass'>200 & 'Mass'<900) %>%
   filter(C13==0) %>%
   filter(C>0)
 

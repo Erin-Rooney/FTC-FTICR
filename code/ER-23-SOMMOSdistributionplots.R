@@ -1,12 +1,12 @@
 # Erin C Rooney
 # SOMMOS data
 
-#load data
+#load data-------------------------------------
 sommos_csv = read.csv("processed/horizon_processed4.csv")
 
 
 
-#select data
+#select data-----------------------------------
 barrow = sommos_csv$site=="BARR"
 healy = sommos_csv$site=="HEAL"
 toolik = sommos_csv$site=="TOOL"
@@ -16,10 +16,10 @@ data = as.data.frame(healy)
 data = as.data.frame(toolik)
 data = as.data.frame(bona)
 
-#load library
+#load library--------------------------------
 library(ggplot2)
 
-#plot Fe distributions
+#plot Fe distributions-------------------------
 
 
 p <- ggplot() +
@@ -52,7 +52,7 @@ p <- ggplot() +
 
 p
 
-###########
+#Active layer ftc plot----------------------------
 
 plot(activelayer_dat)
 
