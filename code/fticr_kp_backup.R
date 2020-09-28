@@ -179,7 +179,25 @@ fticr_data_chcl3 =
   left_join(dplyr::select(fticr_meta_chcl3, Mass,formula), by = "Mass")  %>% 
   #left_join(corekey, by = "CoreID") %>% 
   # rearrange columns
-  dplyr::select(-Mass,-formula, -presence,Mass,formula,presence)
+  dplyr::select(-Mass,-formula, -presence,Mass,formula,presence) %>% 
+  separate(CoreID, sep = "_", into = c("FT_col", "ID", "W")) %>% 
+  # filter only FT
+  # filter(FT_col == "FT")
+  filter(FT_col %in% "FT") %>% 
+  left_join(fticr_reps, by = "ID") %>% 
+  rename(max_reps = reps) %>% 
+  group_by(Site, Material, Trtmt, formula) %>% 
+  dplyr::mutate(formulareps = n()) %>% 
+  # set up replication filter for 2/3 of max_rep
+  ungroup() %>% 
+  mutate(include = formulareps >= (2/3)*max_reps) %>% 
+  
+  ## mutate(include = formulareps > 1,
+  ##        occurrence = case_when(formulareps == max_reps ~ "3/3",
+  ##                               formulareps < max_reps & formulareps >= (2/3)*max_reps ~ "2/3+",
+  ##                               formulareps >= (1/3)*max_reps ~ "1/3+",
+  ##                               formulareps < (1/3)*max_reps ~ "exclude")) %>% 
+  filter(include)
   
   
   meta_formula_chcl3 = 
@@ -197,7 +215,7 @@ write.csv(meta_hcoc_water,"fticr_meta_hcoc_water.csv", row.names = FALSE)
 
 write.csv(fticr_data_chcl3,"fticr_data_chcl3.csv", row.names = FALSE)
 write.csv(fticr_meta_chcl3,"fticr_meta_chcl3.csv", row.names = FALSE)
-write.csv(meta_hcoc_Chcl3,"fticr_meta_hcoc_chcl3.csv", row.names = FALSE)
+write.csv(meta_hcoc_chcl3,"fticr_meta_hcoc_chcl3.csv", row.names = FALSE)
 
 # Load files-----------------------------------
 
@@ -205,8 +223,11 @@ fticr_data_water = read.csv("fticr_data_water.csv")
 fticr_meta_water = read.csv("fticr_meta_water.csv")
 meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
+fticr_data_chcl3 = read.csv("fticr_data_water.csv")
+fticr_meta_chcl3 = read.csv("fticr_meta_water.csv")
+meta_hcoc_chcl3  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
-# van krevelen plots ------------------------------------------------------
+# van krevelen plots_water------------------------------------------------------
 fticr_water = 
   fticr_data_water %>% 
   select(ID, formula, Site, Trtmt, Material) 
@@ -258,5 +279,55 @@ fticr_water_trt %>%
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
   theme_bw()
 
+# van krevelen plots_chcl3------------------------------------------------------
 
+fticr_chcl3 = 
+  fticr_data_chcl3 %>% 
+  select(ID, formula, Site, Trtmt, Material) 
 
+fticr_chcl3_trt = 
+  fticr_chcl3 %>% 
+  distinct(Site, Trtmt, Material, formula) %>% 
+  left_join(meta_hcoc_chcl3, by = "formula")
+
+fticr_chcl3_trt = fticr_chcl3_trt %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+fticr_chcl3_trt %>% 
+  ggplot(aes(x=OC, y=HC, color = Trtmt))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  stat_ellipse()+
+  facet_grid(Material ~ Site)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("CHCl3 extracted FTICR-MS")+
+  theme_er()
+  #scale_color_manual (values = soil_palette("gley", 2))
+
+fticr_chcl3_trt %>% 
+  ggplot(aes(x=OC, y=HC, color = Site))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  stat_ellipse()+
+  facet_grid(Material ~.)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("CHCl3 extracted FTICR-MS")+
+  theme_er() +
+  scale_color_manual (values = soil_palette("redox", 2))
+
+fticr_chcl3_trt %>% 
+  ggplot(aes(x=OC, y=HC, color = Site))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  facet_grid(Material ~ Trtmt)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  theme_bw()
