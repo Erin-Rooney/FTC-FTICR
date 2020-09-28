@@ -56,6 +56,10 @@ head(FTC_site)
 plot_dat = subset(FTC_site, mag.vec == 1.5)
 plot_dat=FTC_site[,c("longitude.dec_deg","latitude.dec_deg","site","Def1","season","core","depth_pos","year")]
 
+#Relevant data
+plot_dat = subset(FTC_site, mag.vec == 1.5)
+plot_dat=FTC_site[,c("longitude.dec_deg","latitude.dec_deg","site","Def1","season","core","depth_pos","year")]
+
 #Here can calculate what you want to average over (in this example, average over everything but site) 
 FTC_example = summarySE(plot_dat, measurevar = "Def1", groupvars = c("longitude.dec_deg", "latitude.dec_deg","site"), na.rm=TRUE)
 

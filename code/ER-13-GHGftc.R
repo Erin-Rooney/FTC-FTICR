@@ -26,7 +26,7 @@ str(sommos_oc)
 str(probe_loc)
 levels(as.factor(ghg_csv2$trmt))
 levels(as.factor(ftc_fulldat$site)) 
-      mutate(site = factor (site, levels = c("BARR", "TOOL", "BONA", "HEAL")))
+      mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
       
       
 #mutate(TRT = factor(TRT, levels = c("CON", "FTC")))
@@ -139,7 +139,7 @@ ftc_fulldat %>%
   ggplot(aes(y = depth_cm, x = site, size = Def1, color = Def1))+
   #geom_jitter()+
   geom_point(position = position_jitter(width = 0.2))+
-  scale_y_reverse()+
+  scale_y_reverse() +
   ggtitle("Freeze Thaw Gradient Across Seasons") +
   scale_size_continuous(1) +
   scale_color_gradient(low = "blue", high = "red")+
