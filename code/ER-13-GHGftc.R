@@ -26,6 +26,7 @@ str(sommos_oc)
 str(probe_loc)
 levels(as.factor(ghg_csv2$trmt))
 levels(as.factor(ftc_fulldat$site)) 
+ftc_fulldat = ftc_fulldat %>% 
       mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
       
       
