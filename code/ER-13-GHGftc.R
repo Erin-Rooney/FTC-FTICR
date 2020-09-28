@@ -28,7 +28,22 @@ levels(as.factor(ghg_csv2$trmt))
 levels(as.factor(ftc_fulldat$site)) 
 ftc_fulldat = ftc_fulldat %>% 
       mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
-      
+
+ftc_fulldat = ftc_fulldat %>% 
+  filter(!season == "activelayer")
+
+
+ftc_fulldat = ftc_fulldat %>% 
+      mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))
+
+ftc_dat = ftc_dat %>% 
+  filter(!season == "activelayer")
+
+
+ftc_dat = ftc_dat %>% 
+  mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))
+
+
       
 #mutate(TRT = factor(TRT, levels = c("CON", "FTC")))
 
@@ -133,7 +148,8 @@ ftc_dat %>%
   # scale_size_continuous()+
   scale_color_gradient(low = "blue", high = "red")+
   theme_er() +
-  facet_grid(~season)
+  facet_grid(~season) 
+  
 
 ftc_fulldat %>% 
   filter(duration==24 & mag.vec==1.5) %>% 
