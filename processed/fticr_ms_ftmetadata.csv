@@ -1,0 +1,82 @@
+ID,Site,Trtmt,Rep,Depth Top (cm),Depth Bottom (cm),Morph,Material
+FT 01,TOOL ,CON,2,38,44,Bjj,Upper Mineral
+FT 02,TOOL,CON,3,14,35,O,Organic
+FT 03,TOOL,CON,2,44,58,BC/Oajj,Lower Mineral
+FT 04,HEAL,CON,2,0,12,O,Organic
+FT 05,TOOL,FTC,1,10,20,O,Organic
+FT 06,TOOL,FTC,1,20,30,O,Organic
+FT 07,HEAL,FTC,3,16,30,Oa/Ajj,Organic
+FT 08,HEAL,CON,2,47,68,B,Lower Mineral
+FT 09,HEAL,CON,1,0,12,O,Organic
+FT 10,HEAL ,CON,2,34,47,B,Upper Mineral
+FT 11,HEAL,CON,2,34,47,B,Upper Mineral
+FT 12,HEAL,FTC,3,30,38,A,Upper Mineral
+FT 13,HEAL,FTC,1,0,12,O,Organic
+FT 14,HEAL,CON,1,33,50,B,Upper Mineral
+FT 15,TOOL,FTC,3,50,58,B,Lower Mineral
+FT 16,HEAL,CON,1,50,60,B,Lower Mineral
+FT 17,TOOL,FTC,2,38,44,B,Upper Mineral
+FT 18,TOOL,CON,2,44,58,BC/Oajj,Lower Mineral
+FT 19,TOOL,FTC,3,35,41,B/Oajj,Upper Mineral
+FT 20,HEAL,FTC,2,28,34,B/Oajj,Upper Mineral
+FT 21,TOOL,CON,1,20,30,O,Organic
+FT 22,TOOL,FTC,3,14,35,O,Organic
+FT 23,HEAL,FTC,1,33,50,B,Upper Mineral
+FT 24,TOOL,FTC,3,0,14,O,Organic
+FT 25,TOOL,FTC,2,20,28,O,Organic
+FT 26,TOOL,CON,2,10,20,O,Organic
+FT 27,TOOL,FTC,3,14,35,O,Organic
+FT 28,TOOL,CON,2,20,28,O,Organic
+FT 29,HEAL,FTC,2,47,68,B,Lower Mineral
+FT 30,HEAL,FTC,2,34,47,B,Upper Mineral
+FT 31,HEAL,CON,2,12,28,O,Organic
+FT 32,HEAL,FTC,2,34,47,B,Upper Mineral
+FT 33,TOOL,CON,3,35,41,B/Oajj,Upper Mineral
+FT 34,HEAL,CON,3,16,30,Oa/Ajj,Organic
+FT 35,TOOL,CON,1,30,40,Oea/Bw,Organic
+FT 36,TOOL,FTC,2,0,16,O,Organic
+FT 37,HEAL,FTC,3,0,9,O,Organic
+FT 38,TOOL,FTC,2,44,58,B,Lower Mineral
+FT 39,HEAL,CON,1,33,50,B,Upper Mineral
+FT 40,HEAL,FTC,1,33,50,B,Upper Mineral
+FT 41,TOOL,FTC,2,44,58,B,Lower Mineral
+FT 42,HEAL,FTC,3,16,30,Oa/Ajj,Organic
+FT 43,HEAL,FTC,1,24,33,B/Oajj,Upper Mineral
+FT 44,HEAL,CON,3,30,38,A,Upper Mineral
+FT 45,HEAL,FTC,1,12,24,Oa/Oejj,Organic
+FT 46,HEAL,CON,1,50,60,B,Lower Mineral
+FT 47,HEAL,CON,1,12,24,Oa/Oejj,Organic
+FT 48,HEAL,CON,3,0,9,O,Organic
+FT 49,TOOL,CON,3,14,35,O,Organic
+FT 50,HEAL,CON,1,24,33,B/Oajj,Upper Mineral
+FT 51,TOOL,CON,1,10,20,O,Organic
+FT 52,HEAL,FTC,1,12,24,Oa/Oejj,Organic
+FT 53,TOOL,FTC,1,30,40,Oea/Bw,Organic
+FT 54,TOOL,FTC,2,10,20,O,Organic
+FT 55,HEAL,CON,3,16,30,Oa/Ajj,Organic
+FT 56,TOOL,CON,3,0,14,O,Organic
+FT 57,HEAL,CON,2,20,28,O,Organic
+FT 58,HEAL,FTC,2,20,28,O,Organic
+FT 59,TOOL,FTC,1,0,10,O,Organic
+FT 60,HEAL,CON,2,28,34,B/Oajj,Upper Mineral
+FT 61,TOOL,CON,3,50,58,B,Lower Mineral
+FT 62,HEAL,FTC,1,50,60,B,Lower Mineral
+FT 63,HEAL,FTC,2,12,20,O,Organic
+FT 64,HEAL,CON,1,12,24,Oa/Oejj,Organic
+FT 65,HEAL,CON,3,40,54,Bw,Lower Mineral
+FT 66,TOOL,CON,3,41,50,B,Upper Mineral
+FT 67,TOOL,CON,1,40,50,B,Upper Mineral
+FT 68,TOOL,FTC,1,40,50,Bw,Upper Mineral
+FT 69,TOOL,CON,2,28,38,B,Upper Mineral
+FT 70,TOOL,FTC,2,28,38,Bw,Upper Mineral
+FT 71,HEAL,FTC,3,40,54,B,Lower Mineral
+FT 72,TOOL,CON,1,60,67,B,Lower Mineral
+FT 73,TOOL,FTC,3,41,50,B,Upper Mineral
+FT 74,TOOL,FTC,1,50,60,Bw,Lower Mineral
+FT 75,TOOL,CON,1,50,60,B,Lower Mineral
+FT 76,HEAL,CON,3,40,54,Bw,Lower Mineral
+FT 77,HEAL,FTC,1,50,60,B,Lower Mineral
+FT 78,HEAL,FTC,3,40,54,B,Lower Mineral
+FT 79,TOOL,FTC,1,60,67,C,Lower Mineral
+FT 80,HEAL,CON,2,47,68,B,Lower Mineral
+FT 81,HEAL,FTC,2,47,68,B,Lower Mineral
