@@ -9,10 +9,27 @@ library(reshape2)
 report_water = read.csv("processed/Lybrand Alaska Sept 2019 Report_Colorcoded.csv")
 report_chcl3 = read.csv("processed/Lybrand Alaska CHCl3 Sept 2019 Report_Colorcoded.csv")
 
+# core key for fticr ------------------------------------------------------
+
+fticr_key = read.csv("processed/fticr_ms_ftmetadata.csv")
+fticr_reps = 
+  fticr_key %>% 
+  # remove extra spaces in Site names
+  mutate(Site = str_replace(Site, " ", "")) %>% 
+  # calculate reps per treatment grouping
+  group_by(Site, Material, Trtmt) %>% 
+  dplyr::mutate(reps = n()) %>% 
+  # separate ID column into many
+  separate(ID, sep = " ", into = c("FT", "ID")) %>% 
+  # keep only the necessary columns
+  select(ID, Site, Trtmt, Material, reps)
+
+
+
 # Assemble reports WATER------------------------------
 fticr_report_water = 
   report_water %>% 
-  rename(Mass=`ï..Mass`) %>% 
+  rename(Mass=`Mass`) %>% 
   # filter appropriate mass range
   filter(Mass>200 & Mass<900) %>% 
   # remove isotopes
@@ -67,7 +84,30 @@ fticr_data_water =
   left_join(dplyr::select(fticr_meta_water, Mass,formula), by = "Mass")  %>% 
   #left_join(corekey, by = "CoreID") %>% 
   # rearrange columns
-  dplyr::select(-Mass,-formula, -presence,Mass,formula,presence)
+  dplyr::select(-Mass,-formula, -presence,Mass,formula,presence) %>% 
+  # separate COREID for easy left_join
+  separate(CoreID, sep = "_", into = c("FT_col", "ID", "W")) %>% 
+  # filter only FT
+  # filter(FT_col == "FT")
+  filter(FT_col %in% "FT") %>% 
+  left_join(fticr_reps, by = "ID") %>% 
+  rename(max_reps = reps) %>% 
+  group_by(Site, Material, Trtmt, formula) %>% 
+  dplyr::mutate(formulareps = n()) %>% 
+  # set up replication filter for 2/3 of max_rep
+  ungroup() %>% 
+  mutate(include = formulareps >= (2/3)*max_reps) %>% 
+  
+      ## mutate(include = formulareps > 1,
+      ##        occurrence = case_when(formulareps == max_reps ~ "3/3",
+      ##                               formulareps < max_reps & formulareps >= (2/3)*max_reps ~ "2/3+",
+      ##                               formulareps >= (1/3)*max_reps ~ "1/3+",
+      ##                               formulareps < (1/3)*max_reps ~ "exclude")) %>% 
+  filter(include)
+
+
+  
+
 # now we want only peaks that are in 3 of the 5 replicates
 # group by the treatment levels  
 # group_by(treatment, sat_level,formula) %>% 
@@ -161,14 +201,42 @@ write.csv(meta_hcoc_Chcl3,"fticr_meta_hcoc_chcl3.csv", row.names = FALSE)
 
 # Load files-----------------------------------
 
-fticr_data = read.csv("processed/fticr_data.csv")
-fticr_meta = read.csv("processed/fticr_meta.csv")
-meta_hcoc  = read.csv("processed/fticr_meta_hcoc.csv")
+fticr_data_water = read.csv("fticr_data_water.csv")
+fticr_meta_water = read.csv("fticr_meta_water.csv")
+meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 
+# van krevelen plots ------------------------------------------------------
+fticr_water = 
+  fticr_data_water %>% 
+  select(ID, formula, Site, Trtmt, Material) 
 
+fticr_water_trt = 
+  fticr_water %>% 
+  distinct(Site, Trtmt, Material, formula) %>% 
+  left_join(meta_hcoc_water, by = "formula")
 
+fticr_water_trt %>% 
+  ggplot(aes(x=OC, y=HC, color = Trtmt))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse()+
+  facet_grid(Material ~ Site)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  theme_bw()
 
-# Relative Abundance------------------------------
+fticr_water_trt %>% 
+  ggplot(aes(x=OC, y=HC, color = Site))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  facet_grid(Material ~ Trtmt)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  theme_bw()
+
 
 
