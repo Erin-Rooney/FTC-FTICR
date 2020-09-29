@@ -4,6 +4,7 @@
 # Load libraries-------------------------------
 library(tidyverse)
 library(reshape2)
+library(soilpalettes)
 
 # Load data------------------------------------
 report_water = read.csv("processed/Lybrand Alaska Sept 2019 Report_Colorcoded.csv")
@@ -257,14 +258,16 @@ ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site, fill = Site)) +
   geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.05) +
   facet_grid(Material ~ .) +
   theme_er() +
-  scale_color_manual (values = soil_palette("redox", 2)) +
+  scale_fill_manual(values = soil_palette("redox", 2)) +
+  scale_color_manual(values = soil_palette("redox", 2)) + 
   ggtitle("NOSC, Water Extracted by Site")
 
 ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.05) +
   facet_grid(Material ~ .) +
   theme_er() +
-  scale_color_manual (values = soil_palette("redox", 2)) +
+  scale_fill_manual (values = soil_palette("eutrostox", 2)) +
+  scale_color_manual(values = soil_palette("eutrostox", 2)) +
   ggtitle("NOSC, Water Extracted by Treatment")
 
 ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
@@ -272,6 +275,7 @@ ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   facet_grid(Material ~ Site) +
   theme_er() +
   scale_color_manual (values = soil_palette("redox", 2)) +
+  scale_fill_manual (values = soil_palette("redox", 2)) +
   ggtitle("NOSC, Water Extracted")
 
 ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site))
@@ -282,6 +286,7 @@ ggplot(fticr_water_nosc_trt, aes(x = NOSC, color = Site, fill = Site))+
     geom_histogram(alpha = 0.5, position = "identity")+
     facet_grid(Material~.) + 
     theme_er() +
+    scale_fill_color (values = soil_palette("gley", 2)) +
     scale_color_manual (values = soil_palette("gley", 2)) +
     ggtitle("NOSC, Water Extracted")
 
