@@ -1,4 +1,4 @@
-﻿Lab ID,Site,Rep,Top Depth,Bottom Depth,Treatment,Morph,Material,Corresponding RO
+﻿ID,Site,Rep,Top Depth,Bottom Depth,trmt,Morph,Material,Corresponding RO
 GHG 2,HEAL,1,12,24,CON,Oa/Oejj,Organic,"RO 47, RO 64"
 GHG 1,HEAL,3,16,30,CON,Oa/Ajj,Organic,RO 34
 GHG 18,HEAL,1,24,33,CON,B/Oajj,Upper Mineral,RO 50

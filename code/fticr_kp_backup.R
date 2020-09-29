@@ -223,9 +223,68 @@ fticr_data_water = read.csv("fticr_data_water.csv")
 fticr_meta_water = read.csv("fticr_meta_water.csv")
 meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
-fticr_data_chcl3 = read.csv("fticr_data_water.csv")
-fticr_meta_chcl3 = read.csv("fticr_meta_water.csv")
-meta_hcoc_chcl3  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
+fticr_data_chcl3 = read.csv("fticr_data_chcl3.csv")
+fticr_meta_chcl3 = read.csv("fticr_meta_chcl3.csv")
+meta_hcoc_chcl3  = read.csv("fticr_meta_hcoc_chcl3.csv") %>% select(-Mass)
+
+# NOSC plots_water-------------------------------
+
+fticr_meta_nosc_water =
+fticr_meta_water %>% 
+  select(NOSC, formula, Mass, Class)
+
+fticr_water = 
+  fticr_data_water %>% 
+  select(ID, formula, Site, Trtmt, Material) 
+
+fticr_water_nosc_trt = 
+  fticr_water %>% 
+  distinct(Site, Trtmt, Material, formula) %>% 
+  left_join(fticr_meta_nosc_water, by = "formula")
+
+fticr_water_nosc_trt = fticr_water_nosc_trt %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(binwidth = 0.05) +
+  facet_grid(Material ~ Site) +
+  theme_er() +
+  scale_color_manual (values = soil_palette("gley", 2)) +
+  ggtitle("NOSC, Water Extracted by Treatment")
+
+  
+ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site, fill = Site)) +
+  geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.05) +
+  facet_grid(Material ~ .) +
+  theme_er() +
+  scale_color_manual (values = soil_palette("redox", 2)) +
+  ggtitle("NOSC, Water Extracted by Site")
+
+ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.05) +
+  facet_grid(Material ~ .) +
+  theme_er() +
+  scale_color_manual (values = soil_palette("redox", 2)) +
+  ggtitle("NOSC, Water Extracted by Treatment")
+
+ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.05) +
+  facet_grid(Material ~ Site) +
+  theme_er() +
+  scale_color_manual (values = soil_palette("redox", 2)) +
+  ggtitle("NOSC, Water Extracted")
+
+ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site))
+  geom_histogram(aes(y = stat(count)/sum(count))) +
+    scale_y_continuous(labels = scales::percent)
+  
+ggplot(fticr_water_nosc_trt, aes(x = NOSC, color = Site, fill = Site))+
+    geom_histogram(alpha = 0.5, position = "identity")+
+    facet_grid(Material~.) + 
+    theme_er() +
+    scale_color_manual (values = soil_palette("gley", 2)) +
+    ggtitle("NOSC, Water Extracted")
+
 
 # van krevelen plots_water------------------------------------------------------
 fticr_water = 
