@@ -152,7 +152,7 @@ fticr_report_chcl3 =
   filter(C13==0) %>%
   filter(C>0)
 
-# split report into meta and data
+# split report into meta and data 
 
 fticr_meta_chcl3 = 
   fticr_report_chcl3 %>% 
