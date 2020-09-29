@@ -5,6 +5,27 @@
 library(tidyverse)
 library(reshape2)
 library(soilpalettes)
+theme_er <- function() {  # this for all the elements common across plots
+  theme_bw() %+replace%
+    theme(legend.position = "top",
+          legend.key=element_blank(),
+          legend.title = element_blank(),
+          legend.text = element_text(size = 12),
+          legend.key.size = unit(1.5, 'lines'),
+          panel.border = element_rect(color="black",size=2, fill = NA),
+          plot.title = element_text(hjust = 0.5, size = 14),
+          plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
+          axis.text = element_text(size = 12, color = "black"),
+          axis.title = element_text(size = 12, face = "bold", color = "black"),
+          # formatting for facets
+          panel.background = element_blank(),
+          strip.background = element_rect(colour="white", fill="white"), #facet formatting
+          panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
+          panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
+          strip.text.x = element_text(size=12, face="bold"), #facet labels
+          strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
+    )
+}
 
 # Load data------------------------------------
 report_water = read.csv("processed/Lybrand Alaska Sept 2019 Report_Colorcoded.csv")
@@ -228,11 +249,12 @@ fticr_data_chcl3 = read.csv("fticr_data_chcl3.csv")
 fticr_meta_chcl3 = read.csv("fticr_meta_chcl3.csv")
 meta_hcoc_chcl3  = read.csv("fticr_meta_hcoc_chcl3.csv") %>% select(-Mass)
 
-# NOSC plots_water-------------------------------
+# NOSC and AImod plots_water-------------------------------
+
 
 fticr_meta_nosc_water =
 fticr_meta_water %>% 
-  select(NOSC, formula, Mass, Class)
+  select(NOSC, formula, Mass, Class, AImod, HC, OC)
 
 fticr_water = 
   fticr_data_water %>% 
@@ -245,6 +267,8 @@ fticr_water_nosc_trt =
 
 fticr_water_nosc_trt = fticr_water_nosc_trt %>% 
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+#NOSC
 
 ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   geom_histogram(binwidth = 0.05) +
@@ -289,6 +313,41 @@ ggplot(fticr_water_nosc_trt, aes(x = NOSC, color = Site, fill = Site))+
     scale_fill_color (values = soil_palette("gley", 2)) +
     scale_color_manual (values = soil_palette("gley", 2)) +
     ggtitle("NOSC, Water Extracted")
+
+
+# AImod-------------------------------------------
+soil_aromatic =
+  fticr_water_nosc_trt %>% 
+  dplyr::select(formula, Site, Trtmt, Material, Mass, AImod, HC, OC)
+
+
+
+soil_aromatic = soil_aromatic %>% 
+  dplyr::mutate(aromatic_col = case_when(AImod>0.5 ~ "aromatic",
+                                     (HC<2.0 & HC>1.5) ~ "aliphatic")) 
+  soil_aromatic
+
+soil_aromatic %>%
+  drop_na %>% 
+  group_by(Site, Trtmt, Material, aromatic_col) %>% 
+  dplyr::summarize(counts = n())->
+  soil_aromatic_counts
+
+#ggplots
+
+ggplot(soil_aromatic_counts, aes(x=Site, y=counts, fill=Trtmt)) + 
+  geom_boxplot() + theme_er() + 
+  scale_fill_manual (values = soil_palette("podzol", 4)) +
+  facet_grid(Material ~.)
+
+ggplot(soil_aromatic_counts, aes(x=Site, y=counts, fill=aromatic_col)) + 
+  geom_boxplot() + theme_er() + 
+  scale_fill_manual (values = soil_palette("alaquod", 4)) +
+  facet_grid(Material ~ .)
+
+
+# stats for aromatic peaks
+
 
 
 # van krevelen plots_water------------------------------------------------------
