@@ -4,6 +4,7 @@
 # 1. load packages and files -----------------------------------------------------------
 
 library(tidyverse)
+library(soilpalettes)
 
 ghg_data = read.csv("processed/ghg_depth.csv")
 ftc_data = read.csv("processed/FTC_quant_inprocess.csv")
@@ -20,7 +21,7 @@ ftc_avg =
   ## FOR NOW, I AM COMBINING ACROSS ALL THOSE VARIABLES, KEEPING ONLY DEPTH, SEASON, SITE AS GROUPING VARIABLES
   
   # create a `total` ftc column for annual total ftc
-  group_by(site, year, core) %>% 
+  group_by(site, year, core, depth_cm) %>% 
   dplyr::mutate(total = sum(def1)) %>% 
   ungroup() %>% 
   
@@ -59,7 +60,13 @@ ghg_summary =
 #  group_by(site, mid, trmt) %>% 
 #  dplyr::summarise(co2_ug_g_oc = round(mean(gain_ug_g_oc),2)) %>% 
 #  ungroup() %>% 
-  mutate(site = recode(site, "healy" = "HEAL", "tool" = "TOOL"))
+  mutate(site = recode(site, "healy" = "HEAL", "tool" = "TOOL")) 
+
+ghg_summary = ghg_summary %>% 
+  mutate(trmt = factor(trmt, levels = c("ftc", "control")))
+
+ghg_summary = ghg_summary %>% 
+  mutate(day = factor(day, levels = c("day1", "day4", "day7", "day14")))
 
 ## 2.3 now combine the two files such that `mid` lies within the ftc depth range
 ghg_ftc = 
@@ -68,14 +75,30 @@ ghg_ftc =
 #
 # 3. plots -------------------------------------------------------------------
 
-theme_set(theme_bw())
+theme_set(theme_er())
 
 ghg_ftc %>% 
   filter(season=="total") %>% 
   ggplot(aes(x = ftc, y = gain_ug_g_oc, color = trmt))+
   geom_point()+
   geom_smooth(method = "lm", se = F)+
-  facet_grid(season~mid, scales = "free_y")
+  facet_grid(season~day)
+  #facet_grid(season~mid, scales = "free_y")
+
+
+ghg_ftc %>% 
+  filter(!season=="total") %>% 
+  #filter(day=="day1") %>% 
+  filter(site=="HEAL") %>% 
+  ggplot(aes(x = ftc, y = gain_ug_g_oc, color = trmt))+
+  geom_point()+
+  geom_smooth(method = "lm", se = F)+
+  theme_er()+
+  ggtitle("Healy")+
+  facet_wrap(day~.)+
+  scale_fill_manual(values = soil_palette("redox", 2)) +
+  scale_color_manual(values = soil_palette("redox", 2)) 
+#facet_grid(season~mid, scales = "free_y")
 
 ghg_ftc %>% 
   filter(season=="total") %>% 
