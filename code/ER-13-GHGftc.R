@@ -13,12 +13,8 @@ probe_loc = read.csv("processed/Probe Locations.csv")
 
 # set data frames-----------------------------
 
-library(dplyr)
-library(ggplot2)
-library(maps)
-require(maps)
+library(tidyverse)
 require(viridis)
-library(tidyr)
 str(ghg_csv2)
 str(ftc_dat)
 str(ftc_fulldat)
@@ -28,6 +24,15 @@ levels(as.factor(ghg_csv2$trmt))
 levels(as.factor(ftc_fulldat$site)) 
 ftc_fulldat = ftc_fulldat %>% 
       mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
+
+ftc_actdat = ftc_fulldat %>% 
+  filter(season=="activelayer")
+
+ftc_actdat = ftc_actdat %>% 
+  filter(!Def1=="NA")
+
+ftc_actdat = ftc_actdat %>% 
+  mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
 
 ftc_fulldat = ftc_fulldat %>% 
   filter(!season == "activelayer")
@@ -49,27 +54,27 @@ ftc_dat = ftc_dat %>%
 
 
 # ggplot set up-----------------------------------
-theme_er <- function() {  # this for all the elements common across plots
-  theme_bw() %+replace%
-    theme(legend.position = "top",
-          legend.key=element_blank(),
-          legend.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.key.size = unit(1.5, 'lines'),
-          panel.border = element_rect(color="black",size=2, fill = NA),
-          plot.title = element_text(hjust = 0.5, size = 14),
-          plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
-          axis.text = element_text(size = 12, color = "black"),
-          axis.title = element_text(size = 12, face = "bold", color = "black"),
-          # formatting for facets
-          panel.background = element_blank(),
-          strip.background = element_rect(colour="white", fill="white"), #facet formatting
-          panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
-          panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
-          strip.text.x = element_text(size=12, face="bold"), #facet labels
-          strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
-    )
-}
+  theme_er <- function() {  # this for all the elements common across plots
+    theme_bw() %+replace%
+      theme(legend.position = "top",
+            legend.key=element_blank(),
+            legend.title = element_blank(),
+            legend.text = element_text(size = 12),
+            legend.key.size = unit(1.5, 'lines'),
+            panel.border = element_rect(color="black",size=2, fill = NA),
+            plot.title = element_text(hjust = 0.5, size = 14),
+            plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
+            axis.text = element_text(size = 12, color = "black"),
+            axis.title = element_text(size = 12, face = "bold", color = "black"),
+            # formatting for facets
+            panel.background = element_blank(),
+            strip.background = element_rect(colour="white", fill="white"), #facet formatting
+            panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
+            panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
+            strip.text.x = element_text(size=12, face="bold"), #facet labels
+            strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
+      )
+  }
 
 library(ggplot2)
 library(soilpalettes)
@@ -164,6 +169,42 @@ ftc_fulldat %>%
   facet_grid(~season)
 
 
+#ftc_actdat = ftc_actdat %>% 
+ # filter(!Def1==NA)
+
+levels(as.factor(ftc_actdat$site)) 
+
+
+ftc_actdatheal = ftc_actdat %>% 
+  filter(site=="HEAL")
+
+ftc_actdattool = ftc_actdat %>% 
+  filter(site=="TOOL")
+
+ftc_actdatheal %>% 
+  filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
+  ggplot(aes(y = depth_cm, x = site, color = Def1))+
+  #geom_jitter()+
+  geom_point(position = position_jitter(width = 0.2), size = 7)+
+  scale_y_reverse()+
+  annotate("segment", x = 1.5, xend = 0.5, y = 39, yend = 39, color = "pink", size= 2) +
+  # scale_size_continuous()+
+  scale_color_gradient(low = "light blue", high = "brown")+
+  ggtitle("Healy") +
+  theme_er()
+
+ftc_actdattool %>% 
+  filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
+  ggplot(aes(y = depth_cm, x = site, color = Def1))+
+  #geom_jitter()+
+  geom_point(position = position_jitter(width = 0.2), size = 7)+
+  scale_y_reverse()+
+  annotate("segment", x = 1.5, xend = 0.5, y = 9, yend = 9, color = "pink", size= 2) +
+  # scale_size_continuous()+
+  scale_color_gradient(low = "light blue", high = "brown")+
+  ggtitle("Toolik") +
+  theme_er()
+
 # bubble plot with depth on y axis--------------------------------------
 ghg_csv2 %>% 
   filter(mid > 0) %>% 
@@ -239,14 +280,19 @@ usa <- subset(world, admin == "United States of America")
 
 
 # heatmap--------------------------------------------------------------
-ftc_dat %>% 
+ftc_actdat %>% 
+  filter(depth_cm<100 ) %>%
+  ggplot(aes(y = depth_cm, x = site, fill = Def1))+
+  geom_tile()+
+  scale_y_reverse()+
+  coord_fixed(ratio=1/4)
+
+ftc_actdat %>% 
   filter(depth_cm<100 ) %>% 
-  ggplot(aes(y = depth_cm, x = site, fill = def1))+
+  ggplot(aes(y = depth_cm, x = site, fill = Def1))+
   geom_tile()+
   scale_y_reverse()+
   coord_fixed(ratio=1/2)
-
-
 
 
 ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
