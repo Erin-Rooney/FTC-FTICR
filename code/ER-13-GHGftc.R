@@ -26,13 +26,10 @@ ftc_fulldat = ftc_fulldat %>%
       mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
 
 ftc_actdat = ftc_fulldat %>% 
-  filter(season=="activelayer")
+  filter(season=="activelayer" & !is.na(Def1)) %>% 
+  mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL"))) 
 
-ftc_actdat = ftc_actdat %>% 
-  filter(!Def1=="NA")
 
-ftc_actdat = ftc_actdat %>% 
-  mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
 
 ftc_fulldat = ftc_fulldat %>% 
   filter(!season == "activelayer")
@@ -204,6 +201,52 @@ ftc_actdattool %>%
   scale_color_gradient(low = "light blue", high = "brown")+
   ggtitle("Toolik") +
   theme_er()
+
+ftc_actdat_subset = 
+  ftc_actdat %>% 
+  filter(site %in% c("HEAL", "TOOL"))
+
+ftc_actdat_subset %>% 
+  filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
+  ggplot(aes(y = depth_cm, x = site, color = as.character(Def1)))+
+  geom_point(position = position_jitter(width = 0.2), size = 7)+
+  scale_y_reverse()+
+  annotate("segment", x = 0.7, xend = 1.3, y = 9, yend = 9, color = "pink", size= 2) +
+  annotate("segment", x = 1.5, xend = 2.5, y = 10, yend = 10, color = "pink", size= 2) +
+  #scale_color_gradient(low = "light blue", high = "brown")+
+  annotate("text", label = "organic soil\n(5 cm)", x = 1.5, y = 25, size = 4)+
+  annotate("text", label = "active layer", x = 1.5, y = 6, size = 4)+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Sunset2")))+
+  #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
+  #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
+  #           fill = "red", alpha = 0.5, color = "black", size = 3)+
+  theme_er()
+
+ftc_actdat_subset %>% 
+  filter(Def1 > 0) %>% 
+  filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
+  ggplot(aes(y = depth_cm, x = site, color = as.character(Def1)))+
+  geom_point(position = position_jitter(width = 0.2), size = 7)+
+  geom_point(data = ftc_actdat_subset %>% filter(Def1 == 0 &duration==24 & mag.vec==1.5 & depth_cm<100),
+             position = position_jitter(width = 0.2), size = 2, color = "black")+
+  scale_y_reverse()+
+  annotate("segment", x = 0.7, xend = 1.3, y = 9, yend = 9, color = "pink", size= 2) +
+  annotate("segment", x = 1.5, xend = 2.5, y = 10, yend = 10, color = "pink", size= 2) +
+  #scale_color_gradient(low = "light blue", high = "brown")+
+  annotate("text", label = "organic soil\n(5 cm)", x = 1.5, y = 25, size = 4)+
+  annotate("text", label = "active layer", x = 1.5, y = 6, size = 4)+
+  annotate("text", label = "black = no ftc", x = 1.5, y = 50, size = 4)+
+  annotate(
+    geom = "curve", x = 2, y = 35, xend = 1, yend = 27, 
+    curvature = -0.5, arrow = arrow(length = unit(2, "mm")))+               
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Sunset2")))+
+  #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
+  #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
+  #           fill = "red", alpha = 0.5, color = "black", size = 3)+
+  theme_er()
+
+
+
 
 # bubble plot with depth on y axis--------------------------------------
 ghg_csv2 %>% 
