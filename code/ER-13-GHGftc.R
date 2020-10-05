@@ -14,7 +14,6 @@ probe_loc = read.csv("processed/Probe Locations.csv")
 # set data frames-----------------------------
 
 library(tidyverse)
-require(viridis)
 str(ghg_csv2)
 str(ftc_dat)
 str(ftc_fulldat)
@@ -206,6 +205,10 @@ ftc_actdat_subset =
   ftc_actdat %>% 
   filter(site %in% c("HEAL", "TOOL"))
 
+ftc_fulldat_subset = 
+  ftc_fulldat %>% 
+  filter(site %in% c("HEAL", "TOOL"))
+
 ftc_actdat_subset %>% 
   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
   ggplot(aes(y = depth_cm, x = site, color = as.character(Def1)))+
@@ -222,31 +225,66 @@ ftc_actdat_subset %>%
   #           fill = "red", alpha = 0.5, color = "black", size = 3)+
   theme_er()
 
-ftc_actdat_subset %>% 
+ftc_fulldat_subset %>% 
   filter(Def1 > 0) %>% 
   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
   ggplot(aes(y = depth_cm, x = site, color = as.character(Def1)))+
-  geom_point(position = position_jitter(width = 0.2), size = 7)+
+  geom_point(position = position_jitter(width = 0.2), size = 4.5)+
   geom_point(data = ftc_actdat_subset %>% filter(Def1 == 0 &duration==24 & mag.vec==1.5 & depth_cm<100),
              position = position_jitter(width = 0.2), size = 2, color = "black")+
   scale_y_reverse()+
-  annotate("segment", x = 0.7, xend = 1.3, y = 9, yend = 9, color = "pink", size= 2) +
-  annotate("segment", x = 1.5, xend = 2.5, y = 10, yend = 10, color = "pink", size= 2) +
+  annotate("segment", x = 0.7, xend = 1.3, y = 50, yend = 50, color = "pink", size= 2) +
+  annotate("segment", x = 1.7, xend = 2.3, y = 19, yend = 19, color = "pink", size= 2) +
   #scale_color_gradient(low = "light blue", high = "brown")+
-  annotate("text", label = "organic soil\n(5 cm)", x = 1.5, y = 25, size = 4)+
-  annotate("text", label = "active layer", x = 1.5, y = 6, size = 4)+
-  annotate("text", label = "black = no ftc", x = 1.5, y = 50, size = 4)+
-  annotate(
-    geom = "curve", x = 2, y = 35, xend = 1, yend = 27, 
-    curvature = -0.5, arrow = arrow(length = unit(2, "mm")))+               
+  annotate("text", label = "organic soil\n(0-30 cm)", x = 1.5, y = 13, size = 4)+
+  annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.5, y = 43, size = 4)+
+  annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.5, y = 68, size = 4)+
+  #annotate("text", label = "active layer", x = 1.5, y = 6, size = 4)+
+  #annotate("text", label = "black = no ftc", x = 1.5, y = 50, size = 4)+
+ # annotate(
+    #geom = "curve", x = 2, y = 35, xend = 1, yend = 27, 
+   # curvature = -0.5, arrow = arrow(length = unit(2, "mm")))+               
   scale_color_manual(values = rev(PNWColors::pnw_palette("Sunset2")))+
+  labs(
+    title = "Site Characteristics", 
+    y = "depth, cm",
+    guides(fill=guide_legend(title= "Freeze/Thaw")))+
+    #legend.title = "Freeze/Thaw Cycles during Maximum Thaw",
   #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
   #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
   #           fill = "red", alpha = 0.5, color = "black", size = 3)+
   theme_er()
 
 
-
+ftc_fulldat %>% 
+  filter(Def1 > 0) %>% 
+  filter(duration==24 & mag.vec==1.5) %>%
+  ggplot(aes(y = depth_cm, x = site, color = as.character(Def1)))+
+  geom_point(position = position_jitter(width = 0.2), size = 4.5)+
+  geom_point(data = ftc_actdat %>% filter(Def1 == 0 & duration==24 & mag.vec==1.5),
+             position = position_jitter(width = 0.2), size = 2, color = "black")+
+  scale_y_reverse()+
+  #annotate("segment", x = 0.7, xend = 1.3, y = 50, yend = 50, color = "pink", size= 2) +
+  #annotate("segment", x = 1.7, xend = 2.3, y = 19, yend = 19, color = "pink", size= 2) +
+  #scale_color_gradient(low = "light blue", high = "brown")+
+  #annotate("text", label = "organic soil\n(0-30 cm)", x = 1.5, y = 13, size = 4)+
+  #annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.5, y = 43, size = 4)+
+  #annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.5, y = 68, size = 4)+
+  #annotate("text", label = "active layer", x = 1.5, y = 6, size = 4)+
+  #annotate("text", label = "black = no ftc", x = 1.5, y = 50, size = 4)+
+  # annotate(
+  #geom = "curve", x = 2, y = 35, xend = 1, yend = 27, 
+  # curvature = -0.5, arrow = arrow(length = unit(2, "mm")))+               
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Starfish")))+
+  labs(
+    title = "Site Characteristics", 
+    y = "depth, cm",
+    guides(fill=guide_legend(title= "Freeze/Thaw")))+
+  #legend.title = "Freeze/Thaw Cycles during Maximum Thaw",
+  #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
+  #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
+  #           fill = "red", alpha = 0.5, color = "black", size = 3)+
+  theme_er()
 
 # bubble plot with depth on y axis--------------------------------------
 ghg_csv2 %>% 
@@ -273,54 +311,6 @@ sommos_oc %>%
   scale_color_gradient(low = "purple", high = "yellow")+
   ggtitle("Organic Carbon Content, g per 100g") +
   theme_er() 
-
-# Map plots---------------------------------------------------------------
-
-library("rnaturalearth")
-library("rnaturalearthdata")
-library("sf")
-library("ggspatial")
-install.packages(c("cowplot", "googleway", "ggplot2", "ggrepel", 
-                   "ggspatial", "libwgeom", "sf", "rnaturalearth", "rnaturalearthdata"))
-
-mainstates <- map_data("state")
-
-ggplot(data = mainstates) +
-  geom_sf() 
-
-ggplot() + 
-  geom_polygon( data=MainStates, aes(x=long, y=lat, group=group),
-                color="black", fill="lightblue" )
-
-usa <- subset(world, admin == "United States of America")
-(mainland <- ggplot(data = usa) +
-    geom_sf(fill = "cornsilk") +
-    coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), ylim = c(-2300000, 
-                                                                       730000)))
-data(map.states)
-
-ggplot(map.states, aes(long, lat,group=group)) + geom_polygon()
-
-
-
-
-world <- ne_countries(scale='medium',returnclass = 'sf')
-class(world)
-
-ggplot(data = world) +
-  geom_sf()
-
-usa <- subset(world, admin == "United States of America")
-(mainland <- ggplot(data = usa) +
-    geom_sf(fill = "cornsilk") +
-    coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), ylim = c(-2300000, 
-                                                                       730000)))
-
-(alaska <- ggplot(data = usa) +
-    geom_sf(fill = "cornsilk") +
-    coord_sf(crs = st_crs(3467), xlim = c(-2400000, 1600000), ylim = c(200000, 
-                                                                       2500000), expand = FALSE, datum = NA))
-
 
 # heatmap--------------------------------------------------------------
 ftc_actdat %>% 
