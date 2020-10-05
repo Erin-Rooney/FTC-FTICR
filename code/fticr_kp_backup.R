@@ -306,11 +306,11 @@ ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   ggtitle("NOSC, Water Extracted by Treatment")
 
 ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
-  geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.05) +
+  geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.1) +
   facet_grid(Material ~ Site) +
   theme_er() +
-  scale_color_manual (values = soil_palette("redox", 2)) +
-  scale_fill_manual (values = soil_palette("redox", 2)) +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
   ggtitle("NOSC, Water Extracted")
 
 ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site))
@@ -435,25 +435,26 @@ fticr_water =
 fticr_water_trt = 
   fticr_water %>% 
   distinct(Site, Trtmt, Material, formula) %>% 
-  left_join(meta_hcoc_water, by = "formula")
+  left_join(fticr_water_nosc_trt, by = "formula")
 
 fticr_water_trt = fticr_water_trt %>% 
-  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+  mutate(Material = factor (Material.x, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 fticr_water_trt %>% 
-  ggplot(aes(x=OC, y=HC, color = Trtmt))+
+  filter(Trtmt.x %in% "CON") %>% 
+  ggplot(aes(x=OC, y=HC, color = NOSC))+
   geom_point(alpha = 0.2, size = 1)+
-  stat_ellipse(show.legend = F)+
-  stat_ellipse()+
-  facet_grid(Material ~ Site)+
-  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  #stat_ellipse(show.legend = F)+
+  #stat_ellipse()+
+  facet_grid(Material ~ Site.x)+
+  #geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  #geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  #geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
   ggtitle("Water extracted FTICR-MS")+
   theme_er()+
-  scale_fill_manual (values = soil_palette("redox", 2))
-
+  scale_color_continuous(pnw_palette("Starfish"))
+  
 fticr_water_trt %>% 
   ggplot(aes(x=OC, y=HC, color = Site))+
   geom_point(alpha = 0.2, size = 1)+
