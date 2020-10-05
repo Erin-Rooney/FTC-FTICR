@@ -5,6 +5,7 @@
 library(tidyverse)
 library(reshape2)
 library(soilpalettes)
+library(PNWColors)
 theme_er <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
     theme(legend.position = "top",
@@ -286,11 +287,13 @@ fticr_water_nosc_trt =
 
   
 ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site, fill = Site)) +
-  geom_histogram(alpha = 0.2, position = "identity", binwidth = 0.05) +
+  geom_histogram(alpha = 0.4, position = "identity", binwidth = 0.1) +
   facet_grid(Material ~ .) +
   theme_er() +
-  scale_fill_manual(values = soil_palette("redox", 2)) +
-  scale_color_manual(values = soil_palette("redox", 2)) + 
+  #scale_fill_manual(values = soil_palette("redox", 2)) +
+  #scale_color_manual(values = soil_palette("redox", 2)) + 
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
   ggtitle("NOSC, Water Extracted by Site")+
   facet_grid(Material~Trtmt)
 
@@ -362,7 +365,7 @@ ggplot(soil_aromatic_counts, aes(x=Site, y=counts, fill=aromatic_col)) +
 
 fticr_water_arom = 
   fticr_water %>% 
-  left_join(select(fticr_meta_water, formula, AImod, HC, OC), by = "formula") %>% 
+  left_join(select(fticr_meta_water, formula, AImod, HC, OC), by = "formula") %>%
   dplyr::mutate(aromatic_col = case_when(AImod>0.5 ~ "aromatic",
                                          (HC<2.0 & HC>1.5) ~ "aliphatic")) %>% 
   drop_na %>%
@@ -370,11 +373,10 @@ fticr_water_arom =
   dplyr::summarize(counts = n())
 
 fticr_water_arom %>% 
-  ggplot(aes(x=Trtmt, y=counts, shape=Trtmt, color = aromatic_col)) + 
+  ggplot(aes(x=Trtmt, y=counts, shape=Trtmt, fill = aromatic_col)) + 
   geom_boxplot() + 
   geom_point(aes(group = aromatic_col), position = position_dodge(width = 0.5))+
   theme_er() + 
-  
   scale_fill_manual (values = soil_palette("podzol", 4)) +
   facet_grid(Material ~ Site)
 
@@ -410,11 +412,13 @@ fticr_water_relabund %>%
   theme_er()
 
 fticr_water_relabund %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) %>% 
   filter(aromatic_col %in% "aromatic") %>% 
-  ggplot(aes(x = Site, y = relabund, color = Trtmt, shape = Trtmt))+
+  ggplot(aes(x = Site, y = relabund, color = Trtmt, shape = Trtmt, size = 4))+
   #geom_boxplot()+
   geom_point(position = position_dodge(width = 0.3))+
   facet_grid(Material ~ .)+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Lake", 2)))+
   theme_er()
 ## potential idea: do ANOVA with x = site, and report p-values in the graph
 ## then do ANOVA with x = trtmt for each site, and report sig. as asterisks
