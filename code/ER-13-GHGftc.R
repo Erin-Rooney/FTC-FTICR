@@ -26,13 +26,10 @@ ftc_fulldat = ftc_fulldat %>%
       mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
 
 ftc_actdat = ftc_fulldat %>% 
-  filter(season=="activelayer")
+  filter(season=="activelayer" & !is.na(Def1)) %>% 
+  mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL"))) 
 
-ftc_actdat = ftc_actdat %>% 
-  filter(!Def1=="NA")
 
-ftc_actdat = ftc_actdat %>% 
-  mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
 
 ftc_fulldat = ftc_fulldat %>% 
   filter(!season == "activelayer")
