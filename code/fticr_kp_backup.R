@@ -328,18 +328,19 @@ soil_aromatic =
   fticr_water_nosc_trt %>% 
   dplyr::select(formula, Site, Trtmt, Material, Mass, AImod, HC, OC)
 
-
-
+## KP note: "aromatic" does not include lignin-like molecules because of definitions
+## alternative method is to classify as aliphatic/simple vs. complex
 soil_aromatic = soil_aromatic %>% 
   dplyr::mutate(aromatic_col = case_when(AImod>0.5 ~ "aromatic",
                                      (HC<2.0 & HC>1.5) ~ "aliphatic")) 
-  soil_aromatic
+#  soil_aromatic
 
 soil_aromatic %>%
-  drop_na %>% 
+  drop_na %>%
   group_by(Site, Trtmt, Material, aromatic_col) %>% 
   dplyr::summarize(counts = n())->
   soil_aromatic_counts
+
 
 #ggplots
 
@@ -353,6 +354,70 @@ ggplot(soil_aromatic_counts, aes(x=Site, y=counts, fill=aromatic_col)) +
   scale_fill_manual (values = soil_palette("alaquod", 4)) +
   facet_grid(Material ~ .)
 
+
+##### KP edit ----
+
+## meta_sub = fticr_meta_water %>%  select(formula, HC, OC)
+## fticr_water %>% left_join(meta_sub)
+
+fticr_water_arom = 
+  fticr_water %>% 
+  left_join(select(fticr_meta_water, formula, AImod, HC, OC), by = "formula") %>% 
+  dplyr::mutate(aromatic_col = case_when(AImod>0.5 ~ "aromatic",
+                                         (HC<2.0 & HC>1.5) ~ "aliphatic")) %>% 
+  drop_na %>%
+  group_by(ID, Site, Trtmt, Material, aromatic_col) %>% 
+  dplyr::summarize(counts = n())
+
+fticr_water_arom %>% 
+  ggplot(aes(x=Trtmt, y=counts, shape=Trtmt, color = aromatic_col)) + 
+  geom_boxplot() + 
+  geom_point(aes(group = aromatic_col), position = position_dodge(width = 0.5))+
+  theme_er() + 
+  
+  scale_fill_manual (values = soil_palette("podzol", 4)) +
+  facet_grid(Material ~ Site)
+
+### ^^ the files above have aliph as well as aromatic for the same sample, which can be confusing/misleading
+### create an index combining them
+
+## aromatic rel_abund
+fticr_water_relabund = 
+  fticr_water %>% 
+  left_join(select(fticr_meta_water, formula, AImod, HC, OC), by = "formula") %>% 
+  dplyr::mutate(aromatic_col = case_when(AImod>0.5 ~ "aromatic",
+                                         (HC<2.0 & HC>1.5) ~ "aliphatic"),
+                aromatic_col = if_else(is.na(aromatic_col), "other", aromatic_col)) %>% 
+  ## create a column for group counts
+  group_by(ID, Site, Trtmt, Material, aromatic_col) %>% 
+  dplyr::summarize(counts = n()) %>% 
+  ## create a column for total counts
+  group_by(ID, Site, Trtmt, Material) %>%
+  dplyr::mutate(totalcounts = sum(counts)) %>% 
+  ungroup() %>% 
+  mutate(relabund = (counts/totalcounts)*100,
+         relabund = round(relabund, 2))
+  
+
+## plot relabund of aromatic
+
+fticr_water_relabund %>% 
+  filter(aromatic_col %in% "aromatic") %>% 
+  ggplot(aes(x = Trtmt, y = relabund, color = Trtmt, shape = Trtmt))+
+  #geom_boxplot()+
+  geom_point()+
+  facet_grid(Material ~ Site)+
+  theme_er()
+
+fticr_water_relabund %>% 
+  filter(aromatic_col %in% "aromatic") %>% 
+  ggplot(aes(x = Site, y = relabund, color = Trtmt, shape = Trtmt))+
+  #geom_boxplot()+
+  geom_point(position = position_dodge(width = 0.3))+
+  facet_grid(Material ~ .)+
+  theme_er()
+## potential idea: do ANOVA with x = site, and report p-values in the graph
+## then do ANOVA with x = trtmt for each site, and report sig. as asterisks
 
 # stats for aromatic peaks
 
