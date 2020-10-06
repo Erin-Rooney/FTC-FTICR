@@ -1,8 +1,77 @@
 # Erin C Rooney
 # SOMMOS data
 
+#load libraries-------------------------------
+library(tidyverse)
+
 #load data-------------------------------------
 sommos_csv = read.csv("processed/horizon_processed4.csv")
+neon_barr_csv = read.csv("processed/neon_barr_biogeochem.csv")
+neon_heal_csv = read.csv("processed/neon_heal_biogeochem.csv")
+neon_tool_csv = read.csv("processed/neon_tool_biogeochem.csv")
+neon_bona_csv = read.csv("processed/neon_bona_biogeochem.csv")
+
+
+#process data------------------------------------
+sommos_proc = sommos_csv %>% 
+dplyr::select(site, horizon_type, midpoint_depth.cm, DC_Al.g100g, 
+              DC_Fe.g100g, DC_Mn.g100g, DC_Si.g100g, SP_Al.g100g, SP_Fe.g100g, 
+              SP_Mn.g100g, SP_Si.g100g, AO_Al.g100g, AO_Fe.g100g, AO_Mn.mgkg, AO_Si.g100g) %>% 
+  # create columns for indices
+  dplyr::mutate(AO = (AO_Fe.g100g+AO_Al.g100g),
+                SP = (SP_Fe.g100g+SP_Al.g100g),
+                DC = (DC_Fe.g100g+DC_Al.g100g),
+                AO_DC = (AO/DC),
+                SP_DC = (SP/DC))
+                
+                
+neon_barr_proc = neon_barr_csv %>% 
+  dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
+                feKcl, nitrogenTot, estimatedOC, carbonTot, alOxalate, feOxalate, alCitDithionate, 
+                feCitDithionate) %>% 
+  # create columns for indices
+  dplyr::mutate(AO = (alOxalate+feOxalate),
+                KCL = (alKcl+feKcl),
+                DC = (alCitDithionate+feCitDithionate),
+                AO_DC = (AO/DC),
+                KCL_DC = (KCL/DC))
+
+neon_heal_proc = neon_heal_csv %>% 
+  dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
+                feKcl, nitrogenTot, estimatedOC, carbonTot, alOxalate, feOxalate, alCitDithionate, 
+                feCitDithionate) %>% 
+  # create columns for indices
+  dplyr::mutate(AO = (alOxalate+feOxalate),
+                KCL = (alKcl+feKcl),
+                DC = (alCitDithionate+feCitDithionate),
+                AO_DC = (AO/DC),
+                KCL_DC = (KCL/DC))
+
+neon_bona_proc = neon_bona_csv %>% 
+  dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
+                feKcl, nitrogenTot, estimatedOC, carbonTot, alOxalate, feOxalate, alCitDithionate, 
+                feCitDithionate) %>% 
+  # create columns for indices
+  dplyr::mutate(AO = (alOxalate+feOxalate),
+                KCL = (alKcl+feKcl),
+                DC = (alCitDithionate+feCitDithionate),
+                AO_DC = (AO/DC),
+                KCL_DC = (KCL/DC))
+
+neon_tool_proc = neon_tool_csv %>% 
+  dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
+                feKcl, nitrogenTot, estimatedOC, carbonTot, alOxalate, feOxalate, alCitDithionate, 
+                feCitDithionate) %>% 
+  # create columns for indices
+  dplyr::mutate(AO = (alOxalate+feOxalate),
+                KCL = (alKcl+feKcl),
+                DC = (alCitDithionate+feCitDithionate),
+                AO_DC = (AO/DC),
+                KCL_DC = (KCL/DC))
+
+neon_proc = 
+  neon_tool_proc %>% 
+  left_join(neon_heal_proc, by = "siteID")
 
 # ggplot set up-----------------------------------
 theme_er <- function() {  # this for all the elements common across plots
@@ -27,6 +96,7 @@ theme_er <- function() {  # this for all the elements common across plots
     )
 }
 
+#
 theme_jack <- function (base_size = 12, base_family = "") {
   theme_bw(base_size = base_size, base_family = base_family) %+replace% 
     theme(
@@ -39,9 +109,9 @@ theme_jack <- function (base_size = 12, base_family = "") {
       axis.text = element_text(colour = "black"),
       axis.title.x = element_text(colour = "black"), #size=rel(3)),
       axis.title.y = element_text(colour = "black", angle=90),
-      panel.background = element_rect(fill="black"),
-      panel.grid.minor = element_line(color= "dark gray"),
-      panel.grid.major = element_line(colour = "dark gray"),
+      panel.background = element_rect(fill="white"),
+      panel.grid.minor = element_line(color= "white"),
+      panel.grid.major = element_line(colour = "white"),
       plot.background = element_rect(fill="white"))
 }
       
@@ -58,22 +128,36 @@ theme_jack <- function (base_size = 12, base_family = "") {
 #load library--------------------------------
 library(tidyverse)
 library(PNWColors)
+library(agricolae)
 
-#aov---------------------------------------
+#aov_hsd---------------------------------------
 
-sommos_aov1 = aov(data = sommos_csv, LIG.ugg ~ site)
+sommos_aov1 = aov(data = sommos_proc, SP_DC ~ site)
 summary(sommos_aov1)
 
-
-
-
+SPDC_hsd = HSD.test(sommos_aov1,"site")
+print(SPDC_hsd)
+print(SPDC_hsd$groups)
 
 #ggplots------------------------------------------------------------
+sommos_proc = sommos_proc %>% 
+  mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
 
-sommos_csv %>% 
+sommos_proc %>% 
   ggplot() +
-  geom_point(data = sommos_csv, aes(y=HF.g100g, x=OCC.g100g, color=site)) +
-  theme_er()
+  geom_boxplot(data = sommos_proc, aes(y=AO_DC, x=site, fill=site)) +
+  theme_er() +
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "AO Extractable: DC Extractable Ratio")
+
+sommos_proc %>% 
+  ggplot() +
+  geom_boxplot(data = sommos_proc, aes(y=SP_DC, x=site, fill=site)) +
+  theme_er() +
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "SP Extractable: DC Extractable Ratio")
+
+  
   #scale_y_continuous(trans = "reverse", breaks = (sommos_csv$top_depth.cm)) 
   #facet_grid(. ~ site)
 
