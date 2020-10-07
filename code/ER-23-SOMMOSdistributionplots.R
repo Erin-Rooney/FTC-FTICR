@@ -3,6 +3,8 @@
 
 #load libraries-------------------------------
 library(tidyverse)
+library(PNWColors)
+library(agricolae)
 
 #load data-------------------------------------
 sommos_csv = read.csv("processed/horizon_processed4.csv")
@@ -13,7 +15,7 @@ neon_bona_csv = read.csv("processed/neon_bona_biogeochem.csv")
 
 
 #process data------------------------------------
-sommos_proc = sommos_csv %>% 
+asommos_proc = sommos_csv %>% 
 dplyr::select(site, horizon_type, midpoint_depth.cm, DC_Al.g100g, 
               DC_Fe.g100g, DC_Mn.g100g, DC_Si.g100g, SP_Al.g100g, SP_Fe.g100g, 
               SP_Mn.g100g, SP_Si.g100g, AO_Al.g100g, AO_Fe.g100g, AO_Mn.mgkg, AO_Si.g100g) %>% 
@@ -27,7 +29,7 @@ dplyr::select(site, horizon_type, midpoint_depth.cm, DC_Al.g100g,
                 
 neon_barr_proc = neon_barr_csv %>% 
   dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
-                feKcl, nitrogenTot, estimatedOC, carbonTot, alOxalate, feOxalate, alCitDithionate, 
+                feKcl, nitrogenTot, estimatedOC, carbonTot, ctonRatio, acidity, OlsenPExtractable, waterSatx, alOxalate, feOxalate, alCitDithionate, 
                 feCitDithionate) %>% 
   # create columns for indices
   dplyr::mutate(AO = (alOxalate+feOxalate),
@@ -38,7 +40,7 @@ neon_barr_proc = neon_barr_csv %>%
 
 neon_heal_proc = neon_heal_csv %>% 
   dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
-                feKcl, nitrogenTot, estimatedOC, carbonTot, alOxalate, feOxalate, alCitDithionate, 
+                feKcl, nitrogenTot, estimatedOC, carbonTot, ctonRatio, acidity, OlsenPExtractable, waterSatx, alOxalate, feOxalate, alCitDithionate, 
                 feCitDithionate) %>% 
   # create columns for indices
   dplyr::mutate(AO = (alOxalate+feOxalate),
@@ -49,7 +51,7 @@ neon_heal_proc = neon_heal_csv %>%
 
 neon_bona_proc = neon_bona_csv %>% 
   dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
-                feKcl, nitrogenTot, estimatedOC, carbonTot, alOxalate, feOxalate, alCitDithionate, 
+                feKcl, nitrogenTot, estimatedOC, carbonTot, ctonRatio, acidity, OlsenPExtractable, waterSatx, alOxalate, feOxalate, alCitDithionate, 
                 feCitDithionate) %>% 
   # create columns for indices
   dplyr::mutate(AO = (alOxalate+feOxalate),
@@ -60,7 +62,7 @@ neon_bona_proc = neon_bona_csv %>%
 
 neon_tool_proc = neon_tool_csv %>% 
   dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
-                feKcl, nitrogenTot, estimatedOC, carbonTot, alOxalate, feOxalate, alCitDithionate, 
+                feKcl, nitrogenTot, estimatedOC, carbonTot, ctonRatio, acidity, OlsenPExtractable, waterSatx, alOxalate, feOxalate, alCitDithionate, 
                 feCitDithionate) %>% 
   # create columns for indices
   dplyr::mutate(AO = (alOxalate+feOxalate),
@@ -71,7 +73,8 @@ neon_tool_proc = neon_tool_csv %>%
 
 neon_proc = 
   neon_tool_proc %>% 
-  left_join(neon_heal_proc, by = "siteID")
+  bind_rows(neon_heal_proc, neon_barr_proc, neon_bona_proc)
+  
 
 # ggplot set up-----------------------------------
 theme_er <- function() {  # this for all the elements common across plots
@@ -97,7 +100,7 @@ theme_er <- function() {  # this for all the elements common across plots
 }
 
 #
-theme_jack <- function (base_size = 12, base_family = "") {
+#theme_jack <- function (base_size = 12, base_family = "") {
   theme_bw(base_size = base_size, base_family = base_family) %+replace% 
     theme(
       legend.position = "top",
@@ -125,10 +128,6 @@ theme_jack <- function (base_size = 12, base_family = "") {
 # data = as.data.frame(toolik)
 # data = as.data.frame(bona)
 
-#load library--------------------------------
-library(tidyverse)
-library(PNWColors)
-library(agricolae)
 
 #aov_hsd---------------------------------------
 
@@ -139,7 +138,83 @@ SPDC_hsd = HSD.test(sommos_aov1,"site")
 print(SPDC_hsd)
 print(SPDC_hsd$groups)
 
+neon_aov1 = aov(data = neon_proc, AO_DC ~ siteID*biogeoCenterDepth)
+summary(neon_aov1)
+
+neon_aov2 = aov(data = neon_proc, nitrogenTot ~ siteID*biogeoCenterDepth)
+summary(neon_aov2)
+
+AODCneon_hsd = HSD.test(neon_aov2,"siteID")
+print(AODCneon_hsd)
+print(AODCneon_hsd$groups)
+
+neon_aov3 = aov(data = neon_proc, nitrogenTot ~ siteID)
+summary(neon_aov3)
+
+ntotneon_hsd = HSD.test(neon_aov3,"siteID")
+print(ntotneon_hsd)
+print(ntotneon_hsd$groups)
+
+neon_aov4 = aov(data = neon_proc, acidity ~ siteID)
+summary(neon_aov4)
+
+acidity_hsd = HSD.test(neon_aov4,"siteID")
+print(acidity_hsd)
+print(acidity_hsd$groups)
+
+neon_aov5 = aov(data = neon_proc, waterSatx ~ siteID)
+summary(neon_aov5)
+
+water_hsd = HSD.test(neon_aov5,"siteID")
+print(water_hsd)
+print(water_hsd$groups)
+
 #ggplots------------------------------------------------------------
+neon_proc = neon_proc %>% 
+  mutate(siteID = factor (siteID, levels = c("HEAL", "BONA", "BARR", "TOOL")))
+
+neon_proc %>% 
+  ggplot() +
+  geom_point(data = neon_proc, aes(y=biogeoCenterDepth, x=nitrogenTot, color=siteID)) +
+  theme_er() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "Total Nitrogen")+
+  scale_y_reverse()+
+  facet_grid(. ~ siteID)
+
+
+neon_proc %>% 
+  ggplot() +
+  geom_point(data = neon_proc, aes(y=biogeoCenterDepth, x=estimatedOC, color=siteID)) +
+  theme_er() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "OC")+
+  scale_y_reverse()+
+  facet_grid(. ~ siteID)
+
+neon_proc %>% 
+  ggplot() +
+  geom_point(data = neon_proc, aes(y=biogeoCenterDepth, x=acidity, color=siteID)) +
+  theme_er() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "Acidity")+
+  scale_y_reverse()+
+  facet_grid(. ~ siteID)
+
+neon_proc %>% 
+  ggplot() +
+  geom_point(data = neon_proc, aes(y=biogeoCenterDepth, x=waterSatx, color=siteID)) +
+  geom_smooth(span = 0.3)+
+  theme_er() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "Water Saturation")+
+  scale_y_reverse()+
+  facet_grid(. ~ siteID)
+  
+
+
+#Sommos ggplots
+
 sommos_proc = sommos_proc %>% 
   mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
 
