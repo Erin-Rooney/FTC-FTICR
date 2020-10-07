@@ -15,7 +15,7 @@ neon_bona_csv = read.csv("processed/neon_bona_biogeochem.csv")
 
 
 #process data------------------------------------
-asommos_proc = sommos_csv %>% 
+sommos_proc = sommos_csv %>% 
 dplyr::select(site, horizon_type, midpoint_depth.cm, DC_Al.g100g, 
               DC_Fe.g100g, DC_Mn.g100g, DC_Si.g100g, SP_Al.g100g, SP_Fe.g100g, 
               SP_Mn.g100g, SP_Si.g100g, AO_Al.g100g, AO_Fe.g100g, AO_Mn.mgkg, AO_Si.g100g) %>% 
@@ -171,11 +171,12 @@ print(water_hsd$groups)
 
 #ggplots------------------------------------------------------------
 neon_proc = neon_proc %>% 
-  mutate(siteID = factor (siteID, levels = c("HEAL", "BONA", "BARR", "TOOL")))
+  mutate(siteID = factor (siteID, levels = c("HEAL", "BONA", "BARR", "TOOL"))) %>% 
+  rename(depth = biogeoCenterDepth)
 
 neon_proc %>% 
   ggplot() +
-  geom_point(data = neon_proc, aes(y=biogeoCenterDepth, x=nitrogenTot, color=siteID)) +
+  geom_point(data = neon_proc, aes(y=depth, x=nitrogenTot, color=siteID)) +
   theme_er() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
   labs(y = "Depth, cm", x = "Total Nitrogen")+
@@ -184,8 +185,9 @@ neon_proc %>%
 
 
 neon_proc %>% 
-  ggplot() +
-  geom_point(data = neon_proc, aes(y=biogeoCenterDepth, x=estimatedOC, color=siteID)) +
+  ggplot(aes(y=depth, x=estimatedOC, color=siteID)) +
+  geom_point() +
+  geom_smooth(span = 0.3)+
   theme_er() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
   labs(y = "Depth, cm", x = "OC")+
@@ -194,7 +196,7 @@ neon_proc %>%
 
 neon_proc %>% 
   ggplot() +
-  geom_point(data = neon_proc, aes(y=biogeoCenterDepth, x=acidity, color=siteID)) +
+  geom_point(data = neon_proc, aes(y=depth, x=acidity, color=siteID)) +
   theme_er() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
   labs(y = "Depth, cm", x = "Acidity")+
@@ -202,12 +204,12 @@ neon_proc %>%
   facet_grid(. ~ siteID)
 
 neon_proc %>% 
-  ggplot() +
-  geom_point(data = neon_proc, aes(y=biogeoCenterDepth, x=waterSatx, color=siteID)) +
-  geom_smooth(span = 0.3)+
+  ggplot(aes(y=depth, x=waterSatx, color=siteID)) +
+  geom_point() +
+  #geom_smooth(span = 0.3)+
   theme_er() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "Depth, cm", x = "Water Saturation")+
+  labs(y = "Depth, cm", x = "Water Saturation") +
   scale_y_reverse()+
   facet_grid(. ~ siteID)
   
