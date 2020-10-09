@@ -177,15 +177,6 @@ neon_proc = neon_proc %>%
 
 library(ggthemes)
 
-neon_proc %>% 
-  ggplot() +
-  geom_point(data = neon_proc, aes(y=depth, x=nitrogenTot, color=siteID)) +
-  theme_erclean() +
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "Depth, cm", x = "Total Nitrogen")+
-  scale_y_reverse()+
-  facet_grid(. ~ siteID)
-
 p1 = neon_proc %>% 
   ggplot() +
   geom_point(data = neon_proc, aes(y=depth, x=nitrogenTot, color=siteID)) +
