@@ -100,23 +100,24 @@ theme_er <- function() {  # this for all the elements common across plots
 }
 
 #
-#theme_jack <- function (base_size = 12, base_family = "") {
-#   theme_bw(base_size = base_size, base_family = base_family) %+replace% 
-#     theme(
-#       legend.position = "top",
-#       legend.key=element_blank(),
-#       legend.title = element_blank(),
-#       legend.text = element_text(size = 12),
-#       legend.key.size = unit(1.5, 'lines'),
-#       panel.border = element_rect(color="gray",size=2, fill = NA),
-#       axis.text = element_text(colour = "black"),
-#       axis.title.x = element_text(colour = "black"), #size=rel(3)),
-#       axis.title.y = element_text(colour = "black", angle=90),
-#       panel.background = element_rect(fill="white"),
-#       panel.grid.minor = element_line(color= "white"),
-#       panel.grid.major = element_line(colour = "white"),
-#       plot.background = element_rect(fill="white"))
-# }
+theme_erclean <- function () {
+   theme_clean() %+replace%
+    theme(legend.position = "top",
+          legend.key = element_blank(),
+          legend.title = element_blank(),
+          legend.text = element_text(size = 12),
+          legend.key.size = unit(1.5, 'lines'),
+          plot.title = element_text(hjust = 0.5, size = 14),
+          plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
+          axis.text = element_text(size = 12, color = "black"),
+          axis.title = element_text(size = 12, face = "bold", color = "black"),
+          strip.background = element_rect(colour="white", fill="white"), #facet formatting
+          panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
+          panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
+          strip.text.x = element_text(size=12, face="bold"), #facet labels
+          strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
+          )
+ }
       
 # select data-----------------------------------
 # barrow = sommos_csv$site=="BARR"
@@ -174,10 +175,21 @@ neon_proc = neon_proc %>%
   mutate(siteID = factor (siteID, levels = c("HEAL", "BONA", "BARR", "TOOL"))) %>% 
   rename(depth = biogeoCenterDepth)
 
+library(ggthemes)
+
+neon_proc %>% 
+  ggplot() +
+  geom_point(data = neon_proc, aes(y=depth, x=nitrogenTot, color=siteID)) +
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "Total Nitrogen")+
+  scale_y_reverse()+
+  facet_grid(. ~ siteID)
+
 p1 = neon_proc %>% 
   ggplot() +
   geom_point(data = neon_proc, aes(y=depth, x=nitrogenTot, color=siteID)) +
-  theme_er() +
+  theme_erclean() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
   labs(y = "Depth, cm", x = "Total Nitrogen")+
   scale_y_reverse()+
@@ -188,9 +200,9 @@ p2 = neon_proc %>%
   ggplot(aes(y=depth, x=estimatedOC, color=siteID)) +
   geom_point() +
   #geom_smooth(span = 0.3)+
-  theme_er() +
+  theme_erclean() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "Depth, cm", x = "Organic Carbon")+
+  labs(y = NULL, x = "Organic Carbon")+
   scale_y_reverse()+
   facet_grid(. ~ siteID)
 
@@ -209,13 +221,31 @@ p3 = neon_proc %>%
   geom_point() +
   xlim(0, 1.5)+
   #geom_smooth(span = 0.3)+
-  theme_er() +
+  theme_erclean() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
   labs(y = "Depth, cm", x = "AO to DC ratio")+
   scale_y_reverse()+
   facet_grid(. ~ siteID)
 
 p4 = neon_proc %>% 
+  ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
+  geom_point() +
+  #xlim(0, 1.5)+
+  #geom_smooth(span = 0.3)+
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = NULL, x = "C:N ratio")+
+  scale_y_reverse()+
+  facet_grid(. ~ siteID)
+
+library(patchwork)
+p1+p2+p3+p4+ #combines the two plots
+  plot_layout(guides = "collect") & theme_erclean()
+
+#
+
+
+neon_proc %>% 
   ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
   geom_point() +
   #xlim(0, 1.5)+
@@ -227,21 +257,7 @@ p4 = neon_proc %>%
   facet_grid(. ~ siteID)
 
 
-neon_proc %>% 
-  ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
-  geom_point==() +
-  #xlim(0, 1.5)+
-  #geom_smooth(span = 0.3)+
-  theme_er() +
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "Depth, cm", x = "C:N ratio")+
-  scale_y_reverse()+
-  facet_grid(. ~ siteID)
 
-
-library(patchwork)
-p1+p2+p3+p4+ #combines the two plots
-  plot_layout(guides = "collect", y.axis.text = "collect") & theme_er()
 
 
 #
