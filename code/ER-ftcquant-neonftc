@@ -1,0 +1,30 @@
+# FTCQuant and NEON cores
+# Erin Rooney
+# Oct 15 2020
+
+library(usethis)
+library(devtools)
+
+#install.packages("backports")
+library(backports)
+
+#####
+writeLines('PATH="${RTOOLS40_HOME}\\usr\\bin;${PATH}"', con = "~/.Renviron")
+
+Sys.which("make")
+## "C:\\rtools40\\usr\\bin\\make.exe"
+
+#####
+
+#####
+
+
+install_github("BajczA475/FTCQuant/FTCQuant")
+
+library(FTCQuant)
+
+all_fall = read.csv("processed/Dat-all_fall1.csv")
+
+soilTempMean=(all_fall$soilTempMean)
+
+FTCQuant::freeze.thaw.analysis(data.frame(all_fall, soilTempMean), mag.vec=1.5, dur.vec=24, thres.vec=0)
