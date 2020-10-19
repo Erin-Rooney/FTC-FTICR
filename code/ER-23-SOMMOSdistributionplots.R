@@ -14,6 +14,7 @@ neon_tool_csv = read.csv("processed/neon_tool_biogeochem.csv")
 neon_bona_csv = read.csv("processed/neon_bona_biogeochem.csv")
 
 
+
 #process data------------------------------------
 sommos_proc = sommos_csv %>% 
 dplyr::select(site, horizon_type, midpoint_depth.cm, DC_Al.g100g, 
@@ -176,6 +177,26 @@ neon_proc = neon_proc %>%
   rename(depth = biogeoCenterDepth)
 
 library(ggthemes)
+library(gapminder)
+
+
+ggplot(neon_proc, aes(y=depth, x=nitrogenTot, size = carbonTot, color=siteID)) +
+  geom_point(alpha = 0.7) +
+  scale_size(range = c(1, 10), name = "AO:DC")+
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "Total Nitrogen")+
+  scale_y_reverse()+
+  facet_grid(.~siteID)
+
+ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = AO_DC, color=siteID)) +
+  geom_point(alpha = 0.4) +
+  scale_size(range = c(1, 24), name = "AO:DC")+
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "C:N Ratio")+
+  scale_y_reverse()+
+  facet_grid(.~siteID)
 
 p1 = neon_proc %>% 
   ggplot() +
