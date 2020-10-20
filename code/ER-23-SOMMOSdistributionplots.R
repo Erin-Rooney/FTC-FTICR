@@ -140,11 +140,15 @@ SPDC_hsd = HSD.test(sommos_aov1,"site")
 print(SPDC_hsd)
 print(SPDC_hsd$groups)
 
-neon_aov1 = aov(data = neon_proc, AO_DC ~ siteID*biogeoCenterDepth)
+neon_aov1 = aov(data = neon_proc, AO_DC * ctonRatio ~ siteID)
 summary(neon_aov1)
 
-neon_aov2 = aov(data = neon_proc, nitrogenTot ~ siteID*biogeoCenterDepth)
+neon_aov2 = aov(data = neon_proc, ctonRatio ~ siteID*depth)
 summary(neon_aov2)
+
+ctonneon_hsd = HSD.test(neon_aov2,"siteID")
+print(ctonneon_hsd)
+print(ctonneon_hsd$groups)
 
 AODCneon_hsd = HSD.test(neon_aov2,"siteID")
 print(AODCneon_hsd)
