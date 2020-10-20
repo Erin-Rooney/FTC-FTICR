@@ -154,7 +154,7 @@ AODCneon_hsd = HSD.test(neon_aov2,"siteID")
 print(AODCneon_hsd)
 print(AODCneon_hsd$groups)
 
-neon_aov3 = aov(data = neon_proc, nitrogenTot ~ siteID)
+neon_aov3 = aov(data = neon_proc, nitrogenTot ~ siteID*depth)
 summary(neon_aov3)
 
 ntotneon_hsd = HSD.test(neon_aov3,"siteID")
@@ -174,6 +174,20 @@ summary(neon_aov5)
 water_hsd = HSD.test(neon_aov5,"siteID")
 print(water_hsd)
 print(water_hsd$groups)
+
+neon_aov6 = aov(data = neon_proc, estimatedOC ~ siteID*depth)
+summary(neon_aov6)
+
+oc_hsd = HSD.test(neon_aov6,"depth")
+print(oc_hsd)
+print(oc_hsd$groups)
+
+neon_aov6 = aov(data = neon_proc, AO_DC * waterSatx ~ siteID*depth)
+summary(neon_aov6)
+
+oc_hsd = HSD.test(neon_aov6,"siteID")
+print(oc_hsd)
+print(oc_hsd$groups)
 
 #ggplots------------------------------------------------------------
 neon_proc = neon_proc %>% 
