@@ -197,6 +197,30 @@ neon_proc = neon_proc %>%
 library(ggthemes)
 library(gapminder)
 
+neon_tool_proc %>% 
+ggplot() +
+  geom_boxplot(aes(x = ctonRatio, y = biogeoCenterDepth)) +
+  ylim(28, 38)+
+  labs(y = "OC", x = "Depth")
+
+neon_tool_proc %>% 
+  ggplot() +
+  geom_boxplot(aes(x = biogeoCenterDepth, y = estimatedOC)) +
+  xlim(28, 38)+
+  labs(y = "OC", x = "Depth")
+  
+neon_tool_proc %>% 
+  ggplot() +
+  geom_boxplot(aes(x = biogeoCenterDepth, y = carbonTot)) +
+ # ylim(28, 38)+
+  labs(y = "OC", x = "Depth")
+
+neon_tool_proc %>% 
+  ggplot() +
+  geom_boxplot(aes(x = biogeoCenterDepth, y = ctonRatio)) +
+  #ylim()+
+  labs(y = "C:N", x = "Depth")
+
 
 ggplot(neon_proc, aes(y=depth, x=nitrogenTot, size = carbonTot, color=siteID)) +
   geom_point(alpha = 0.7) +
