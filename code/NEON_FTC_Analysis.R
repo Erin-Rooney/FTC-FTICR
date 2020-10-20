@@ -34,3 +34,5 @@ for (i in 1:length(myfiles)){
   extract_dat(x=myfiles[[i]], 
               name=file.names[[i]])
 }
+
+#Angela will add: FTC analysis
