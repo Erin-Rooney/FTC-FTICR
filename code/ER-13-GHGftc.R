@@ -150,14 +150,15 @@ ggplot(ftc_dat, aes(x = depth_cm, y = site, fill = def1)) +
   geom_raster(hjust = 0, vjust = 0) + theme_er() + facet_grid(season~.)
 
 # bubble plot with depth on y axis---------------------------------
-ftc_dat %>% 
+ftc_fulldat %>% 
   filter(duration==24 & mag.vec==1.5 & depth_cm<70) %>%
-  ggplot(aes(y = depth_cm, x = site, size = def1, color = def1))+
+  ggplot(aes(y = depth_cm, x = site, size = Def1, color = as.character(Def1)))+
   #geom_jitter()+
   geom_point(position = position_jitter(width = 0.2))+
   scale_y_reverse()+
   # scale_size_continuous()+
-  scale_color_gradient(low = "blue", high = "red")+
+ # scale_color_gradient(low = "blue", high = "pink")+
+  scale_color_manual(values = (PNWColors::pnw_palette("Sailboat",7)))+
   ggtitle("Freeze Thaw Cycle Frequency") +
   theme_er() +
   facet_grid(~season)
