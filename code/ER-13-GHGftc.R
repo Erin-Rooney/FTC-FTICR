@@ -227,9 +227,9 @@ ftc_actdat_subset =
   ftc_actdat %>% 
   filter(site %in% c("HEAL", "TOOL"))
 
-ftc_fulldat_subset = 
+ftc_fulldat_subset2 = 
   ftc_fulldat %>% 
-  filter(site %in% c("HEAL", "TOOL"))
+  filter(site %in% c("TOOL"))
 
 ftc_actdat_subset %>% 
   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
@@ -247,6 +247,45 @@ ftc_actdat_subset %>%
   #           fill = "red", alpha = 0.5, color = "black", size = 3)+
   theme_er()
 
+ftc_fulldat_subset2 %>% 
+  filter(Def1 > 0) %>% 
+  filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
+  ggplot(aes(y = depth_cm, x = site, color = as.character(Def1)))+
+  geom_point(position = position_jitter(width = 0.2), size = 4.5)+
+  geom_point(data = ftc_fulldat_subset2 %>% filter(Def1 == 0 &duration==24 & mag.vec==1.5 & depth_cm<100),
+             position = position_jitter(width = 0.2), size = 2, color = "black")+
+  scale_y_reverse()+
+  #annotate("segment", x = 0.7, xend = 1.3, y = 50, yend = 50, color = "pink", size= 2) +
+  annotate("segment", x = 0.7, xend = 1.3, y = 19, yend = 19, color = "pink", size= 2) +
+  #scale_color_gradient(low = "light blue", high = "brown")+
+  annotate("text", label = "organic soil\n(0-20 cm)", x = 1.3, y = 13, size = 4)+
+  annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.3, y = 40, size = 4)+
+  annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.3, y = 55, size = 4)+
+  annotate("text", label = "Sample 2", x = 0.65, y = 37, size = 4)+
+  annotate("text", label = "Sample 1", x = 0.65, y = 28, size = 4)+
+  annotate("text", label = "Sample 3", x = 0.65, y = 41, size = 4)+
+  annotate(
+    geom = "curve", x = 0.72, y = 37, xend = 0.8, yend = 44, 
+   curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
+  annotate(
+    geom = "curve", x = 0.72, y = 28, xend = 0.8, yend = 34, 
+    curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+
+  annotate(
+    geom = "curve", x = 0.72, y = 41, xend = 0.8, yend = 47, 
+    curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Sunset2")))+
+  labs(
+    title = "Freeze/Thaw Soil Profile from Toolik, Alaska", 
+    y = "depth, cm",
+    x = "",
+    guides(fill=guide_legend(title= "Freeze/Thaw")))+
+    #legend.title = "Freeze/Thaw Cycles during Maximum Thaw",
+  #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
+  #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
+  #           fill = "red", alpha = 0.5, color = "black", size = 3)+
+  theme_er()
+
+
 ftc_fulldat_subset %>% 
   filter(Def1 > 0) %>% 
   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
@@ -263,15 +302,15 @@ ftc_fulldat_subset %>%
   annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.5, y = 68, size = 4)+
   #annotate("text", label = "active layer", x = 1.5, y = 6, size = 4)+
   #annotate("text", label = "black = no ftc", x = 1.5, y = 50, size = 4)+
- # annotate(
-    #geom = "curve", x = 2, y = 35, xend = 1, yend = 27, 
-   # curvature = -0.5, arrow = arrow(length = unit(2, "mm")))+               
+  #annotate(
+  #geom = "curve", x = 0.5, y = 28, xend = 0.8, yend = 34, 
+  #curvature = -0.5, arrow = arrow(length = unit(2, "mm")))+               
   scale_color_manual(values = rev(PNWColors::pnw_palette("Sunset2")))+
   labs(
     title = "Site Characteristics", 
     y = "depth, cm",
     guides(fill=guide_legend(title= "Freeze/Thaw")))+
-    #legend.title = "Freeze/Thaw Cycles during Maximum Thaw",
+  #legend.title = "Freeze/Thaw Cycles during Maximum Thaw",
   #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
   #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
   #           fill = "red", alpha = 0.5, color = "black", size = 3)+
