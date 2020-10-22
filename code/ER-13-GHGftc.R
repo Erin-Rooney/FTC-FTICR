@@ -14,19 +14,37 @@ probe_loc = read.csv("processed/Probe Locations.csv")
 # set data frames-----------------------------
 
 library(tidyverse)
-str(ghg_csv2)
-str(ftc_dat)
-str(ftc_fulldat)
-str(sommos_oc)
-str(probe_loc)
-levels(as.factor(ghg_csv2$trmt))
-levels(as.factor(ftc_fulldat$site)) 
+#str(ghg_csv2)
+#str(ftc_dat)
+#str(ftc_fulldat)
+#str(sommos_oc)
+#str(probe_loc)
+
 ftc_fulldat = ftc_fulldat %>% 
-      mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
+      mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")),
+             site = recode (site, "HEAL" = "healy",
+                            "BONA" = "caribou-poker",
+                            "BARR" = "barrow",
+                            "TOOL" = "toolik"))
+             
+             
+             #site = recode (site, "healy" = "HEAL", 
+             #              "toolik" = "TOOL", 
+             #              "caribou-poker" = "BONA", 
+             #              "barrow" = "BARR"))
+
+
+# ftc_fulldat = ftc_fulldat %>% 
+#   mutate(site = character) %>% 
+#   mutate(site = recode(ftc_fulldat$site,
+#                        "healy" = "HEAL", 
+#                        "toolik" = "TOOL", 
+#                        "caribou-poker" = "BONA", 
+#                        "barrow" = "BARR"))
 
 ftc_actdat = ftc_fulldat %>% 
   filter(season=="activelayer" & !is.na(Def1)) %>% 
-  mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL"))) 
+  mutate(site = factor (site, levels = c("healy", "caribou-poker", "barrow", "toolik"))) 
 
 
 
@@ -52,7 +70,7 @@ ftc_dat = ftc_dat %>%
 # ggplot set up-----------------------------------
   theme_er <- function() {  # this for all the elements common across plots
     theme_bw() %+replace%
-      theme(legend.position = "top",
+      theme(legend.position = "bottom",
             legend.key=element_blank(),
             legend.title = element_blank(),
             legend.text = element_text(size = 12),
@@ -61,6 +79,7 @@ ftc_dat = ftc_dat %>%
             plot.title = element_text(hjust = 0.5, size = 14),
             plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
             axis.text = element_text(size = 12, color = "black"),
+            axis.text.x.bottom = element_text (angle = 90),
             axis.title = element_text(size = 12, face = "bold", color = "black"),
             # formatting for facets
             panel.background = element_blank(),
@@ -72,35 +91,35 @@ ftc_dat = ftc_dat %>%
       )
   }
 
-theme_er2 <- function() {  # this for all the elements common across plots
-  theme_bw() %+replace%
-    theme(legend.position = "top",
-          legend.key=element_blank(),
-          legend.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.key.size = unit(1.5, 'lines'),
-          panel.border = element_rect(color="black",size=2, fill = NA),
-          plot.title = element_text(hjust = 0.5, size = 14),
-          plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
-          axis.text = element_text(size = 12, color = "black"),
-          axis.title = element_text(size = 12, face = "bold", color = "black"),
-          # formatting for facets
-          panel.background = element_blank(),
-          strip.background = element_rect(colour="black", fill="black"), #facet formatting
-          panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
-          panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
-          strip.text.x = element_text(size=12, face="bold"), #facet labels
-          strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
-    )
-}
+# theme_er2 <- function() {  # this for all the elements common across plots
+#   theme_bw() %+replace%
+#     theme(legend.position = "top",
+#           legend.key=element_blank(),
+#           legend.title = element_blank(),
+#           legend.text = element_text(size = 12),
+#           legend.key.size = unit(1.5, 'lines'),
+#           panel.border = element_rect(color="black",size=2, fill = NA),
+#           plot.title = element_text(hjust = 0.5, size = 14),
+#           plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
+#           axis.text = element_text(size = 12, color = "black"),
+#           axis.title = element_text(size = 12, face = "bold", color = "black"),
+#           # formatting for facets
+#           panel.background = element_blank(),
+#           strip.background = element_rect(colour="black", fill="black"), #facet formatting
+#           panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
+#           panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
+#           strip.text.x = element_text(size=12, face="bold"), #facet labels
+#           strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
+#     )
+# }
 
-library(ggplot2)
-library(soilpalettes)
-library(soilDB)
-library(aqp)
-library(sharpshootR)
-library(sp)
-library(ggridges)
+# library(ggplot2)
+# library(soilpalettes)
+# library(soilDB)
+# library(aqp)
+# library(sharpshootR)
+# library(sp)
+# library(ggridges)
 
 # gain in C ggplot----------------------------------------
 ggplot(ghg_csv2, aes(x=trmt, y=gain_ug_g_oc, fill=day)) + geom_boxplot() 
@@ -150,16 +169,19 @@ ggplot(ftc_dat, aes(x = depth_cm, y = site, fill = def1)) +
   geom_raster(hjust = 0, vjust = 0) + theme_er() + facet_grid(season~.)
 
 # bubble plot with depth on y axis---------------------------------
+
+
 ftc_fulldat %>% 
-  filter(duration==24 & mag.vec==1.5 & depth_cm<70) %>%
+  filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
   ggplot(aes(y = depth_cm, x = site, size = Def1, color = as.character(Def1)))+
   #geom_jitter()+
   geom_point(position = position_jitter(width = 0.2))+
   scale_y_reverse()+
   # scale_size_continuous()+
  # scale_color_gradient(low = "blue", high = "pink")+
-  scale_color_manual(values = (PNWColors::pnw_palette("Sailboat",7)))+
-  ggtitle("Freeze Thaw Cycle Frequency") +
+  scale_color_manual(values = (PNWColors::pnw_palette("Bay",7)))+
+  labs(y = "depth, cm", x = "", legend.title = "Freeze/Thaw Cycles") +
+  #ggtitle("Freeze Thaw Cycle Frequency") +
   theme_er() +
   facet_grid(~season)
 
