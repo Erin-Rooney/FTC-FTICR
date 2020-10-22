@@ -25,41 +25,21 @@ ftc_fulldat = ftc_fulldat %>%
              site = recode (site, "HEAL" = "healy",
                             "BONA" = "caribou-poker",
                             "BARR" = "barrow",
-                            "TOOL" = "toolik"))
+                            "TOOL" = "toolik"))%>% 
+      filter(!season == "activelayer" & !is.na(Def1)) %>%       
+      mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))  
+    
+
              
              
-             #site = recode (site, "healy" = "HEAL", 
-             #              "toolik" = "TOOL", 
-             #              "caribou-poker" = "BONA", 
-             #              "barrow" = "BARR"))
-
-
-# ftc_fulldat = ftc_fulldat %>% 
-#   mutate(site = character) %>% 
-#   mutate(site = recode(ftc_fulldat$site,
-#                        "healy" = "HEAL", 
-#                        "toolik" = "TOOL", 
-#                        "caribou-poker" = "BONA", 
-#                        "barrow" = "BARR"))
-
 ftc_actdat = ftc_fulldat %>% 
   filter(season=="activelayer" & !is.na(Def1)) %>% 
   mutate(site = factor (site, levels = c("healy", "caribou-poker", "barrow", "toolik"))) 
 
 
 
-ftc_fulldat = ftc_fulldat %>% 
-  filter(!season == "activelayer")
-
-
-ftc_fulldat = ftc_fulldat %>% 
-      mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))
-
 ftc_dat = ftc_dat %>% 
-  filter(!season == "activelayer")
-
-
-ftc_dat = ftc_dat %>% 
+  filter(!season == "activelayer") %>% 
   mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))
 
 
@@ -79,7 +59,7 @@ ftc_dat = ftc_dat %>%
             plot.title = element_text(hjust = 0.5, size = 14),
             plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
             axis.text = element_text(size = 12, color = "black"),
-            axis.text.x.bottom = element_text (angle = 90),
+            axis.text.x.bottom = element_text (vjust = 0.5, hjust=1, angle = 90),
             axis.title = element_text(size = 12, face = "bold", color = "black"),
             # formatting for facets
             panel.background = element_blank(),
@@ -90,6 +70,7 @@ ftc_dat = ftc_dat %>%
             strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
       )
   }
+
 
 # theme_er2 <- function() {  # this for all the elements common across plots
 #   theme_bw() %+replace%
@@ -120,7 +101,7 @@ ftc_dat = ftc_dat %>%
 # library(sharpshootR)
 # library(sp)
 # library(ggridges)
-
+#
 # gain in C ggplot----------------------------------------
 ggplot(ghg_csv2, aes(x=trmt, y=gain_ug_g_oc, fill=day)) + geom_boxplot() 
 
