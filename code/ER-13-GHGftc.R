@@ -145,17 +145,18 @@ ftc_dat = ftc_dat %>%
 
 ftc_fulldat %>% 
   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
-  ggplot(aes(y = depth_cm, x = site, size = Def1, color = as.character(Def1)))+
+  ggplot(aes(y = depth_cm, x = site, size = as.character(Def1), color = as.character(Def1)))+
   #geom_jitter()+
   geom_point(position = position_jitter(width = 0.2))+
   scale_y_reverse()+
   # scale_size_continuous()+
  # scale_color_gradient(low = "blue", high = "pink")+
   scale_color_manual(values = (PNWColors::pnw_palette("Bay",7)))+
-  labs(y = "depth, cm", x = "", legend.title = "Freeze/Thaw Cycles") +
+  labs(y = "depth, cm", x = "", legend_title = "My title")+
   #ggtitle("Freeze Thaw Cycle Frequency") +
   theme_er() +
   facet_grid(~season)
+
 
 ###########
 
