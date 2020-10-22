@@ -48,11 +48,11 @@ ftc_dat = ftc_dat %>%
 
 
 # ggplot set up-----------------------------------
-  theme_er <- function() {  # this for all the elements common across plots
+  theme_er1 <- function() {  # this for all the elements common across plots
     theme_bw() %+replace%
       theme(legend.position = "bottom",
-            legend.key=element_blank(),
-            legend.title = element_blank(),
+            #legend.key=element_blank(),
+            #legend.title = element_blank(),
             legend.text = element_text(size = 12),
             legend.key.size = unit(1.5, 'lines'),
             panel.border = element_rect(color="black",size=2, fill = NA),
@@ -70,6 +70,28 @@ ftc_dat = ftc_dat %>%
             strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
       )
   }
+
+theme_er <- function() {  # this for all the elements common across plots
+  theme_bw() %+replace%
+    theme(legend.position = "bottom",
+          #legend.key=element_blank(),
+          #legend.title = element_blank(),
+          legend.text = element_text(size = 12),
+          legend.key.size = unit(1.5, 'lines'),
+          panel.border = element_rect(color="black",size=2, fill = NA),
+          plot.title = element_text(hjust = 0.5, size = 14),
+          plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
+          axis.text = element_text(size = 12, color = "black"),
+          axis.title = element_text(size = 12, face = "bold", color = "black"),
+          # formatting for facets
+          panel.background = element_blank(),
+          strip.background = element_rect(colour="white", fill="white"), #facet formatting
+          panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
+          panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
+          strip.text.x = element_text(size=12, face="bold"), #facet labels
+          strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
+    )
+}
 
 
 # theme_er2 <- function() {  # this for all the elements common across plots
@@ -152,9 +174,9 @@ ftc_fulldat %>%
   # scale_size_continuous()+
  # scale_color_gradient(low = "blue", high = "pink")+
   scale_color_manual(values = (PNWColors::pnw_palette("Bay",7)))+
-  labs(y = "depth, cm", x = "", legend_title = "My title")+
+  labs(y = "depth, cm", x = "", color = "Freeze/Thaw Cycles", size = "Freeze/Thaw Cycles")+
   #ggtitle("Freeze Thaw Cycle Frequency") +
-  theme_er() +
+  theme_er1() +
   facet_grid(~season)
 
 
@@ -192,58 +214,58 @@ levels(as.factor(ftc_actdat$site))
 
 
 ftc_actdatheal = ftc_actdat %>% 
-  filter(site=="HEAL")
+  filter(site=="healy")
 
 ftc_actdattool = ftc_actdat %>% 
-  filter(site=="TOOL")
+  filter(site=="toolik")
 
-ftc_actdatheal %>% 
-  filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
-  ggplot(aes(y = depth_cm, x = site, color = Def1))+
-  #geom_jitter()+
-  geom_point(position = position_jitter(width = 0.2), size = 7)+
-  scale_y_reverse()+
-  annotate("segment", x = 1.5, xend = 0.5, y = 39, yend = 39, color = "pink", size= 2) +
-  # scale_size_continuous()+
-  scale_color_gradient(low = "light blue", high = "brown")+
-  ggtitle("Healy") +
-  theme_er()
-
-ftc_actdattool %>% 
-  filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
-  ggplot(aes(y = depth_cm, x = site, color = Def1))+
-  #geom_jitter()+
-  geom_point(position = position_jitter(width = 0.2), size = 7)+
-  scale_y_reverse()+
-  annotate("segment", x = 1.5, xend = 0.5, y = 9, yend = 9, color = "pink", size= 2) +
-  # scale_size_continuous()+
-  scale_color_gradient(low = "light blue", high = "brown")+
-  ggtitle("Toolik") +
-  theme_er()
+# ftc_actdatheal %>% 
+#   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
+#   ggplot(aes(y = depth_cm, x = site, color = Def1))+
+#   #geom_jitter()+
+#   geom_point(position = position_jitter(width = 0.2), size = 7)+
+#   scale_y_reverse()+
+#   annotate("segment", x = 1.5, xend = 0.5, y = 39, yend = 39, color = "pink", size= 2) +
+#   # scale_size_continuous()+
+#   scale_color_gradient(low = "light blue", high = "brown")+
+#   ggtitle("Healy") +
+#   theme_er()
+# 
+# ftc_actdattool %>% 
+#   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
+#   ggplot(aes(y = depth_cm, x = site, color = Def1))+
+#   #geom_jitter()+
+#   geom_point(position = position_jitter(width = 0.2), size = 7)+
+#   scale_y_reverse()+
+#   annotate("segment", x = 1.5, xend = 0.5, y = 9, yend = 9, color = "pink", size= 2) +
+#   # scale_size_continuous()+
+#   scale_color_gradient(low = "light blue", high = "brown")+
+#   ggtitle("Toolik") +
+#   theme_er()
 
 ftc_actdat_subset = 
   ftc_actdat %>% 
-  filter(site %in% c("HEAL", "TOOL"))
+  filter(site %in% c("healy", "toolik"))
 
 ftc_fulldat_subset2 = 
   ftc_fulldat %>% 
-  filter(site %in% c("TOOL"))
+  filter(site %in% c("toolik"))
 
-ftc_actdat_subset %>% 
-  filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
-  ggplot(aes(y = depth_cm, x = site, color = as.character(Def1)))+
-  geom_point(position = position_jitter(width = 0.2), size = 7)+
-  scale_y_reverse()+
-  annotate("segment", x = 0.7, xend = 1.3, y = 9, yend = 9, color = "pink", size= 2) +
-  annotate("segment", x = 1.5, xend = 2.5, y = 10, yend = 10, color = "pink", size= 2) +
-  #scale_color_gradient(low = "light blue", high = "brown")+
-  annotate("text", label = "organic soil\n(5 cm)", x = 1.5, y = 25, size = 4)+
-  annotate("text", label = "active layer", x = 1.5, y = 6, size = 4)+
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Sunset2")))+
-  #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
-  #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
-  #           fill = "red", alpha = 0.5, color = "black", size = 3)+
-  theme_er()
+# ftc_actdat_subset %>% 
+#   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
+#   ggplot(aes(y = depth_cm, x = site, color = as.character(Def1)))+
+#   geom_point(position = position_jitter(width = 0.2), size = 7)+
+#   scale_y_reverse()+
+#   annotate("segment", x = 0.7, xend = 1.3, y = 9, yend = 9, color = "pink", size= 2) +
+#   annotate("segment", x = 1.5, xend = 2.5, y = 10, yend = 10, color = "pink", size= 2) +
+#   #scale_color_gradient(low = "light blue", high = "brown")+
+#   annotate("text", label = "organic soil\n(5 cm)", x = 1.5, y = 25, size = 4)+
+#   annotate("text", label = "active layer", x = 1.5, y = 6, size = 4)+
+#   scale_color_manual(values = rev(PNWColors::pnw_palette("Sunset2")))+
+#   #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
+#   #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
+#   #           fill = "red", alpha = 0.5, color = "black", size = 3)+
+#   theme_er()
 
 ftc_fulldat_subset2 %>% 
   filter(Def1 > 0) %>% 
@@ -271,16 +293,16 @@ ftc_fulldat_subset2 %>%
   annotate(
     geom = "curve", x = 0.72, y = 41, xend = 0.8, yend = 47, 
     curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Sunset2")))+
+  scale_color_manual(values = (PNWColors::pnw_palette("Starfish", 3)))+
   labs(
-    title = "Freeze/Thaw Soil Profile from Toolik, Alaska", 
+    title = "Freeze/Thaw Soil Profile \n Toolik, Alaska \n ", 
     y = "depth, cm",
-    x = "",
-    guides(fill=guide_legend(title= "Freeze/Thaw")))+
+    x = "", 
+    color = "Freeze/Thaw Cycles")+
     #legend.title = "Freeze/Thaw Cycles during Maximum Thaw",
   #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
   #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
-  #           fill = "red", alpha = 0.5, color = "black", size = 3)+
+  #           fill = "red", alpha = 0.5, color = "black", size = 4)+
   theme_er()
 
 
