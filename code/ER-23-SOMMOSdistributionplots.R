@@ -360,62 +360,62 @@ sommos_proc %>%
 sommos_csv %>% 
   ggplot() +
   geom_point(data = sommos_csv, aes(y=OCC.g100g, x=LIG.ugg, color=site, size=10, shape=horizon_type)) +
-  theme_jack() +
+  theme_er() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))
   
   
 #scale_y_continuous(trans = "reverse", breaks = (sommos_csv$top_depth.cm)) 
 #facet_grid(. ~ site)
 
-sommos_csv %>% 
-  ggplot() +
-  geom_point(data = sommos_csv, aes(y=FLF.g100g, x=HF.g100g, color=site, size=OCC.g100g)) +
-  #scale_y_continuous(trans = "reverse", breaks = (sommos_csv$top_depth.cm)) +
-  theme_er2() +
-  strip.background = element_rect(colour="black", fill="black") #facet formatting
-
-  #facet_grid(. ~ site)
+# sommos_csv %>% 
+#   ggplot() +
+#   geom_point(data = sommos_csv, aes(y=FLF.g100g, x=HF.g100g, color=site, size=OCC.g100g)) +
+#   #scale_y_continuous(trans = "reverse", breaks = (sommos_csv$top_depth.cm)) +
+#   theme_erclean() +
+#   strip.background = element_rect(colour="black", fill="black") #facet formatting
+# 
+#   #facet_grid(. ~ site)
 
 ###########
 
 
+# 
+# p <- ggplot() +
+#   
+#   geom_line(data = sommos_csv, aes(y=top_depth.cm, x=AO_Fe.g100g, color=site)) +
+#   
+#   #scale_y_continuous(trans = "reverse", breaks = (sommos_csv$top_depth.cm)) +
+#   
+#   scale_y_continuous()+
+#   
+#   scale_y_reverse +
+#   
+#   scale_x_continuous(position = "top")
+# 
+# p + facet_grid(. ~ site)
 
-p <- ggplot() +
-  
-  geom_line(data = sommos_csv, aes(y=top_depth.cm, x=AO_Fe.g100g, color=site)) +
-  
-  #scale_y_continuous(trans = "reverse", breaks = (sommos_csv$top_depth.cm)) +
-  
-  scale_y_continuous()
-  
-  scale_y_reverse +
-  
-  scale_x_continuous(position = "top")
-
-p + facet_grid(. ~ site)
 
 
-
-p <- ggplot() +
-  geom_line(data = as.data.frame(barrow), aes(y = top_depth.cm, x= clay.gg, color = site))
-
-p
+# p <- ggplot() +
+#   geom_line(data = as.data.frame(barrow), aes(y = top_depth.cm, x= clay.gg, color = site))
+# 
+# p
 
 #Active layer ftc plot----------------------------
 
-plot(activelayer_dat)
-
-p <- ggplot() +
-  
-  geom_line(data = activelayer_dat, aes(x = Def1, y = depth_m, color = site_pos)) +
-  
-  scale_y_reverse()
-  
- # scale_y_continuous(trans = "reverse", breaks = (activelayer_dat$depth_m))
-
-p
-
-p + facet_grid(. ~ site_pos)
+# plot(activelayer_dat)
+# 
+# p <- ggplot() +
+#   
+#   geom_line(data = activelayer_dat, aes(x = Def1, y = depth_m, color = site_pos)) +
+#   
+#   scale_y_reverse()
+#   
+#  # scale_y_continuous(trans = "reverse", breaks = (activelayer_dat$depth_m))
+# 
+# p
+# 
+# p + facet_grid(. ~ site_pos)
 
 
 
