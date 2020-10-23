@@ -197,16 +197,12 @@ neon_proc = neon_proc %>%
 library(ggthemes)
 library(gapminder)
 
+#these plots were used to determine means within certain depth ranges.
+
 neon_tool_proc %>% 
 ggplot() +
   geom_boxplot(aes(x = ctonRatio, y = biogeoCenterDepth)) +
   ylim(28, 38)+
-  labs(y = "OC", x = "Depth")
-
-neon_tool_proc %>% 
-  ggplot() +
-  geom_boxplot(aes(x = biogeoCenterDepth, y = estimatedOC)) +
-  xlim(28, 38)+
   labs(y = "OC", x = "Depth")
   
 neon_tool_proc %>% 
@@ -221,6 +217,7 @@ neon_tool_proc %>%
   #ylim()+
   labs(y = "C:N", x = "Depth")
 
+#These plots are combo figures from NEON metadata
 
 ggplot(neon_proc, aes(y=depth, x=nitrogenTot, size = carbonTot, color=siteID)) +
   geom_point(alpha = 0.7) +
