@@ -5,6 +5,10 @@
 #NEON
 library(neonUtilities)
 library(tidyverse)
+library(data.table)
+library(devtools)
+install_github("BajczA475/FTCQuant/FTCQuant")
+library(FTCQuant)
 
 #Soil temp data###########################################
 
@@ -35,6 +39,12 @@ for (i in 1:length(myfiles)){
               name=file.names[[i]])
 }
 
+spring1=read.csv("") 
+
+
+#Combine season/year files into one list
+temp_dat = list(spring1 = spring1)
+
 #FTC for 1.5 degree mag.vec, 4 hour duration (8 timesteps#######################
 
 #NOTE: this will write a csv file to the working directory 
@@ -46,7 +56,7 @@ FTC_data = function(x, #list of dataframes (element ST_30_minute from NEON data 
 ) {
   
   #Reduce dataframe to relevant columns (speeds up dcast)
-  reduced_dat <- x[,c("siteID","verticalPosition","horizontalPosition","startDateTime","soilTempMean")]
+  #reduced_dat <- x[,c("siteID","verticalPosition","horizontalPosition","startDateTime","soilTempMean")]
   
   #Convert vertical, horizontal, and siteID to factors
   reduced_dat$verticalPosition=as.factor(reduced_dat$verticalPosition)
