@@ -39,11 +39,27 @@ for (i in 1:length(myfiles)){
               name=file.names[[i]])
 }
 
-spring1=read.csv("") 
+spring1=read.csv("spring1.csv") 
+spring2=
+summer1=
+summer2=
+fall1=
+fall2=
+winter1=
+winter2=
 
+spring1_pos=read.csv("spring1_pos.csv") 
+spring2=
+summer1=
+summer2=
+fall1=
+fall2=
+winter1=
+winter2=
 
-#Combine season/year files into one list
-temp_dat = list(spring1 = spring1)
+#Freeze-thaw analysis#########################
+temp.dat=list(spring1 = spring1, ...)
+pos.dat=list(spring1 = spring1_pos, ...)
 
 #FTC for 1.5 degree mag.vec, 4 hour duration (8 timesteps#######################
 
@@ -154,14 +170,14 @@ FTC_data = function(x, #list of dataframes (element ST_30_minute from NEON data 
 }
 
 #TRIAL: smaller dataset
-load(file="activelayer1.RData") 
-trial.temp.dat=list(activelayer1 = activelayer1$ST_30_minute)
-trial.pos.dat=list(activelayer1 = activelayer1$sensor_positions_00041)
+#load(file="activelayer1.RData") 
+#trial.temp.dat=list(activelayer1 = activelayer1$ST_30_minute)
+#trial.pos.dat=list(activelayer1 = activelayer1$sensor_positions_00041)
                                   
-for (i in 1:length(trial.temp.dat)){
-  cur.name=names(trial.temp.dat)[i]
-  FTC_data(x=trial.temp.dat[[i]], 
-           y=trial.pos.dat[[i]], 
+for (i in 1:length(temp.dat)){
+  cur.name=names(temp.dat)[i]
+  FTC_data(x=temp.dat[[i]], 
+           y=pos.dat[[i]], 
            name=cur.name,
            year=substr(cur.name, nchar(cur.name),nchar(cur.name)))
 }
