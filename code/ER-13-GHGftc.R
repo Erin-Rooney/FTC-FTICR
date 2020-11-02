@@ -457,17 +457,17 @@ ggplot(ghg_csv2, aes(x=site, y=gain_ug_g_oc, fill=day)) +
 
 # Old failed ggplots----------------------------------------
 
-ggplot(ghg_csv2, aes(x = day, y = gain_ug_g_oc, color = day)) +
-  geom_dotplot() +
-  xlab("Day") +
-  ylab("CO2 AVG") +
-  ggtitle("12C")
-
-
-
-
-a = ggplot(ghg_csv, aes(x=Site, y=ug_12C_g_soil, fill=DAY)) + geom_boxplot() 
-
-a + theme_er + scale_fill_manual = soil_palette("redox, 4")
-
-ggplot(ghg_csv, aes(x=Site, y=ug_12C_g_soil, fill=TRT)) + geom_boxplot()
+# ggplot(ghg_csv2, aes(x = day, y = gain_ug_g_oc, color = day)) +
+#   geom_dotplot() +
+#   xlab("Day") +
+#   ylab("CO2 AVG") +
+#   ggtitle("12C")
+# 
+# 
+# 
+# 
+# a = ggplot(ghg_csv, aes(x=Site, y=ug_12C_g_soil, fill=DAY)) + geom_boxplot() 
+# 
+# a + theme_er + scale_fill_manual = soil_palette("redox, 4")
+# 
+# ggplot(ghg_csv, aes(x=Site, y=ug_12C_g_soil, fill=TRT)) + geom_boxplot()
