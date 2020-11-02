@@ -12,6 +12,7 @@ library(ggforce)
 library(ggrepel)
 library(ggmap)
 library(usmap)
+library(PNWColors)
 library(soilpalettes)
 theme_er <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
@@ -87,9 +88,10 @@ plot_usmap(include=c("AK")) +
 plot_usmap(include=c("AK")) +
   geom_point(aes(x=lon.1, y=lat.1, fill=Def1), pch=21, data=plot_dat_transformed, size=3, color="black", show.legend=TRUE) + 
   geom_label_repel(aes(x=lon.1, y=lat.1, label=site), data=plot_dat_transformed, size=4.5, point.padding = 0.2) + 
-  labs(fill="Freeze-thaw cycles (#)") + 
-  scale_fill_binned(values = soil_palette("redox", 4), guide = guide_colourbar(barwidth=10, barheight=1, direction = "horizontal", reverse = FALSE, title.position="top", ticks=FALSE, label=TRUE)) +  
+  labs(color="Freeze-thaw cycles (#)") + 
+  scale_color_gradientn(values = pnw_palette("Starfish", 4), guide = guide_colourbar(barwidth=10, barheight=1, direction = "horizontal", reverse = FALSE, title.position="top", ticks=FALSE, label=TRUE)) +  
   theme(legend.position=c(0.1,-0.3),
         plot.margin = unit(c(2,2,2,2), "cm"), 
         legend.title = element_text(size=12, color="black"), 
         legend.text = element_text(size=10, color="black"))
+
