@@ -79,17 +79,21 @@ plot_usmap(include=c("AK")) +
   geom_point(aes(x=lon.1, y=lat.1, fill=Def1), pch=21, data=plot_dat_transformed, size=3, color="black", show.legend=TRUE) + 
   geom_label_repel(aes(x=lon.1, y=lat.1, label=site), data=plot_dat_transformed, size=4.5, point.padding = 0.2) + 
   labs(fill="Freeze-thaw cycles (#)") + 
-  scale_fill_viridis_c(option="plasma", direction=-1, guide = guide_colourbar(barwidth=10, barheight=1, direction = "horizontal", reverse = FALSE, title.position="top", ticks=FALSE, label=TRUE)) +  
+  scale_fill_viridis_c(option="viridis", direction=-1, guide = guide_colourbar
+                       (barwidth=10, barheight=1, direction = "horizontal", 
+                         reverse = FALSE, title.position="top", ticks=FALSE, label=TRUE)) +  
   theme(legend.position=c(0.1,-0.3),
         plot.margin = unit(c(2,2,2,2), "cm"), 
         legend.title = element_text(size=12, color="black"), 
         legend.text = element_text(size=10, color="black"))
 
 plot_usmap(include=c("AK")) +
-  geom_point(aes(x=lon.1, y=lat.1, fill=Def1), pch=21, data=plot_dat_transformed, size=3, color="black", show.legend=TRUE) + 
+  geom_point(aes(x=lon.1, y=lat.1, fill=Def1), pch=21, data=plot_dat_transformed, size=4, color="black", show.legend=TRUE) + 
   geom_label_repel(aes(x=lon.1, y=lat.1, label=site), data=plot_dat_transformed, size=4.5, point.padding = 0.2) + 
-  labs(color="Freeze-thaw cycles (#)") + 
-  scale_color_gradientn(values = pnw_palette("Starfish", 4), guide = guide_colourbar(barwidth=10, barheight=1, direction = "horizontal", reverse = FALSE, title.position="top", ticks=FALSE, label=TRUE)) +  
+  labs(fill="Freeze-thaw cycles (#)") + 
+  scale_fill_gradientn(colors = rev(soil_palette("redox", 4)), 
+                        guide = guide_colourbar(barwidth=10, barheight=1, direction = "horizontal", 
+                                                reverse = FALSE, title.position="top", ticks=FALSE, label=TRUE)) +  
   theme(legend.position=c(0.1,-0.3),
         plot.margin = unit(c(2,2,2,2), "cm"), 
         legend.title = element_text(size=12, color="black"), 
