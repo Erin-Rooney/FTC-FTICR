@@ -283,7 +283,7 @@ ftc_fulldat_subset2 %>%
   annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.3, y = 55, size = 4)+
   annotate("text", label = "aggregates 1-2", x = 0.63, y = 35, size = 4)+
   annotate("text", label = "aggregates 3-4", x = 0.63, y = 26, size = 4)+
-  annotate("text", label = "aggregates 5-6", x = 0.63, y = 39, size = 4)+
+  annotate("text", label = "aggregates 5-6", x = 0.60, y = 39, size = 4)+
   annotate(
     geom = "curve", x = 0.72, y = 37, xend = 0.8, yend = 44, 
    curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
@@ -293,7 +293,7 @@ ftc_fulldat_subset2 %>%
   annotate(
     geom = "curve", x = 0.72, y = 41, xend = 0.8, yend = 47, 
     curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
-  scale_color_manual(values = (PNWColors::pnw_palette("Starfish", 3)))+
+  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 2)))+
   labs(
     title = "Freeze/Thaw Soil Profile \n Toolik, Alaska \n ", 
     y = "depth, cm",
