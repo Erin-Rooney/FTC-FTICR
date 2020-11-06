@@ -174,6 +174,8 @@ ftc_fulldat %>%
   # scale_size_continuous()+
  # scale_color_gradient(low = "blue", high = "pink")+
   scale_color_manual(values = (PNWColors::pnw_palette("Bay",7)))+
+  annotate("rect", xmax = 4.45, xmin = 3.55, ymax = 100, ymin = -0.5, 
+           fill = "yellow", alpha = 0.1, color = "gray55", size = 0.5) +
   labs(y = "depth, cm", x = "", color = "Freeze/Thaw Cycles", size = "Freeze/Thaw Cycles")+
   #ggtitle("Freeze Thaw Cycle Frequency") +
   theme_er1() +
