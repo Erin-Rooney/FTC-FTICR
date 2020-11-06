@@ -22,10 +22,10 @@ library(tidyverse)
 
 ftc_fulldat = ftc_fulldat %>% 
       mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")),
-             site = recode (site, "HEAL" = "healy",
-                            "BONA" = "caribou-poker",
-                            "BARR" = "barrow",
-                            "TOOL" = "toolik"))%>% 
+             site = recode (site, "HEAL" = "Healy",
+                            "BONA" = "Caribou-poker",
+                            "BARR" = "Barrow",
+                            "TOOL" = "Toolik"))%>% 
       filter(!season == "activelayer" & !is.na(Def1)) %>%       
       mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))  
     
@@ -249,7 +249,8 @@ ftc_actdat_subset =
 
 ftc_fulldat_subset2 = 
   ftc_fulldat %>% 
-  filter(site %in% c("toolik"))
+  filter(site %in% c("Toolik")) 
+  
 
 # ftc_actdat_subset %>% 
 #   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
@@ -276,23 +277,23 @@ ftc_fulldat_subset2 %>%
              position = position_jitter(width = 0.2), size = 2, color = "black")+
   scale_y_reverse()+
   #annotate("segment", x = 0.7, xend = 1.3, y = 50, yend = 50, color = "pink", size= 2) +
-  annotate("segment", x = 0.7, xend = 1.3, y = 19, yend = 19, color = "pink", size= 2) +
+  annotate("segment", x = 0.7, xend = 1.3, y = 19, yend = 19, color = "red", alpha = 0.4, size= 1.5) +
   #scale_color_gradient(low = "light blue", high = "brown")+
-  annotate("text", label = "organic soil\n(0-20 cm)", x = 1.3, y = 13, size = 4)+
-  annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.3, y = 40, size = 4)+
-  annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.3, y = 55, size = 4)+
-  annotate("text", label = "aggregates 1-2", x = 0.63, y = 35, size = 4)+
-  annotate("text", label = "aggregates 3-4", x = 0.63, y = 26, size = 4)+
-  annotate("text", label = "aggregates 5-6", x = 0.60, y = 39, size = 4)+
+  annotate("text", label = "organic soil\n(0-20 cm)", x = 1.4, y = 13, size = 4)+
+  annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.4, y = 40, size = 4)+
+  annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.4, y = 55, size = 4)+
+  annotate("text", label = "core 1 \n aggregates 1-2", x = 0.65, y = 37, size = 4)+
+  annotate("text", label = "core 2 \n aggregates 3-4", x = 0.63, y = 23, size = 4)+
+  annotate("text", label = "core 3 \n aggregates 5-6", x = 0.60, y = 55, size = 4)+
   annotate(
-    geom = "curve", x = 0.72, y = 37, xend = 0.8, yend = 44, 
+    geom = "curve", x = 0.68, y = 41, xend = 0.8, yend = 44, 
    curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
   annotate(
     geom = "curve", x = 0.72, y = 28, xend = 0.8, yend = 34, 
-    curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+
+    curvature = 0.25, arrow = arrow(length = unit(2, "mm")))+
   annotate(
-    geom = "curve", x = 0.72, y = 41, xend = 0.8, yend = 47, 
-    curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
+    geom = "curve", x = 0.64, y = 51, xend = 0.8, yend = 47, 
+    curvature = -0.3, arrow = arrow(length = unit(2, "mm")))+ 
   scale_color_manual(values = (PNWColors::pnw_palette("Bay", 2)))+
   labs(
     title = "Freeze/Thaw Soil Profile \n Toolik, Alaska \n ", 
