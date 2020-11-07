@@ -76,7 +76,7 @@ usmap_crs()
 #   Discarded datum unknown in CRS definition
 
 plot_usmap(include=c("AK")) +
-  geom_point(aes(x=lon.1, y=lat.1, fill=Def1), pch=21, data=plot_dat_transformed, size=3, color="black", show.legend=TRUE) + 
+  geom_point(aes(x=lon.1, y=lat.1, fill=N), pch=21, data=plot_dat_transformed, size=3, color="black", show.legend=TRUE) + 
   geom_label_repel(aes(x=lon.1, y=lat.1, label=site), data=plot_dat_transformed, size=4.5, point.padding = 0.2) + 
   labs(fill="Freeze-thaw cycles (#)") + 
   scale_fill_viridis_c(option="viridis", direction=-1, guide = guide_colourbar
@@ -88,7 +88,7 @@ plot_usmap(include=c("AK")) +
         legend.text = element_text(size=10, color="black"))
 
 plot_usmap(include=c("AK")) +
-  geom_point(aes(x=lon.1, y=lat.1, fill=Def1), pch=21, data=plot_dat_transformed, size=4, color="black", show.legend=TRUE) + 
+  geom_point(aes(x=lon.1, y=lat.1, fill=N), pch=21, data=plot_dat_transformed, size=4, color="black", show.legend=TRUE) + 
   geom_label_repel(aes(x=lon.1, y=lat.1, label=site), data=plot_dat_transformed, size=4.5, point.padding = 0.2) + 
   labs(fill="Freeze-thaw cycles (#)") + 
   scale_fill_gradientn(colors = rev(soil_palette("redox", 4)), 
@@ -99,3 +99,4 @@ plot_usmap(include=c("AK")) +
         legend.title = element_text(size=12, color="black"), 
         legend.text = element_text(size=10, color="black"))
 
+sum(FTC_example$Def1)
