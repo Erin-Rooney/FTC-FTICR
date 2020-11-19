@@ -173,7 +173,25 @@ ftc_fulldat %>%
   scale_y_reverse()+
   # scale_size_continuous()+
  # scale_color_gradient(low = "blue", high = "pink")+
-  scale_color_manual(values = (PNWColors::pnw_palette("Bay",7)))+
+  #scale_color_manual(values = (PNWColors::pnw_palette("Bay",7)))+
+  annotate("rect", xmax = 4.45, xmin = 3.55, ymax = 100, ymin = -0.5, 
+           fill = "yellow", alpha = 0.1, color = "gray55", size = 0.5) +
+  labs(y = "depth, cm", x = "", color = "Freeze/Thaw Cycles", size = "Freeze/Thaw Cycles")+
+  #ggtitle("Freeze Thaw Cycle Frequency") +
+  theme_er1() +
+  facet_grid(~season)
+
+library(forcats) 
+
+ftc_fulldat %>% 
+  filter(duration==1 & mag.vec==0.1 & depth_cm<100) %>%
+  ggplot(aes(y = depth_cm, x = site, size = fct_reorder(as.character(Def1), Def1), color = fct_reorder(as.character(Def1), Def1)))+
+  #geom_jitter()+
+  geom_point(position = position_jitter(width = 0.2))+
+  scale_y_reverse()+
+  # scale_size_continuous()+
+  # scale_color_gradient(low = "blue", high = "pink")+
+  #scale_color_manual(values = (PNWColors::pnw_palette("Starfish",100)))+
   annotate("rect", xmax = 4.45, xmin = 3.55, ymax = 100, ymin = -0.5, 
            fill = "yellow", alpha = 0.1, color = "gray55", size = 0.5) +
   labs(y = "depth, cm", x = "", color = "Freeze/Thaw Cycles", size = "Freeze/Thaw Cycles")+
