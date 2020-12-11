@@ -302,9 +302,9 @@ ftc_fulldat_subset2 %>%
   annotate("text", label = "organic soil\n(0-20 cm)", x = 1.4, y = 13, size = 4)+
   annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.4, y = 40, size = 4)+
   annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.4, y = 55, size = 4)+
-  annotate("text", label = "core 1 \n aggregates 1-2", x = 0.65, y = 37, size = 4)+
-  annotate("text", label = "core 2 \n aggregates 3-4", x = 0.63, y = 23, size = 4)+
-  annotate("text", label = "core 3 \n aggregates 5-6", x = 0.60, y = 55, size = 4)+
+  annotate("text", label = "Core B \n 40-50 cm", x = 0.61, y = 37, size = 4)+
+  annotate("text", label = "Core A \n 28-38 cm", x = 0.65, y = 23, size = 4)+
+  annotate("text", label = "Core C \n 41-50 cm", x = 0.58, y = 53, size = 4)+
   annotate(
     geom = "curve", x = 0.68, y = 41, xend = 0.8, yend = 44, 
    curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
