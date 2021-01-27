@@ -237,6 +237,79 @@ ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = AO_DC, color=siteID)) +
   scale_y_reverse()+
   facet_grid(.~siteID)
 
+neon_proc %>% 
+ggplot() +
+  geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
+  #scale_size(range = c(1, 24), name = "AO:DC")+
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "AO:DC", x = "Site")
+  #scale_y_reverse()+
+  #facet_grid(.~siteID)
+
+neon_proc %>% 
+  filter(depth > "75") %>% 
+  ggplot() +
+  geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
+  #scale_size(range = c(1, 24), name = "AO:DC")+
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(title = "75+ cm",
+       y = "AO:DC", x = "Site")
+#scale_y_reverse()+
+#facet_grid(.~siteID)
+
+neon_proc %>% 
+  filter(depth > "50", depth < "75") %>% 
+  ggplot() +
+  geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
+  #scale_size(range = c(1, 24), name = "AO:DC")+
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(title = "50-75 cm",
+       y = "AO:DC", x = "Site")
+#scale_y_reverse()+
+#facet_grid(.~siteID)
+
+neon_proc %>% 
+  filter(depth > "25", depth < "50") %>% 
+  ggplot() +
+  geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
+  #scale_size(range = c(1, 24), name = "AO:DC")+
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(title = "25-50 cm",
+       y = "AO:DC", x = "Site")
+#scale_y_reverse()+
+#facet_grid(.~siteID)
+
+neon_proc %>% 
+  filter(depth > "0", depth < "25") %>% 
+  ggplot() +
+  geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
+  #scale_size(range = c(1, 24), name = "AO:DC")+
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(title = "0-25 cm",
+       y = "AO:DC", x = "Site")
+#scale_y_reverse()+
+#facet_grid(.~siteID)
+
+neon_proc %>% 
+  ggplot(aes(x = (depth), fill = siteID))+
+  geom_histogram(aes(y = stat(count)), 
+                 bindwidth=5, color = "black") +
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  facet_wrap(.~siteID)+
+  theme_er()
+
+
+
 p1 = neon_proc %>% 
   ggplot() +
   geom_point(data = neon_proc, aes(y=depth, x=nitrogenTot, color=siteID)) +
@@ -340,11 +413,13 @@ sommos_proc = sommos_proc %>%
   mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")))
 
 sommos_proc %>% 
+  filter(!horizon_type == "none") %>% 
   ggplot() +
-  geom_boxplot(data = sommos_proc, aes(y=AO_DC, x=site, fill=site)) +
+  geom_point(data = sommos_proc, aes(y=AO_DC, x=site, fill=site, color = site, size = 4)) +
   theme_er() +
-  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "AO Extractable: DC Extractable Ratio")
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "AO Extractable: DC Extractable Ratio") +
+  facet_wrap(.~horizon_type)
 
 sommos_proc %>% 
   ggplot() +
