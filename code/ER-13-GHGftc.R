@@ -327,6 +327,36 @@ ftc_fulldat_subset2 %>%
   theme_er()
 
 
+
+
+ftc_fulldat %>% 
+  filter(duration==1 & mag.vec==0.1 & depth_cm<150) %>%
+  ggplot(aes(y = depth_cm, x = Def1, color = season))+
+  #geom_point()+
+  stat_summary(fun = "mean", geom = "line", size=3, alpha = 0.75)+
+  #geom_point(data = ftc_fulldat_subset2 %>% filter(Def1 == 0 &duration==24 & mag.vec==1.5 & depth_cm<100),
+             #position = position_jitter(width = 0.2), size = 2, color = "black")+
+  scale_y_reverse()+
+  #annotate("segment", x = 0.7, xend = 1.3, y = 50, yend = 50, color = "pink", size= 2) +
+  # annotate("segment", x = 0.7, xend = 1.3, y = 19, yend = 19, color = "red", alpha = 0.4, size= 1.5) +
+  # annotate("text", label = "organic soil\n(0-20 cm)", x = 1.4, y = 13, size = 4)+
+  # annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.4, y = 40, size = 4)+
+  # annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.4, y = 55, size = 4)+
+  # annotate("text", label = "Core B \n 40-50 cm", x = 0.61, y = 37, size = 4)+
+  # annotate("text", label = "Core A \n 28-38 cm", x = 0.65, y = 23, size = 4)+
+  # annotate("text", label = "Core C \n 41-50 cm", x = 0.58, y = 53, size = 4)+
+  scale_color_manual(values = (PNWColors::pnw_palette("Sailboat", 4)))+
+  labs(
+    title = "Freeze/Thaw Soil Profile \n Toolik, Alaska \n ", 
+    y = "depth, cm",
+    x = "Freeze/Thaw Cycles", 
+    color = "Season")+
+  theme_er()+
+  facet_grid(.~site)
+
+
+
+
 ftc_fulldat_subset %>% 
   filter(Def1 > 0) %>% 
   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
