@@ -12,13 +12,16 @@
 
 library(tidyverse)
 library(soilpalettes)
+library(PNWColors)
+library(nord)
 
 # ghg_data = read.csv("processed/ghg_depth.csv")
 ftc_data = read.csv("processed/FTC_quant_inprocess.csv")
-# neon_barr_csv = read.csv("processed/neon_barr_biogeochem.csv")
-# neon_heal_csv = read.csv("processed/neon_heal_biogeochem.csv")
-# neon_tool_csv = read.csv("processed/neon_tool_biogeochem.csv")
-# neon_bona_csv = read.csv("processed/neon_bona_biogeochem.csv")
+ftc_full = read.csv("processed/final_dat2.csv")
+neon_barr_csv = read.csv("processed/neon_barr_biogeochem.csv")
+neon_heal_csv = read.csv("processed/neon_heal_biogeochem.csv")
+neon_tool_csv = read.csv("processed/neon_tool_biogeochem.csv")
+neon_bona_csv = read.csv("processed/neon_bona_biogeochem.csv")
 
 #
 # 2. process files -----------------------------------------------------------
@@ -26,26 +29,26 @@ ftc_data = read.csv("processed/FTC_quant_inprocess.csv")
 ## 2.1 calculate mean ftc
 
 ftc_avg = 
-  ftc_data %>% 
+  ftc_full %>% 
   filter(!season %in% "activelayer") %>% 
   ## NOTE: USE ADDITIONAL FILTERS AS NEEDED. I SEE MULTIPLE ENTRIES IN YEAR, MAG.VEC, DURATION, ETC.
   ## FOR NOW, I AM COMBINING ACROSS ALL THOSE VARIABLES, KEEPING ONLY DEPTH, SEASON, SITE AS GROUPING VARIABLES
   
   # create a `total` ftc column for annual total ftc
   group_by(site, year, core, depth_cm) %>% 
-  #dplyr::mutate(total = sum(def1)) %>% 
+  dplyr::mutate(total = sum(Def1)) %>% 
   ungroup() %>% 
   
   # now, incorporate the `total` data into `season`
   # spread the `season` columns, and then recombine with `total`
-  spread(season, def1) %>% 
-  gather(season, def1, total:winter) %>%
+  spread(season, Def1) %>% 
+  gather(season, Def1, total:winter) %>%
   # many NAs were introduced when forcing wide-form. remove all rows containing NAs
   na.omit() %>% 
   
   # now, calculate mean FTC per site/depth/season
   group_by(site, depth_cm, season) %>% 
-  dplyr::summarise(ftc = as.integer(mean(def1))) %>% 
+  dplyr::summarise(ftc = as.integer(mean(Def1))) %>% 
   ungroup() %>% 
   
   # create new columns for depth range
@@ -64,42 +67,56 @@ ftc_avg =
          depth_stop_cm = as.integer(depth_stop_cm))
 
 
-## 2.2 combine and clean site file for compatibility with ftc file
+# 2.2 combine and clean site file for compatibility with ftc file
 
-# all_site = neon_barr_csv %>% 
-#   bind_rows(neon_bona_csv, neon_heal_csv, neon_tool_csv) 
-# 
-# 
-#  om_thickness = 
-#    all_site %>% 
-#    rename(site = siteID)
-  #  group_by(site, mid, trmt) %>% 
-  #  dplyr::summarise(co2_ug_g_oc = round(mean(gain_ug_g_oc),2)) %>% 
-  #  ungroup() %>% 
-  # mutate(site = recode(site, "healy" = "HEAL", "tool" = "TOOL")) 
+ all_site = neon_barr_csv %>%
+   bind_rows(neon_bona_csv, neon_heal_csv, neon_tool_csv) 
+   
+   
+om = all_site %>%
+   select(siteID, plotID, horizonName, biogeoTopDepth, biogeoBottomDepth, biogeoCenterDepth, ctonRatio) %>% 
+   mutate(major = case_when(grepl("O", horizonName)~"O"),
+          sub = case_when(grepl("e", horizonName)~"e",
+                            grepl("i", horizonName)~"i",
+                            grepl("a", horizonName)~"a",
+                            ))
+ 
 
-# ghg_summary = ghg_summary %>% 
-#   mutate(trmt = factor(trmt, levels = c("ftc", "control")))
-# 
-# ghg_summary = ghg_summary %>% 
-#   mutate(day = factor(day, levels = c("day1", "day4", "day7", "day14")))
 
-# ## 2.3 now combine the two files such that `mid` lies within the ftc depth range
-# om_ftc = 
-#   subset(merge(om_thickness, ftc_avg), depth_start_cm <= biogeoCenterDepth & depth_stop_cm >= biogeoCenterDepth) 
+  om_thickness =
+    om %>%
+    rename(site = siteID, mid = biogeoCenterDepth) %>% 
+    group_by(plotID, mid) 
+    # ungroup() %>%
+   #mutate(site = recode(site, "healy" = "HEAL", "tool" = "TOOL"))
+ # 
+ # ghg_summary = ghg_summary %>%
+ #   mutate(trmt = factor(trmt, levels = c("ftc", "control")))
+ # 
+ # ghg_summary = ghg_summary %>%
+ #   mutate(day = factor(day, levels = c("day1", "day4", "day7", "day14")))
+
+ ## 2.3 now combine the two files such that `mid` lies within the ftc depth range
+ om_ftc =
+   subset(merge(om_thickness, ftc_avg), depth_start_cm <= mid & depth_stop_cm >= mid)
 
 #
 # 3. plots -------------------------------------------------------------------
 
-# theme_set(theme_er())
-# 
-# ghg_ftc %>% 
-#   filter(season=="total") %>% 
-#   ggplot(aes(x = ftc, y = gain_ug_g_oc, color = trmt))+
-#   geom_point()+
-#   geom_smooth(method = "lm", se = F)+
-#   facet_grid(season~day)
-# #facet_grid(season~mid, scales = "free_y")
+theme_set(theme_er())
+ 
+om_ftc = om_ftc %>% 
+   mutate(depth = depth_stop_cm - depth_start_cm)
+
+om_ftc %>%
+  filter(major=="O") %>%
+  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
+  ggplot(aes(x = site, y = depth_cm, fill = site))+
+  geom_bar(position = "dodge", stat= "identity")+
+  scale_y_reverse()+
+  theme_kp()+
+  scale_fill_nord("afternoon_prarie")
+
 # 
 # 
 # ghg_ftc %>% 
@@ -148,7 +165,7 @@ theme_kp <- function() {  # this for all the elements common across plots
           legend.title = element_blank(),
           legend.text = element_text(size = 12),
           legend.key.size = unit(1.5, 'lines'),
-          panel.border = element_rect(color="black",size=1.5, fill = NA),
+          panel.border = element_rect(color="white",size=1.5, fill = NA),
           
           plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
           plot.subtitle = element_text(hjust = 0.5),
@@ -166,10 +183,16 @@ theme_kp <- function() {  # this for all the elements common across plots
 }
 
 
-ftc_avg %>% 
-  ggplot() +
-  geom_rect(ymin = 'depth_start_cm', ymax = 'depth_stop_cm', xmin = 'site'-0.2, xmax= 'site'+0.2, fill = 'ftc')+
+ftc_avg_depth = ftc_avg %>% 
+  mutate(depth = depth_stop_cm - depth_start_cm)
+
+ftc_avg_depth %>% 
+  filter(!season %in% "total") %>% 
+  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
+  ggplot(aes(y = depth, x = site, fill = ftc))+
+  geom_bar(position = "stack", stat= "identity")+
   facet_grid(.~season)+
   scale_y_reverse()+
+  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
   theme_kp()
 
