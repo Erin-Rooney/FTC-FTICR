@@ -168,7 +168,7 @@ theme_kp <- function() {  # this for all the elements common across plots
 
 ftc_avg %>% 
   ggplot() +
-  geom_rect(ymin = 'depth_start_cm', ymax = 'depth_stop_cm', xmin = as.numeric('site')-0.2, xmax= as.numeric('site')+0.2, fill = 'ftc')+
+  geom_rect(ymin = 'depth_start_cm', ymax = 'depth_stop_cm', xmin = 'site'-0.2, xmax= 'site'+0.2, fill = 'ftc')+
   facet_grid(.~season)+
   scale_y_reverse()+
   theme_kp()
