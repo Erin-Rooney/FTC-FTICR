@@ -117,6 +117,19 @@ om_ftc %>%
   theme_kp()+
   scale_fill_nord("afternoon_prarie")
 
+
+om_ftc %>%
+  filter(major=="O") %>%
+  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
+  ggplot(aes(x = site, y = depth_cm, fill = site))+
+  geom_point()+
+  geom_boxplot(alpha = 0.8)+
+  scale_y_reverse()+
+  theme_kp()+
+  scale_fill_nord("afternoon_prarie", 4)+
+  labs(y = "depth, cm")
+
+
 # 
 # 
 # ghg_ftc %>% 
