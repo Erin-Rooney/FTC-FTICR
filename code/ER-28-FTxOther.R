@@ -38,7 +38,15 @@ site_data %>%
   scale_color_nord("afternoon_prarie", 4)+
   labs(y = "precipitation")
 
-  
+climate_data %>% 
+  filter(site %in% c("BONA", "BARR", "HEAL", "TOOL")) %>% 
+  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
+  ggplot()+
+  geom_point(aes(x=site, y=Tmax01, color= site), size =9)+
+  theme_kp()+
+  scale_color_nord("afternoon_prarie", 4)+
+  labs(y = "Temperature, C")
+
 
 
 
