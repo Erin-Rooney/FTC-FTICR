@@ -22,9 +22,25 @@ neon_barr_csv = read.csv("processed/neon_barr_biogeochem.csv")
 neon_heal_csv = read.csv("processed/neon_heal_biogeochem.csv")
 neon_tool_csv = read.csv("processed/neon_tool_biogeochem.csv")
 neon_bona_csv = read.csv("processed/neon_bona_biogeochem.csv")
+site_data = read.csv("processed/SOMMOS_Site_11-25-19.csv")
+climate_data = read.csv("processed/SOMMOS_SoilCoreDB - Climate_1961_1990.csv")
 
 #
 # 2. process files -----------------------------------------------------------
+
+
+site_data %>% 
+ filter(site %in% c("BONA", "BARR", "HEAL", "TOOL")) %>% 
+  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
+  ggplot()+
+  geom_point(aes(x=site, y=PPT03, color= site), size =9)+
+  theme_kp()+
+  scale_color_nord("afternoon_prarie", 4)+
+  labs(y = "precipitation")
+
+  
+
+
 
 ## 2.1 calculate mean ftc
 
@@ -173,7 +189,7 @@ om_ftc %>%
 
 theme_kp <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
-    theme(legend.position = "top",
+    theme(legend.position = "right",
           legend.key=element_blank(),
           legend.title = element_blank(),
           legend.text = element_text(size = 12),
