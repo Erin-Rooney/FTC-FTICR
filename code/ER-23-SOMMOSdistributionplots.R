@@ -80,7 +80,7 @@ neon_proc =
 # ggplot set up-----------------------------------
 theme_er <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
-    theme(legend.position = "top",
+    theme(legend.position = "none",
           legend.key=element_blank(),
           legend.title = element_blank(),
           legend.text = element_text(size = 12),
@@ -103,7 +103,7 @@ theme_er <- function() {  # this for all the elements common across plots
 #
 theme_erclean <- function () {
    theme_clean() %+replace%
-    theme(legend.position = "top",
+    theme(legend.position = "none",
           legend.key = element_blank(),
           legend.title = element_blank(),
           legend.text = element_text(size = 12),
@@ -111,6 +111,7 @@ theme_erclean <- function () {
           plot.title = element_text(hjust = 0.5, size = 14),
           plot.subtitle = element_text(hjust = 0.5, size = 12, lineheight = 1.5),
           axis.text = element_text(size = 12, color = "black"),
+          axis.text.x = element_text(angle = 90),
           axis.title = element_text(size = 12, face = "bold", color = "black"),
           strip.background = element_rect(colour="white", fill="white"), #facet formatting
           panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
@@ -191,7 +192,7 @@ print(oc_hsd$groups)
 
 #ggplots------------------------------------------------------------
 neon_proc = neon_proc %>% 
-  mutate(siteID = factor (siteID, levels = c("HEAL", "BONA", "BARR", "TOOL"))) %>% 
+  mutate(siteID = factor (siteID, levels = c("HEAL", "BONA", "TOOL", "BARR"))) %>% 
   rename(depth = biogeoCenterDepth)
 
 library(ggthemes)
@@ -237,15 +238,52 @@ ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = AO_DC, color=siteID)) +
   scale_y_reverse()+
   facet_grid(.~siteID)
 
+library(nord)
 
-ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = AO_DC, color=siteID)) +
-  geom_point(alpha = 0.4) +
-  scale_size(range = c(1, 24), name = "AO:DC")+
+neon_proc = neon_proc %>% 
+  mutate(siteID = factor (siteID, levels = c("BARR", "TOOL", "BONA", "HEAL"))) 
+
+neon_proc %>% 
+ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
+  geom_point(alpha = 0.4, size = 5) +
   theme_erclean() +
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  scale_color_nord("afternoon_prarie", 4)+
+  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
   labs(y = "Depth, cm", x = "C:N Ratio")+
   scale_y_reverse()+
   facet_grid(.~siteID)
+
+neon_proc %>% 
+  ggplot(aes(y=depth, x=log10(AO_DC), color=siteID)) +
+  geom_point(alpha = 0.4, size = 5) +
+  theme_erclean() +
+  scale_color_nord("afternoon_prarie", 4)+
+  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "AO:DC, log10")+
+  scale_y_reverse()+
+  facet_grid(.~siteID)
+
+neon_proc %>% 
+  ggplot(aes(y=depth, x=acidity, color=siteID)) +
+  geom_point(alpha = 0.4, size = 5) +
+  theme_erclean() +
+  scale_color_nord("afternoon_prarie", 4)+
+  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "Acidity")+
+  scale_y_reverse()+
+  facet_grid(.~siteID)
+  
+
+neon_proc %>% 
+  ggplot(aes(y=depth, x=estimatedOC, color=siteID)) +
+  geom_point(alpha = 0.4, size = 5) +
+  theme_erclean() +
+  scale_color_nord("afternoon_prarie", 4)+
+  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "Estimated OC")+
+  scale_y_reverse()+
+  facet_grid(.~siteID)
+
 
 neon_proc %>% 
 ggplot() +
@@ -311,12 +349,15 @@ neon_proc %>%
 #facet_grid(.~siteID)
 
 neon_proc %>% 
-  ggplot(aes(x = (depth), fill = siteID))+
+  ggplot(aes(x = (depth), fill = siteID, color = siteID))+
   geom_histogram(aes(y = stat(count)), 
-                 bindwidth=5, color = "black") +
-  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+                 bindwidth=5, alpha = 0.5) +
+  scale_fill_nord("afternoon_prarie", 4)+
+  scale_color_nord("afternoon_prarie", 4)+
   facet_wrap(.~siteID)+
   theme_er()
+
+
 
 
 
