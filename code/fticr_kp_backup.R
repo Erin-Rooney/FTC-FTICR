@@ -286,15 +286,18 @@ fticr_water_nosc_trt =
 #   scale_color_manual (values = soil_palette("gley", 2)) +
 #   ggtitle("NOSC, Water Extracted by Treatment")
 
+library(nord)
   
 ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site, fill = Site)) +
-  geom_histogram(alpha = 0.4, position = "identity", binwidth = 0.1) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
   facet_grid(Material ~ .) +
   theme_er() +
   #scale_fill_manual(values = soil_palette("redox", 2)) +
   #scale_color_manual(values = soil_palette("redox", 2)) + 
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
-  scale_fill_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
+  #scale_color_manual(values = rev(nord("afternoon_prarie", 2)))+
+  #scale_fill_manual(values =rev(nord("afternoon_prarie", 2)))+
+  scale_fill_nord("victory_bonds", 2)+
+  scale_color_nord("victory_bonds", 2)+
   ggtitle("NOSC, Water Extracted by Site")+
   facet_grid(Material~Trtmt)
 
@@ -314,9 +317,11 @@ ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   scale_fill_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
   ggtitle("NOSC, Water Extracted")
 
-ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site))
+ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site))+
   geom_histogram(aes(y = stat(count)/sum(count))) +
     scale_y_continuous(labels = scales::percent)
+
+library(soilpalettes)
   
 ggplot(fticr_water_nosc_trt, aes(x = NOSC, color = Site, fill = Site))+
     geom_histogram(alpha = 0.5, position = "identity")+
@@ -348,15 +353,28 @@ soil_aromatic %>%
 
 #ggplots
 
-ggplot(soil_aromatic_counts, aes(x=Site, y=counts, fill=Trtmt)) + 
-  geom_boxplot() + theme_er() + 
+soil_aromatic_counts %>% 
+ggplot(aes(y = count, x = Site, fill =aromatic_col))+ 
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_er() + 
   scale_fill_manual (values = soil_palette("podzol", 4)) +
   facet_grid(Material ~.)
 
-ggplot(soil_aromatic_counts, aes(x=Site, y=counts, fill=aromatic_col)) + 
-  geom_boxplot() + theme_er() + 
+ggplot(soil_aromatic_counts, aes(x=Site, y=counts, fill=aromatic_col, color=aromatic_col)) + 
+  geom_bar(stat = 'identity', position = "dodge", alpha = 0.5) + theme_er() +
+  scale_color_manual(values = (PNWColors::pnw_palette("Mushroom", 3)))+
+  scale_fill_manual(values = (PNWColors::pnw_palette("Mushroom", 3)))+
+  facet_grid(Material ~ Trtmt)
+
+CON_only = soil_aromatic_counts %>% 
+  filter(Trtmt == CON)
+
+  ggplot() +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_er() + 
   scale_fill_manual (values = soil_palette("alaquod", 4)) +
   facet_grid(Material ~ .)
+  
 
 
 ##### KP edit ----
