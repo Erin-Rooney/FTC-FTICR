@@ -237,6 +237,16 @@ ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = AO_DC, color=siteID)) +
   scale_y_reverse()+
   facet_grid(.~siteID)
 
+
+ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = AO_DC, color=siteID)) +
+  geom_point(alpha = 0.4) +
+  scale_size(range = c(1, 24), name = "AO:DC")+
+  theme_erclean() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "C:N Ratio")+
+  scale_y_reverse()+
+  facet_grid(.~siteID)
+
 neon_proc %>% 
 ggplot() +
   geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
