@@ -432,6 +432,76 @@ ghg_csv2 %>%
   theme_er() +
   facet_grid(~trmt)
 
+# calculate mean ghg
+
+ghg_avg = 
+  ghg_csv2 %>% 
+  #filter(!season %in% "activelayer") %>% 
+  ## NOTE: USE ADDITIONAL FILTERS AS NEEDED. I SEE MULTIPLE ENTRIES IN YEAR, MAG.VEC, DURATION, ETC.
+  ## FOR NOW, I AM COMBINING ACROSS ALL THOSE VARIABLES, KEEPING ONLY DEPTH, SEASON, SITE AS GROUPING VARIABLES
+  
+  # create a `total` ftc column for annual total ftc
+  group_by(site, horizon, trmt, mid) %>% 
+  dplyr::mutate(total = sum(gain_ug_g_oc)) %>% 
+  ungroup() %>% 
+  
+  # now, incorporate the `total` data into `season`
+  # spread the `season` columns, and then recombine with `total`
+  #spread(season, Def1) %>% 
+  #wgather(season, Def1, total:winter) %>%
+  # many NAs were introduced when forcing wide-form. remove all rows containing NAs
+  na.omit() %>% 
+  
+  # now, calculate mean FTC per site/depth/season
+  group_by(site, horizon, mid, trmt) %>% 
+  dplyr::summarise(gain_ug_g_oc = as.integer(mean(gain_ug_g_oc))) %>% 
+  ungroup() %>% 
+  
+  # create new columns for depth range
+  # create bins of 5 cm depth increments
+  mutate(depth_bins = cut_width(mid, width = 5, center=2.5)) %>% 
+  # now clean up
+  # remove brackets of different types
+  # I normally use the `stringr` package, but that doesn't like open brackets
+  # so I use the `stringi` package for this. You'll have to install it first
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "]",""),
+         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "[",""),
+         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "(","")) %>% 
+  # now separate this into two different columns
+  separate(depth_bins, sep = ",", into = c("depth_start_cm", "depth_stop_cm")) %>% 
+  mutate(depth_start_cm = as.integer(depth_start_cm),
+         depth_stop_cm = as.integer(depth_stop_cm))
+
+
+
+ghg_corr = ghg_avg %>% 
+  mutate(depth = depth_stop_cm - depth_start_cm)
+
+
+ghg_corr %>% 
+  #filter(mid > 0) %>% 
+  ggplot(aes(y = depth, x = site, fill = gain_ug_g_oc))+
+  #geom_jitter()+
+  geom_bar(position = "stack", stat= "identity")+
+  scale_y_reverse() +
+  #coord_cartesian(ylim = c(70,0)) +
+  # scale_size_continuous()
+  scale_fill_gradient(low = "blue", high = "yellow")+
+  ggtitle("Respiration (ug per g OC)") +
+  theme_er() +
+  facet_grid(~trmt)
+
+ftc_avg_depth %>% 
+  filter(!season %in% "total") %>% 
+  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
+  ggplot(aes(y = depth, x = site, fill = ftc))+
+  geom_bar(position = "stack", stat= "identity")+
+  facet_grid(.~season)+
+  scale_y_reverse()+
+  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
+  theme_kp()
+
+
 sommos_oc %>% 
   filter(mid > 0) %>% 
   ggplot(aes(y = mid, x = site, size = OC.g100g, color = OC.g100g))+
