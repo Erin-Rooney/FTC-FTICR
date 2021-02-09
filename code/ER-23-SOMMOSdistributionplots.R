@@ -35,7 +35,7 @@ neon_barr_proc = neon_barr_csv %>%
   # create columns for indices
   dplyr::mutate(AO = (alOxalate+feOxalate),
                 KCL = (alKcl+feKcl),
-                DC = (alCitDithionate+feCitDithionate),
+                DC = (alCitDithionate+feCitDithionate)-(alOxalate+feOxalate),
                 AO_DC = (AO/DC),
                 KCL_DC = (KCL/DC))
 
@@ -46,7 +46,7 @@ neon_heal_proc = neon_heal_csv %>%
   # create columns for indices
   dplyr::mutate(AO = (alOxalate+feOxalate),
                 KCL = (alKcl+feKcl),
-                DC = (alCitDithionate+feCitDithionate),
+                DC = (alCitDithionate+feCitDithionate)-(alOxalate+feOxalate),
                 AO_DC = (AO/DC),
                 KCL_DC = (KCL/DC))
 
@@ -57,7 +57,7 @@ neon_bona_proc = neon_bona_csv %>%
   # create columns for indices
   dplyr::mutate(AO = (alOxalate+feOxalate),
                 KCL = (alKcl+feKcl),
-                DC = (alCitDithionate+feCitDithionate),
+                DC = (alCitDithionate+feCitDithionate)-(alOxalate+feOxalate),
                 AO_DC = (AO/DC),
                 KCL_DC = (KCL/DC))
 
@@ -68,7 +68,7 @@ neon_tool_proc = neon_tool_csv %>%
   # create columns for indices
   dplyr::mutate(AO = (alOxalate+feOxalate),
                 KCL = (alKcl+feKcl),
-                DC = (alCitDithionate+feCitDithionate),
+                DC = (alCitDithionate+feCitDithionate)-(alOxalate+feOxalate),
                 AO_DC = (AO/DC),
                 KCL_DC = (KCL/DC))
 
