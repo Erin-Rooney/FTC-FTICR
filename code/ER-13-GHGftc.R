@@ -423,14 +423,14 @@ ghg_csv2 %>%
   filter(mid > 0) %>% 
   ggplot(aes(y = mid, x = site, size = gain_ug_g_oc, color = gain_ug_g_oc))+
   #geom_jitter()+
-  geom_point(position = position_jitter(width = 0.2))+
+  geom_point(position = position_jitter(width = 0.05))+
   scale_y_reverse() +
   coord_cartesian(ylim = c(70,0)) +
   # scale_size_continuous()
   scale_color_gradient(low = "blue", high = "yellow")+
   ggtitle("Respiration (ug per g OC)") +
   theme_er() +
-  facet_grid(~trmt)
+  facet_grid(day~trmt)
 
 # calculate mean ghg
 
@@ -453,7 +453,7 @@ ghg_avg =
   na.omit() %>% 
   
   # now, calculate mean FTC per site/depth/season
-  group_by(site, horizon, mid, trmt) %>% 
+  group_by(site, horizon, trmt, mid) %>% 
   dplyr::summarise(gain_ug_g_oc = as.integer(mean(gain_ug_g_oc))) %>% 
   ungroup() %>% 
   
@@ -491,6 +491,42 @@ ghg_corr %>%
   theme_er() +
   facet_grid(~trmt)
 
+library(reshape2)
+library(plotly)
+
+ghg_avg %>% 
+  #filter(mid > 0) %>% 
+  ggplot(aes(y = mid, x = gain_ug_g_oc, color = trmt))+
+  geom_point()+
+  geom_line(orientation = "y")+
+  #geom_jitter()+
+  #geom_bar(position = "stack", stat= "identity")+
+  scale_y_reverse() +
+  #coord_cartesian(ylim = c(70,0)) +
+  # scale_size_continuous()
+  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 2)))+
+  ggtitle("Respiration (ug per g OC)") +
+  theme_er() +
+  facet_grid(.~site)
+
+ghg_avg %>% 
+  #filter(mid > 0) %>% 
+  ggplot(aes(y = mid, x = gain_ug_g_oc, color = trmt))+
+  geom_errorbar(aes(ymin=gain_ug_g_oc-se, ymax=gain_ug_g_oc+se), width=.1) +
+  geom_point()+
+  geom_line(orientation = "y")+
+  #geom_jitter()+
+  #geom_bar(position = "stack", stat= "identity")+
+  scale_y_reverse() +
+  #coord_cartesian(ylim = c(70,0)) +
+  # scale_size_continuous()
+  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 2)))+
+  ggtitle("Respiration (ug per g OC)") +
+  theme_er() +
+  facet_grid(.~site)
+
+
+
 ftc_avg_depth %>% 
   filter(!season %in% "total") %>% 
   mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
@@ -500,6 +536,10 @@ ftc_avg_depth %>%
   scale_y_reverse()+
   scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
   theme_kp()
+
+
+
+  
 
 
 sommos_oc %>% 
