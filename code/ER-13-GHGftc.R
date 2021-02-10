@@ -555,7 +555,7 @@ ghg_summary2 %>%
   scale_y_reverse() +
   #coord_cartesian(ylim = c(70,0)) +
   # scale_size_continuous()
-  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 3)))+
+  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 2)))+
   ggtitle("Respiration (ug per g OC)") +
   theme_er() +
   facet_grid(day~site)
