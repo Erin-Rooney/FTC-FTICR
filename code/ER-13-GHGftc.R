@@ -518,10 +518,19 @@ ghg_summary = ddply(ghg_csv2, c("site", "trmt", "mid"), summarise,
       se   = sd / sqrt(N)
 )
 
+ghg_summary2 = ddply(ghg_csv2, c("site", "trmt", "mid", "day"), summarise,
+                     N    = length(gain_ug_g_oc),
+                     mean = mean(gain_ug_g_oc),
+                     sd   = sd(gain_ug_g_oc),
+                     se   = sd / sqrt(N)
+)
+
+pd <- position_dodge(0.1)
+
 ghg_summary %>% 
   #filter(mid > 0) %>% 
   ggplot(aes(y = mid, x = mean, color = trmt))+
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.1) +
+  #geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.1) +
   geom_point()+
   geom_line(orientation = "y")+
   #geom_jitter()+
@@ -534,7 +543,22 @@ ghg_summary %>%
   theme_er() +
   facet_grid(.~site)
 
-
+ghg_summary2 %>% 
+  #filter(mid > 0) %>% 
+  ggplot(aes(y = mid, x = mean, color = trmt, group = trmt))+
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=.1, 
+                    )) +
+  geom_point()+
+  geom_line(orientation = "y")+
+  #geom_jitter()+
+  #geom_bar(position = "stack", stat= "identity")+
+  scale_y_reverse() +
+  #coord_cartesian(ylim = c(70,0)) +
+  # scale_size_continuous()
+  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 3)))+
+  ggtitle("Respiration (ug per g OC)") +
+  theme_er() +
+  facet_grid(day~site)
 
 ftc_avg_depth %>% 
   filter(!season %in% "total") %>% 
