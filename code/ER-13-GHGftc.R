@@ -509,10 +509,19 @@ ghg_avg %>%
   theme_er() +
   facet_grid(.~site)
 
-ghg_avg %>% 
+library(plyr)
+
+ghg_summary = ddply(ghg_csv2, c("site", "trmt", "mid"), summarise,
+      N    = length(gain_ug_g_oc),
+      mean = mean(gain_ug_g_oc),
+      sd   = sd(gain_ug_g_oc),
+      se   = sd / sqrt(N)
+)
+
+ghg_summary %>% 
   #filter(mid > 0) %>% 
-  ggplot(aes(y = mid, x = gain_ug_g_oc, color = trmt))+
-  geom_errorbar(aes(ymin=gain_ug_g_oc-se, ymax=gain_ug_g_oc+se), width=.1) +
+  ggplot(aes(y = mid, x = mean, color = trmt))+
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.1) +
   geom_point()+
   geom_line(orientation = "y")+
   #geom_jitter()+
