@@ -530,6 +530,8 @@ ghg_summary = ddply(ghg_csv2, c("site", "trmt", "mid"), summarise,
       se   = sd / sqrt(N)
 )
 
+# okay here's a second summary because I wanted to include the day info in the statistical summaries
+
 ghg_summary2 = ddply(ghg_csv2, c("site", "trmt", "mid", "day"), summarise,
                      N    = length(gain_ug_g_oc),
                      mean = mean(gain_ug_g_oc),
@@ -537,7 +539,11 @@ ghg_summary2 = ddply(ghg_csv2, c("site", "trmt", "mid", "day"), summarise,
                      se   = sd / sqrt(N)
 )
 
+#okay this is supposed to be helpful for adding error bars to my line/points but it's not working
 pd <- position_dodge(0.1)
+
+#alright here's a figure. no error bars. but it does have sd info in the data frame but it looks real weird when I put it in the plot
+#important to note, all days are grouped in this plot/data frame
 
 ghg_summary %>% 
   #filter(mid > 0) %>% 
@@ -554,6 +560,9 @@ ghg_summary %>%
   ggtitle("Respiration (ug per g OC)") +
   theme_er() +
   facet_grid(.~site)
+
+#and now a plot that separates out days. Not sure why error bars aren't showing up :(
+
 
 ghg_summary2 %>% 
   #filter(mid > 0) %>% 
@@ -572,6 +581,8 @@ ghg_summary2 %>%
   theme_er() +
   facet_grid(day~site)
 
+#and now we're out of the ghg and into the ftc.
+
 ftc_avg_depth %>% 
   filter(!season %in% "total") %>% 
   mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
@@ -583,8 +594,7 @@ ftc_avg_depth %>%
   theme_kp()
 
 
-
-  
+#and here's a sommos figure
 
 
 sommos_oc %>% 
