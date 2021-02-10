@@ -472,11 +472,12 @@ ghg_avg =
   mutate(depth_start_cm = as.integer(depth_start_cm),
          depth_stop_cm = as.integer(depth_stop_cm))
 
-
+# Okay so here I am taking the averages that I got above and just adding a column for depth
 
 ghg_corr = ghg_avg %>% 
   mutate(depth = depth_stop_cm - depth_start_cm)
 
+# Okay now this is a figure. It's not working well and has issues, but it is a barplot for the ghg respiration data
 
 ghg_corr %>% 
   #filter(mid > 0) %>% 
@@ -491,8 +492,15 @@ ghg_corr %>%
   theme_er() +
   facet_grid(~trmt)
 
+# okay so I need to try this same data but in a line plot. What's great about the following plots
+# is that I figured out how to align them vertically. 
+
+#I don't know if I actually need to load these
+
 library(reshape2)
 library(plotly)
+
+#And here's the plot. But it's using the averages so I don't have data by day.
 
 ghg_avg %>% 
   #filter(mid > 0) %>% 
@@ -509,7 +517,11 @@ ghg_avg %>%
   theme_er() +
   facet_grid(.~site)
 
+# loading another package I think I actually need this one.
+
 library(plyr)
+
+#Okay now I am creating a new data frame that has some statistical summaries
 
 ghg_summary = ddply(ghg_csv2, c("site", "trmt", "mid"), summarise,
       N    = length(gain_ug_g_oc),
