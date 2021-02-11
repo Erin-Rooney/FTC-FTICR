@@ -24,58 +24,28 @@ dplyr::select(site, horizon_type, midpoint_depth.cm, DC_Al.g100g,
   dplyr::mutate(AO = (AO_Fe.g100g+AO_Al.g100g),
                 SP = (SP_Fe.g100g+SP_Al.g100g),
                 DC = (DC_Fe.g100g+DC_Al.g100g),
-                AO_DC = (AO/DC),
+                AO_DC = (DC/AO),
                 SP_DC = (SP/DC))
                 
-                
-neon_barr_proc = neon_barr_csv %>% 
-  dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
-                feKcl, nitrogenTot, estimatedOC, carbonTot, ctonRatio, acidity, OlsenPExtractable, waterSatx, alOxalate, feOxalate, alCitDithionate, 
-                feCitDithionate) %>% 
-  # create columns for indices
-  dplyr::mutate(AO = (alOxalate+feOxalate),
-                KCL = (alKcl+feKcl),
-                DC = (alCitDithionate+feCitDithionate)-(alOxalate+feOxalate),
-                AO_DC = (AO/DC),
-                KCL_DC = (KCL/DC))
-
-neon_heal_proc = neon_heal_csv %>% 
-  dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
-                feKcl, nitrogenTot, estimatedOC, carbonTot, ctonRatio, acidity, OlsenPExtractable, waterSatx, alOxalate, feOxalate, alCitDithionate, 
-                feCitDithionate) %>% 
-  # create columns for indices
-  dplyr::mutate(AO = (alOxalate+feOxalate),
-                KCL = (alKcl+feKcl),
-                DC = (alCitDithionate+feCitDithionate)-(alOxalate+feOxalate),
-                AO_DC = (AO/DC),
-                KCL_DC = (KCL/DC))
-
-neon_bona_proc = neon_bona_csv %>% 
-  dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
-                feKcl, nitrogenTot, estimatedOC, carbonTot, ctonRatio, acidity, OlsenPExtractable, waterSatx, alOxalate, feOxalate, alCitDithionate, 
-                feCitDithionate) %>% 
-  # create columns for indices
-  dplyr::mutate(AO = (alOxalate+feOxalate),
-                KCL = (alKcl+feKcl),
-                DC = (alCitDithionate+feCitDithionate)-(alOxalate+feOxalate),
-                AO_DC = (AO/DC),
-                KCL_DC = (KCL/DC))
-
-neon_tool_proc = neon_tool_csv %>% 
-  dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
-                feKcl, nitrogenTot, estimatedOC, carbonTot, ctonRatio, acidity, OlsenPExtractable, waterSatx, alOxalate, feOxalate, alCitDithionate, 
-                feCitDithionate) %>% 
-  # create columns for indices
-  dplyr::mutate(AO = (alOxalate+feOxalate),
-                KCL = (alKcl+feKcl),
-                DC = (alCitDithionate+feCitDithionate)-(alOxalate+feOxalate),
-                AO_DC = (AO/DC),
-                KCL_DC = (KCL/DC))
-
 neon_proc = 
-  neon_tool_proc %>% 
-  bind_rows(neon_heal_proc, neon_barr_proc, neon_bona_proc)
+  neon_tool_csv %>% 
+  bind_rows(neon_heal_csv, neon_barr_csv, neon_bona_csv)
+
+
+neon_proc = neon_proc %>% 
+  dplyr::select(siteID, plotID, biogeoCenterDepth, alKcl, 
+                feKcl, nitrogenTot, estimatedOC, carbonTot, ctonRatio, acidity, OlsenPExtractable, waterSatx, alOxalate, feOxalate, alCitDithionate, 
+                feCitDithionate) %>% 
+  # create columns for indices
+  dplyr::mutate(AO = (alOxalate+feOxalate),
+                KCL = (alKcl+feKcl),
+                DC = (alCitDithionate+feCitDithionate)-(alOxalate+feOxalate),
+                DC_AO = (DC/AO),
+                KCL_DC = (KCL/DC))
   
+neon_proc_DC = neon_proc %>% 
+  filter(DC>0 & AO>0) 
+
 
 # ggplot set up-----------------------------------
 theme_er <- function() {  # this for all the elements common across plots
@@ -229,7 +199,7 @@ ggplot(neon_proc, aes(y=depth, x=nitrogenTot, size = carbonTot, color=siteID)) +
   scale_y_reverse()+
   facet_grid(.~siteID)
 
-ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = AO_DC, color=siteID)) +
+ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = DC_AO, color=siteID)) +
   geom_point(alpha = 0.4) +
   scale_size(range = c(1, 24), name = "AO:DC")+
   theme_erclean() +
@@ -243,6 +213,9 @@ library(nord)
 neon_proc = neon_proc %>% 
   mutate(siteID = factor (siteID, levels = c("BARR", "TOOL", "BONA", "HEAL"))) 
 
+neon_proc_DC = neon_proc_DC %>% 
+  mutate(siteID = factor (siteID, levels = c("BARR", "TOOL", "BONA", "HEAL"))) 
+
 neon_proc %>% 
 ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
   geom_point(alpha = 0.4, size = 5) +
@@ -253,14 +226,15 @@ ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
   scale_y_reverse()+
   facet_grid(.~siteID)
 
-neon_proc %>% 
-  ggplot(aes(y=depth, x=log10(AO_DC), color=siteID)) +
+neon_proc_DC %>% 
+  ggplot(aes(y=biogeoCenterDepth, x=DC_AO, color=siteID)) +
   geom_point(alpha = 0.4, size = 5) +
   theme_erclean() +
   scale_color_nord("afternoon_prarie", 4)+
   #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "Depth, cm", x = "AO:DC, log10")+
+  labs(y = "Depth, cm", x = "DC:AO, log10")+
   scale_y_reverse()+
+ # scale_x_log10()+
   facet_grid(.~siteID)
 
 neon_proc %>% 
