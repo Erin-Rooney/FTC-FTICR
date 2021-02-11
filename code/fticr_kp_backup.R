@@ -447,7 +447,7 @@ fticr_water_arom %>%
 ### create an index combining them
 
 ## aromatic rel_abund
-fticr_water_relabund = 
+fticr_water_relabund_arom = 
   fticr_water %>% 
   left_join(select(fticr_meta_water, formula, AImod, HC, OC), by = "formula") %>% 
   dplyr::mutate(aromatic_col = case_when(AImod>0.5 ~ "aromatic",
@@ -466,7 +466,7 @@ fticr_water_relabund =
 
 ## plot relabund of aromatic
 
-fticr_water_relabund %>% 
+fticr_water_relabund_arom %>% 
   filter(aromatic_col %in% "aromatic") %>% 
   ggplot(aes(x = Trtmt, y = relabund, color = Trtmt, shape = Trtmt))+
   #geom_boxplot()+
@@ -474,7 +474,7 @@ fticr_water_relabund %>%
   facet_grid(Material ~ Site)+
   theme_er()
 
-fticr_water_relabund %>% 
+fticr_water_relabund_arom %>% 
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) %>% 
   filter(aromatic_col %in% "aromatic") %>% 
   ggplot(aes(x = Site, y = relabund, color = Trtmt, shape = Trtmt, size = 4))+
@@ -487,6 +487,52 @@ fticr_water_relabund %>%
 ## then do ANOVA with x = trtmt for each site, and report sig. as asterisks
 
 # stats for aromatic peaks
+
+
+
+
+
+# relative abundance ------------------------------------------------------
+fticr_water_summarized = 
+  fticr_water %>% 
+  group_by(formula, Site, Trtmt, Material) %>% 
+  dplyr::summarise(n = n()) %>% 
+  mutate(presence = 1) %>% 
+  dplyr::select(-n)
+  
+
+fticr_water_relabund = 
+  fticr_water_summarized %>% 
+  left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
+  ## create a column for group counts
+  group_by(Site, Trtmt, Material, Class) %>% 
+  dplyr::summarize(counts = n()) %>% 
+  ## create a column for total counts
+  group_by(Site, Trtmt, Material) %>%
+  dplyr::mutate(totalcounts = sum(counts)) %>% 
+  ungroup() %>% 
+  mutate(relabund = (counts/totalcounts)*100,
+         relabund = round(relabund, 2)) %>% 
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+# run anova to get statistical significance
+# then use that to create the label file below
+
+label = tribble(
+  ~Site, ~Trtmt, ~Material, ~y, ~label,
+### THIS IS ONLY AN EXAMPLE 
+  "HEAL", "FTC", "Lower Mineral", 50, "*"
+) %>% 
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+# bar graph
+fticr_water_relabund %>% 
+  ggplot(aes(x = Trtmt, y = relabund))+
+  geom_bar(aes(fill = Class), stat = "identity")+
+  facet_grid(Material ~ Site)+
+  geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8)+
+  theme_er()
+
 
 
 
