@@ -356,6 +356,7 @@ soil_aromatic %>%
 soil_aromatic_counts %>% 
 ggplot(aes(y = count, x = Site, fill =aromatic_col))+ 
   geom_bar(stat = "identity", position = "dodge") +
+  geom_point(data = soil_aromatic, aes(x = site, y = aromatic_col))+
   theme_er() + 
   scale_fill_manual (values = soil_palette("podzol", 4)) +
   facet_grid(Material ~.)
