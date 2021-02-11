@@ -57,7 +57,7 @@ fticr_reps =
 # Assemble reports WATER------------------------------
 fticr_report_water = 
   report_water %>% 
-  rename(Mass=`ï..Mass`) %>% 
+  #rename(Mass=`ï..Mass`) %>% 
   # filter appropriate mass range
   filter(Mass>200 & Mass<900) %>% 
   # remove isotopes
@@ -73,7 +73,7 @@ fticr_meta_water =
   # alternatively, use `starts_with()` if all your sample names start with the same prefix
   # dplyr::select(-starts_with("FT")) %>% 
   # select only necessary columns
-  dplyr::select(Mass, C, H, O, N, S, P, El_comp, Class) %>% 
+  dplyr::select(Mass, C, H, O, N, S, P, El_comp) %>% 
   # create columns for indices
   dplyr::mutate(AImod = round((1+C-(0.5*O)-S-(0.5*(N+P+H)))/(C-(0.5*O)-S-N-P),4),
                 NOSC =  round(4-(((4*C)+H-(3*N)-(2*O)-(2*S))/C),4),
@@ -90,7 +90,12 @@ fticr_meta_water =
                 formula_p = if_else(P>0,paste0("P",P),as.character(NA)),
                 formula = paste0(formula_c,formula_h, formula_o, formula_n, formula_s, formula_p),
                 formula = str_replace_all(formula,"NA","")) %>% 
-  dplyr::select(Mass, formula, El_comp, Class, HC, OC, AImod, NOSC, C:P)
+  dplyr::select(Mass, formula, El_comp, HC, OC, AImod, NOSC, C:P) %>% 
+  mutate(Class = case_when(AImod>0.66 ~ "condensed aromatic",
+                           AImod<=0.66 & AImod > 0.50 ~ "aromatic",
+                           AImod <= 0.50 & HC < 1.5 ~ "unsaturated/lignin",
+                           HC >= 1.5 ~ "aliphatic"),
+         Class = replace_na(Class, "other"))
 
 
 # subset of meta for HC/OC only, for Van Krevelen diagrams
