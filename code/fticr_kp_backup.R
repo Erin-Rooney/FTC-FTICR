@@ -333,6 +333,7 @@ fticr_water_nosc %>%
   filter(Site == "HEAL") %>% 
   ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 100), width = 20, fill = NA)+
   facet_grid(Material ~ .) +
   theme_er() +
   scale_fill_manual(values = PNWColors::pnw_palette("Bay", 2))+
