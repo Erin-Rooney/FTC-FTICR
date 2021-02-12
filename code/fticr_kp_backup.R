@@ -266,6 +266,10 @@ fticr_meta_chcl3 = read.csv("fticr_meta_chcl3.csv")
 meta_hcoc_chcl3  = read.csv("fticr_meta_hcoc_chcl3.csv") %>% select(-Mass)
 #
 # NOSC and AImod plots_water-------------------------------
+fticr_water = 
+  fticr_data_water %>% 
+  select(ID, formula, Site, Trtmt, Material) 
+
 fticr_data_water = 
   fticr_water %>% 
   group_by(formula, Site, Trtmt, Material) %>% 
@@ -292,9 +296,7 @@ fticr_meta_nosc_water =
   fticr_data_water %>% 
   select(formula, Mass, Class, NOSC, AImod, HC, OC)
 
-fticr_water = 
-  fticr_data_water %>% 
-  select(ID, formula, Site, Trtmt, Material) 
+
 
 fticr_water_nosc_trt = 
   fticr_water %>% 
