@@ -9,7 +9,7 @@ library(soilpalettes)
 library(PNWColors)
 theme_er <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
-    theme(legend.position = "top",
+    theme(legend.position = "right",
           legend.key=element_blank(),
           legend.title = element_blank(),
           legend.text = element_text(size = 12),
@@ -266,10 +266,30 @@ fticr_meta_chcl3 = read.csv("fticr_meta_chcl3.csv")
 meta_hcoc_chcl3  = read.csv("fticr_meta_hcoc_chcl3.csv") %>% select(-Mass)
 #
 # NOSC and AImod plots_water-------------------------------
+fticr_data_water = 
+  fticr_water %>% 
+  group_by(formula, Site, Trtmt, Material) %>% 
+  dplyr::summarise(n = n()) %>% 
+  mutate(presence = 1) %>% 
+  dplyr::select(-n)
 
+
+fticr_water_relabund = 
+  fticr_data_water %>% 
+  left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
+  ## create a column for group counts
+  group_by(Site, Trtmt, Material, Class) %>% 
+  dplyr::summarize(counts = n()) %>% 
+  ## create a column for total counts
+  group_by(Site, Trtmt, Material) %>%
+  dplyr::mutate(totalcounts = sum(counts)) %>% 
+  ungroup() %>% 
+  mutate(relabund = (counts/totalcounts)*100,
+         relabund = round(relabund, 2)) %>% 
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 fticr_meta_nosc_water =
-  fticr_water_summarized %>% 
+  fticr_data_water %>% 
   select(formula, Mass, Class, NOSC, AImod, HC, OC)
 
 fticr_water = 
@@ -493,16 +513,16 @@ fticr_water_relabund_arom %>%
 
 
 # relative abundance ------------------------------------------------------
-fticr_water_summarized = 
+fticr_data_water = 
   fticr_water %>% 
   group_by(formula, Site, Trtmt, Material) %>% 
   dplyr::summarise(n = n()) %>% 
   mutate(presence = 1) %>% 
   dplyr::select(-n)
-  
+
 
 fticr_water_relabund = 
-  fticr_water_summarized %>% 
+  fticr_data_water %>% 
   left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
   ## create a column for group counts
   group_by(Site, Trtmt, Material, Class) %>% 
@@ -530,16 +550,18 @@ fticr_water_relabund %>%
   ggplot(aes(x = Trtmt, y = relabund))+
   geom_bar(aes(fill = Class), stat = "identity")+
   facet_grid(Material ~ Site)+
-  geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8)+
-  theme_er()
+  geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
+  theme_er()+
+  scale_fill_manual(values = rev(pnw_palette("Sunset",4)))
+
 
 
 
 
 # van krevelen plots_water------------------------------------------------------
 fticr_water = 
-  fticr_water_summarized %>% 
-  select(ID, formula, Site, Trtmt, Material) 
+  fticr_data_water %>% 
+  select(formula, Site, Trtmt, Material) 
 
 fticr_water_trt = 
   fticr_water %>% 
