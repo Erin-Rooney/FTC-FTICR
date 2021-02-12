@@ -255,7 +255,7 @@ write.csv(meta_hcoc_chcl3,"fticr_meta_hcoc_chcl3.csv", row.names = FALSE)
 # analyzing data ----------------------------------------------------------
 
 
-# Load files-----------------------------------
+# 1. Load files-----------------------------------
 
 fticr_data_water = read.csv("fticr_data_water.csv")
 fticr_meta_water = read.csv("fticr_meta_water.csv")
@@ -265,46 +265,43 @@ fticr_data_chcl3 = read.csv("fticr_data_chcl3.csv")
 fticr_meta_chcl3 = read.csv("fticr_meta_chcl3.csv")
 meta_hcoc_chcl3  = read.csv("fticr_meta_hcoc_chcl3.csv") %>% select(-Mass)
 #
-# NOSC and AImod plots_water-------------------------------
+# 2. NOSC and AImod plots_water-------------------------------
 fticr_water = 
   fticr_data_water %>% 
   select(ID, formula, Site, Trtmt, Material) 
 
-fticr_data_water = 
+fticr_data_water_summarized = 
   fticr_water %>% 
-  group_by(formula, Site, Trtmt, Material) %>% 
-  dplyr::summarise(n = n()) %>% 
-  mutate(presence = 1) %>% 
-  dplyr::select(-n)
+  distinct(Site, Trtmt, Material, formula) %>% mutate(presence = 1)
 
 
-fticr_water_relabund = 
-  fticr_data_water %>% 
-  left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
-  ## create a column for group counts
-  group_by(Site, Trtmt, Material, Class) %>% 
-  dplyr::summarize(counts = n()) %>% 
-  ## create a column for total counts
-  group_by(Site, Trtmt, Material) %>%
-  dplyr::mutate(totalcounts = sum(counts)) %>% 
-  ungroup() %>% 
-  mutate(relabund = (counts/totalcounts)*100,
-         relabund = round(relabund, 2)) %>% 
-  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+#3. NOSC--------------------------------
 
-fticr_meta_nosc_water =
-  fticr_data_water %>% 
-  select(formula, Mass, Class, NOSC, AImod, HC, OC)
+#merge _summarized with _meta
 
+fticr_water_nosc = 
+  fticr_data_water_summarized %>%
+  left_join(fticr_meta_water) %>%
+  dplyr::select(formula, NOSC, HC, OC, Class, Material, Trtmt, Site)
 
-
-fticr_water_nosc_trt = 
-  fticr_water %>% 
-  distinct(Site, Trtmt, Material, formula) %>% 
-  left_join(fticr_meta_nosc_water, by = "formula") %>% 
+fticr_water_nosc =
+  fticr_water_nosc %>% 
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
-#NOSC
+#wait, am I supposed to merge meta and summarized before or after dplyr::select? This didn't work. 
+
+
+# fticr_meta_nosc_water =
+#   fticr_meta_water %>% 
+#   select(formula, Mass, Class, NOSC, AImod, HC, OC)
+
+# fticr_water_nosc_trt = 
+#   fticr_data_water_summarized %>% 
+#   distinct(Site, Trtmt, Material, formula) %>% 
+#   left_join(fticr_meta_nosc_water, by = "formula") %>% 
+#   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+
 
 # ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
 #   geom_histogram(binwidth = 0.05) +
@@ -316,7 +313,7 @@ fticr_water_nosc_trt =
 library(nord)
 
 # overall NOSC by site/trt/depth  
-ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site, fill = Site)) +
+ggplot(fticr_water_nosc, aes(NOSC, color = Site, fill = Site)) +
   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
   geom_boxplot(aes(y = 120), width = 20, fill = NA)+
   facet_grid(Material ~ .) +
@@ -332,29 +329,29 @@ ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site, fill = Site)) +
 
 
 # NOSC by compound class
-fticr_water_nosc_trt %>% 
+fticr_water_nosc %>% 
   filter(Site == "HEAL") %>% 
   ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
   facet_grid(Material ~ .) +
   theme_er() +
-  scale_fill_nord("victory_bonds", 2)+
-  scale_color_nord("victory_bonds", 2)+
+  scale_fill_manual(values = PNWColors::pnw_palette("Bay", 2))+
+  scale_color_manual(values = PNWColors::pnw_palette("Bay", 2))+
   ggtitle("NOSC, Water Extracted HEAL")+
   facet_grid(Material~Class)
 
-fticr_water_nosc_trt %>% 
+fticr_water_nosc %>% 
   filter(Site == "TOOL") %>% 
   ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
   facet_grid(Material ~ .) +
   theme_er() +
-  scale_fill_nord("victory_bonds", 2)+
-  scale_color_nord("victory_bonds", 2)+
+  scale_fill_manual(values = PNWColors::pnw_palette("Bay", 2))+
+  scale_color_manual(values = PNWColors::pnw_palette("Bay", 2))+
   ggtitle("NOSC, Water Extracted TOOL")+
   facet_grid(Material~Class)
 
-fticr_water_nosc_trt %>% 
+fticr_water_nosc %>% 
   filter(Trtmt == "FTC") %>% 
   ggplot(aes(NOSC, color = Site, fill = Site)) +
   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
@@ -365,8 +362,19 @@ fticr_water_nosc_trt %>%
   ggtitle("NOSC, Water Extracted FTC")+
   facet_grid(Material~Class)
 
+fticr_water_nosc %>% 
+  filter(Trtmt == "CON") %>% 
+  ggplot(aes(NOSC, color = Site, fill = Site)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  facet_grid(Material ~ .) +
+  theme_er() +
+  scale_fill_nord("victory_bonds", 2)+
+  scale_color_nord("victory_bonds", 2)+
+  ggtitle("NOSC, Water Extracted CON")+
+  facet_grid(Material~Class)
 
-ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
+
+ggplot(fticr_water_nosc, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.05) +
   facet_grid(Material ~ .) +
   theme_er() +
@@ -374,7 +382,7 @@ ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   scale_color_manual(values = soil_palette("eutrostox", 2)) +
   ggtitle("NOSC, Water Extracted by Treatment")
 
-ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
+ggplot(fticr_water_nosc, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.1) +
   facet_grid(Material ~ Site) +
   theme_er() +
@@ -382,13 +390,13 @@ ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   scale_fill_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
   ggtitle("NOSC, Water Extracted")
 
-ggplot(fticr_water_nosc_trt, aes(NOSC, color = Site))+
+ggplot(fticr_water_nosc, aes(NOSC, color = Site))+
   geom_histogram(aes(y = stat(count)/sum(count))) +
     scale_y_continuous(labels = scales::percent)
 
 library(soilpalettes)
   
-ggplot(fticr_water_nosc_trt, aes(x = NOSC, color = Site, fill = Site))+
+ggplot(fticr_water_nosc, aes(x = NOSC, color = Site, fill = Site))+
     geom_histogram(alpha = 0.5, position = "identity")+
     facet_grid(Material~.) + 
     theme_er() +
@@ -399,7 +407,7 @@ ggplot(fticr_water_nosc_trt, aes(x = NOSC, color = Site, fill = Site))+
 
 # AImod-------------------------------------------
 soil_aromatic =
-  fticr_water_nosc_trt %>% 
+  fticr_water_nosc %>% 
   dplyr::select(formula, Site, Trtmt, Material, Mass, AImod, HC, OC)
 
 ## KP note: "aromatic" does not include lignin-like molecules because of definitions
@@ -469,6 +477,21 @@ fticr_water_arom %>%
 ### create an index combining them
 
 ## aromatic rel_abund
+
+fticr_water_relabund = 
+  fticr_data_water_summarized %>% 
+  left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
+  ## create a column for group counts
+  group_by(Site, Trtmt, Material, Class) %>% 
+  dplyr::summarize(counts = n()) %>% 
+  ## create a column for total counts
+  group_by(Site, Trtmt, Material) %>%
+  dplyr::mutate(totalcounts = sum(counts)) %>% 
+  ungroup() %>% 
+  mutate(relabund = (counts/totalcounts)*100,
+         relabund = round(relabund, 2)) %>% 
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
 fticr_water_relabund_arom = 
   fticr_water %>% 
   left_join(select(fticr_meta_water, formula, AImod, HC, OC), by = "formula") %>% 
@@ -515,7 +538,7 @@ fticr_water_relabund_arom %>%
 
 
 # relative abundance ------------------------------------------------------
-fticr_data_water = 
+fticr_data_water_summarized = 
   fticr_water %>% 
   group_by(formula, Site, Trtmt, Material) %>% 
   dplyr::summarise(n = n()) %>% 
@@ -561,17 +584,26 @@ fticr_water_relabund %>%
 
 
 # van krevelen plots_water------------------------------------------------------
-fticr_water = 
-  fticr_data_water %>% 
-  select(formula, Site, Trtmt, Material) 
 
-fticr_water_trt = 
-  fticr_water %>% 
-  distinct(Site, Trtmt, Material, formula) %>% 
-  left_join(fticr_water_nosc_trt) %>% 
-  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+fticr_water_hcoc =
+  fticr_data_water_summarized %>% 
+  left_join(fticr_meta_water) %>% 
+  dplyr::select(formula, Site, Trtmt, Material, HC, OC)
 
-fticr_water_trt %>% 
+
+
+
+# fticr_water = 
+#   fticr_data_water %>% 
+#   select(formula, Site, Trtmt, Material) 
+# 
+# fticr_water_trt = 
+#   fticr_water %>% 
+#   distinct(Site, Trtmt, Material, formula) %>% 
+#   left_join(fticr_water_nosc_trt) %>% 
+#   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+# 
+fticr_water_hcoc %>% 
   filter(Trtmt %in% "CON") %>% 
   ggplot(aes(x=OC, y=HC, color = NOSC))+
   geom_point(alpha = 0.2, size = 1)+
@@ -589,7 +621,7 @@ fticr_water_trt %>%
   theme_er()+
   scale_color_gradientn(colors = pnw_palette("Starfish"))
   
-fticr_water_trt %>% 
+fticr_water_hcoc %>% 
   ggplot(aes(x=OC, y=HC, color = Site))+
   geom_point(alpha = 0.2, size = 1)+
   stat_ellipse(show.legend = F)+
@@ -602,7 +634,7 @@ fticr_water_trt %>%
   theme_er() +
   scale_color_manual (values = soil_palette("redox", 2))
 
-fticr_water_trt %>% 
+fticr_water_hcoc %>% 
   ggplot(aes(x=OC, y=HC, color = Site))+
   geom_point(alpha = 0.2, size = 1)+
   stat_ellipse(show.legend = F)+
@@ -614,7 +646,7 @@ fticr_water_trt %>%
   theme_bw()
 
 
-fticr_water_trt %>% 
+fticr_water_hcoc %>% 
   ggplot(aes(x=OC, y=HC, color = Trtmt))+
   geom_point(alpha = 0.2, size = 1)+
   stat_ellipse(show.legend = F)+
@@ -632,7 +664,7 @@ fticr_water_trt %>%
 
 # this does only unique loss/gain by CON vs FTC
 fticr_water_ftc_loss = 
-  fticr_water_summarized %>% 
+  fticr_data_water_summarized %>% 
   # calculate n to see which peaks were unique vs. common
   group_by(formula, Site, Material) %>% 
   dplyr::mutate(n = n()) %>% 
@@ -644,7 +676,7 @@ fticr_water_ftc_loss =
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 fticr_water_ftc_loss_common = 
-  fticr_water_summarized %>% 
+  fticr_data_water_summarized %>% 
   # calculate n to see which peaks were unique vs. common
   group_by(formula, Site, Material) %>% 
   dplyr::mutate(n = n()) %>% 
