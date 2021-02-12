@@ -32,7 +32,7 @@ climate_data = read.csv("processed/SOMMOS_SoilCoreDB - Climate_1961_1990.csv")
 precip = climate_data %>% 
  filter(site %in% c("BONA", "BARR", "HEAL", "TOOL")) %>% 
   mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>%
-  select(site, PPT01, PPT02, PPT03, PPT04, PPT05, PPT06, PPT07, PPT08, PPT09) %>% 
+  select(site, 'PPT01', 'PPT02', 'PPT03', 'PPT04', 'PPT05', 'PPT06', 'PPT07', 'PPT08', 'PPT09') %>% 
   tidyr::pivot_longer(
     cols = starts_with("PPT"),
     names_to = "precip_type",
@@ -44,6 +44,15 @@ precip %>%
   geom_boxplot(alpha = 0.5)+
   theme_kp()+
   scale_fill_nord("afternoon_prarie", 4)+
+  labs(y = "precipitation, cm")
+
+precip %>% 
+  ggplot(aes(x=precip_type, y = precip_cm, color = site, group = site))+
+  geom_point(size = 5)+
+  geom_line(size = 2)+
+  #geom_boxplot(alpha = 0.5)+
+  theme_kp()+
+  scale_color_nord("afternoon_prarie", 4)+
   labs(y = "precipitation, cm")
 
 temp %>% 
@@ -62,9 +71,9 @@ temp %>%
 temp = climate_data %>% 
   filter(site %in% c("BONA", "BARR", "HEAL", "TOOL")) %>% 
   mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>%
-  select(site, Tmax01, Tmax02, Tmax03, Tmax04, Tmax05, Tmax06, Tmax07, Tmax08, Tmax09, Tmax10, Tmax11, Tmax12, 
-         Tmin01, Tmin02, Tmin03, Tmin04, Tmin05, Tmin06, Tmin07, Tmin08, Tmin09, Tmin10, Tmin11, Tmin12,
-         Tave01, Tave02, Tave03, Tave04, Tave05, Tave06, Tave07, Tave08, Tave09, Tave10, Tave11, Tave12) %>% 
+  select(site, 'Tmax01', 'Tmax02', 'Tmax03', 'Tmax04', 'Tmax05', 'Tmax06', 'Tmax07', 'Tmax08', 'Tmax09', 'Tmax10', 'Tmax11', 'Tmax12', 
+         'Tmin01', 'Tmin02', 'Tmin03', 'Tmin04', 'Tmin05', 'Tmin06', 'Tmin07', 'Tmin08', 'Tmin09', 'Tmin10', 'Tmin11', 'Tmin12',
+         'Tave01', 'Tave02', 'Tave03', 'Tave04', 'Tave05', 'Tave06', 'Tave07', 'Tave08', 'Tave09', 'Tave10', 'Tave11', 'Tave12') %>% 
   tidyr::pivot_longer(
     cols = starts_with("T"),
     names_to = "Temp_ID",
@@ -72,7 +81,20 @@ temp = climate_data %>%
   mutate(Temp_type = case_when(grepl("Tmax", Temp_ID)~"max",
                                grepl("Tave", Temp_ID)~"ave",
                                grepl("Tmin", Temp_ID)~"min")
+         
          )
+
+
+temp %>% 
+  filter(Temp_type %in% "ave") %>% 
+  ggplot(aes(x=Temp_ID, y = Temp_C, color = site, group = site))+
+  geom_point(size = 5)+
+  geom_line(size =2)+
+  #geom_boxplot(alpha = 0.5)+
+  theme_kp()+
+  scale_color_nord("afternoon_prarie", 4)+
+  labs(y = "Temperature, C")+
+  facet_grid(.~Temp_type)
 
 ## 2.1 calculate mean ftc
 
