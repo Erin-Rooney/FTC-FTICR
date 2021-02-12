@@ -40,7 +40,7 @@ ftc_actdat = ftc_fulldat %>%
 
 ftc_dat = ftc_dat %>% 
   filter(!season == "activelayer") %>% 
-  mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))
+  mutate(season = factor(season, levels = c("winter", "spring", "summer", "fall")))
 
 
       
@@ -620,7 +620,8 @@ ghg_csv2 %>%
 
 ftc_avg_depth %>% 
   filter(!season %in% "total") %>% 
-  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
+  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>%
+  mutate(season = factor(season, levels = c("winter", "spring", "summer", "fall"))) %>%
   ggplot(aes(y = depth, x = site, fill = ftc))+
   geom_bar(position = "stack", stat= "identity")+
   facet_grid(.~season)+
