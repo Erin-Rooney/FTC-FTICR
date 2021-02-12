@@ -57,7 +57,7 @@ fticr_reps =
 # Assemble reports WATER------------------------------
 fticr_report_water = 
   report_water %>% 
-  #rename(Mass=`ï..Mass`) %>% 
+  rename(Mass=`ï..Mass`) %>% 
   # filter appropriate mass range
   filter(Mass>200 & Mass<900) %>% 
   # remove isotopes
