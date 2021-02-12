@@ -517,6 +517,7 @@ ghg_avg %>%
   theme_er() +
   facet_grid(.~site)
 
+
 # loading another package I think I actually need this one.
 
 library(plyr)
@@ -561,14 +562,29 @@ ghg_summary %>%
   theme_er() +
   facet_grid(.~site)
 
+ghg_summary2 %>% 
+  #filter(mid > 0) %>% 
+  ggplot(aes(y = mid, x = gain_ug_g_oc, color = day))+
+  geom_point()+
+  geom_line(orientation = "y")+
+  #geom_jitter()+
+  #geom_bar(position = "stack", stat= "identity")+
+  scale_y_reverse() +
+  #coord_cartesian(ylim = c(70,0)) +
+  # scale_size_continuous()
+  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 2)))+
+  ggtitle("Respiration (ug per g OC)") +
+  theme_er() +
+  facet_grid(site~trmt)
+
 #and now a plot that separates out days. Not sure why error bars aren't showing up :(
 
 
-ghg_summary2 %>% 
+ghg_csv2 %>% 
   #filter(mid > 0) %>% 
-  ggplot(aes(y = mid, x = mean, color = trmt, group = trmt))+
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=.1, 
-                    )) +
+  ggplot(aes(y = mid, x = gain_ug_g_oc, color = trmt, group = trmt))+
+  #geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=.1, 
+  #                  )) +
   geom_point()+
   geom_line(orientation = "y")+
   #geom_jitter()+
@@ -580,6 +596,25 @@ ghg_summary2 %>%
   ggtitle("Respiration (ug per g OC)") +
   theme_er() +
   facet_grid(day~site)
+
+
+ghg_csv2 %>% 
+  mutate(day = factor(day, levels = c('day1', 'day4', 'day7', 'day14'))) %>% 
+  #filter(mid > 0) %>% 
+  ggplot(aes(y = mid, x = gain_ug_g_oc, color = day, group = day))+
+  #geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=.1, 
+  #                  )) +
+  geom_point()+
+  geom_line(orientation = "y")+
+  #geom_jitter()+
+  #geom_bar(position = "stack", stat= "identity")+
+  scale_y_reverse() +
+  #coord_cartesian(ylim = c(70,0)) +
+  # scale_size_continuous()
+  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 4)))+
+  ggtitle("Respiration (ug per g OC)") +
+  theme_er() +
+  facet_grid(trmt~site)
 
 #and now we're out of the ghg and into the ftc.
 
