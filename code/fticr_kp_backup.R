@@ -268,7 +268,7 @@ meta_hcoc_chcl3  = read.csv("fticr_meta_hcoc_chcl3.csv") %>% select(-Mass)
 # NOSC and AImod plots_water-------------------------------
 fticr_water = 
   fticr_data_water %>% 
-  select(formula, Site, Trtmt, Material, Mass, Class) 
+  select(ID, formula, Site, Trtmt, Material) 
 
 fticr_data_water = 
   fticr_water %>% 
