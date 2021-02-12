@@ -261,7 +261,7 @@ neon_proc %>%
 
 neon_proc %>% 
 ggplot() +
-  geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
+  geom_boxplot(aes(y=DC_AO, x=siteID, color=siteID, fill = siteID))+
   #scale_size(range = c(1, 24), name = "AO:DC")+
   theme_erclean() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
@@ -273,7 +273,7 @@ ggplot() +
 neon_proc %>% 
   filter(depth > "75") %>% 
   ggplot() +
-  geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
+  geom_boxplot(aes(y=DC_AO, x=siteID, color=siteID, fill = siteID))+
   #scale_size(range = c(1, 24), name = "AO:DC")+
   theme_erclean() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
@@ -286,7 +286,7 @@ neon_proc %>%
 neon_proc %>% 
   filter(depth > "50", depth < "75") %>% 
   ggplot() +
-  geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
+  geom_boxplot(aes(y=DC_AO, x=siteID, color=siteID, fill = siteID))+
   #scale_size(range = c(1, 24), name = "AO:DC")+
   theme_erclean() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
@@ -299,7 +299,7 @@ neon_proc %>%
 neon_proc %>% 
   filter(depth > "25", depth < "50") %>% 
   ggplot() +
-  geom_boxplot(aes(y=AO_DC, x=siteID, color=siteID, fill = siteID))+
+  geom_boxplot(aes(y=DC_AO, x=siteID, color=siteID, fill = siteID))+
   #scale_size(range = c(1, 24), name = "AO:DC")+
   theme_erclean() +
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
