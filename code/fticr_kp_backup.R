@@ -604,8 +604,9 @@ fticr_water_trt %>%
   theme_er() +
   scale_color_manual (values = soil_palette("redox", 2))
 
-## calculate peaks lost/gained
+## calculate peaks lost/gained ---- 
 
+# this does only unique loss/gain by CON vs FTC
 fticr_water_ftc_loss = 
   fticr_water_summarized %>% 
   # calculate n to see which peaks were unique vs. common
@@ -618,7 +619,21 @@ fticr_water_ftc_loss =
   left_join(meta_hcoc_water) %>% 
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
-  
+fticr_water_ftc_loss_common = 
+  fticr_water_summarized %>% 
+  # calculate n to see which peaks were unique vs. common
+  group_by(formula, Site, Material) %>% 
+  dplyr::mutate(n = n()) %>% 
+  # n = 1 means unique to CON or FTC Trtmt
+  # n = 2 means common to both
+  # filter(n == 1) %>% 
+  mutate(loss_gain = case_when(n == 2 ~ "common",
+                               (n == 1 & Trtmt == "CON") ~ "lost",
+                               (n == 1 & Trtmt == "FTC") ~ "gained")) %>% 
+  left_join(meta_hcoc_water) %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+# plot only lost/gained
 fticr_water_ftc_loss %>% 
   ggplot(aes(x = OC, y = HC, color = loss_gain))+
   geom_point(alpha = 0.2, size = 1)+
@@ -628,6 +643,25 @@ fticr_water_ftc_loss %>%
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
   ggtitle("Water extracted FTICR-MS")+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  scale_color_manual (values = rev(soil_palette("redox", 2)))
+
+# plot common as well as lost/gained
+fticr_water_ftc_loss_common %>% 
+  filter(loss_gain == "common") %>% 
+  ggplot()+
+  geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
+  geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
+         aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
+  #geom_point(alpha = 0.2, size = 1)+
+  #stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("Water extracted FTICR-MS")+
+  labs(caption = "grey = common to both")+
   facet_grid(Material ~ Site)+
   theme_er() +
   scale_color_manual (values = rev(soil_palette("redox", 2)))
