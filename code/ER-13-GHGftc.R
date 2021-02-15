@@ -14,6 +14,9 @@ probe_loc = read.csv("processed/Probe Locations.csv")
 
 library(tidyverse)
 library(forcats) 
+library(nord)
+library(PNWColors)
+library(soilpalettes)
 
 #rename site codes and set levels, exclude active layer, set season levels
 #this data is for a full profile that does not need active layer (september) isolated
@@ -344,7 +347,8 @@ ftc_avg %>%
   scale_fill_gradientn(colors = (PNWColors::pnw_palette("Starfish")))+  
   theme_er()
 
-library(nord)
+
+pal=PNWColors::pnw_palette("Anemone",100)
 
 
 ftc_avg %>% 
@@ -354,27 +358,31 @@ ftc_avg %>%
   ggplot(aes(y = depth, x = site, fill = ftc))+
   geom_bar(position = "stack", stat= "identity")+
   scale_y_reverse()+
-  #annotate("segment", x = 0.7, xend = 1.3, y = 50, yend = 50, color = "pink", size= 2) +
-  annotate("segment", x = 0.2, xend = 1.8, y = 19, yend = 19, color = "red", alpha = 0.4, size= 1.5) +
+  #annotate("segment", x = 0.7, xend = 1.3, y = 50, yend = 50, color = "blue", size= 2) +
+  annotate("segment", x = 0.2, xend = 1.8, y = 25, yend = 25, color = "black", size= 1.5,
+           linetype = 2) +
   #scale_color_gradient(low = "light blue", high = "brown")+
-  annotate("text", label = "organic soil\n(0-20 cm)", x = 1.1, y = 10, size = 4, color="white")+
-  annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.1, y = 40, size = 4, color="white")+
-  annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.1, y = 65, size = 4, color="white")+
-  annotate("text", label = "Core B \n 40-50 cm", x = 0.61, y = 37, size = 4)+
-  annotate("text", label = "Core A \n 28-38 cm", x = 0.65, y = 23, size = 4)+
-  annotate("text", label = "Core C \n 41-50 cm", x = 0.58, y = 53, size = 4)+
+  annotate("text", label = "organic soil\n(0-20 cm)", x = 1.1, y = 10, size = 5, color = "white")+
+  annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.1, y = 40, size = 5, color = "white")+
+  annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.1, y = 65, size = 5, color = "white")+
+  # annotate("text", label = "Core B \n 40-50 cm", x = 0.40, y = 44, size = 4)+
+  # annotate("text", label = "Core A \n 28-38 cm", x = 0.65, y = 31, size = 4)+
+  # annotate("text", label = "Core C \n 41-50 cm", x = 0.59, y = 59, size = 4)+
+  annotate("text", label = "Core B", x = 0.40, y = 44, size = 5)+
+  annotate("text", label = "Core A", x = 0.40, y = 31, size = 5)+
+  annotate("text", label = "Core C", x = 0.40, y = 59, size = 5)+
   annotate(
-    geom = "curve", x = 0.68, y = 41, xend = 0.8, yend = 44, 
-    curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
+    geom = "curve", x = 0.53, y = 43, xend = 0.8, yend = 44,
+    curvature = -0.1, arrow = arrow(length = unit(3, "mm")), color = "black", size = 0.75)+
   annotate(
-    geom = "curve", x = 0.72, y = 28, xend = 0.8, yend = 34, 
-    curvature = 0.25, arrow = arrow(length = unit(2, "mm")))+
+    geom = "curve", x = 0.53, y = 31, xend = 0.8, yend = 34,
+    curvature = -0.1, arrow = arrow(length = unit(3, "mm")), color = "black", size = 0.75)+
   annotate(
-    geom = "curve", x = 0.64, y = 51, xend = 0.8, yend = 47, 
-    curvature = -0.3, arrow = arrow(length = unit(2, "mm")))+ 
-  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Shuksan2")))+  
+    geom = "curve", x = 0.53, y = 58, xend = 0.8, yend = 47,
+    curvature = -0.1, arrow = arrow(length = unit(3, "mm")), color = "black", size = 0.75)+
+  scale_fill_gradientn(colors = rev(soil_palette("redox", 3)))+
   labs(
-    title = "Freeze/Thaw Soil Profile \n Toolik, Alaska \n ", 
+    #title = "Freeze/Thaw Soil Profile \n Toolik, Alaska \n ", 
     y = "depth, cm",
     x = "", 
     color = "Freeze/Thaw Cycles")+
