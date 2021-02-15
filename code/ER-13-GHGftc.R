@@ -4,23 +4,21 @@
 # GHG FTC C12 and C13 data
 
 # load data---------------------------------
-#ghg_csv = read.csv("processed/ghg_ftc.csv")
 ghg_csv2 = read.csv("processed/ghg_depth.csv")
-ftc_dat = read.csv("processed/FTC_quant_inprocess.csv")
-ftc_fulldat = read.csv("processed/final_dat2.csv")
+#ftc_dat = read.csv("processed/FTC_quant_inprocess.csv")
+ftc_dat = read.csv("processed/final_dat2.csv")
 sommos_oc = read.csv("processed/oc_sommos_neonoc.csv")
 probe_loc = read.csv("processed/Probe Locations.csv")
 
 # set data frames-----------------------------
 
 library(tidyverse)
-#str(ghg_csv2)
-#str(ftc_dat)
-#str(ftc_fulldat)
-#str(sommos_oc)
-#str(probe_loc)
+library(forcats) 
 
-ftc_fulldat = ftc_fulldat %>% 
+#rename site codes and set levels, exclude active layer, set season levels
+#this data is for a full profile that does not need active layer (september) isolated
+
+ftc_fulldat = ftc_dat %>% 
       mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")),
              site = recode (site, "HEAL" = "Healy",
                             "BONA" = "Caribou-poker",
@@ -30,21 +28,115 @@ ftc_fulldat = ftc_fulldat %>%
       mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))  
     
 
+#next, isolate active layer, recode site names, and set levels
+#this data is specifically for active layer plots
              
-             
-ftc_actdat = ftc_fulldat %>% 
+ftc_actdat = ftc_dat %>% 
   filter(season=="activelayer" & !is.na(Def1)) %>% 
+  mutate(site = recode (site, "HEAL" = "Healy",
+                        "BONA" = "Caribou-poker",
+                        "BARR" = "Barrow",
+                        "TOOL" = "Toolik"))%>% 
   mutate(site = factor (site, levels = c("healy", "caribou-poker", "barrow", "toolik"))) 
 
 
+#subset. why do this instead of filtering?
 
-ftc_dat = ftc_dat %>% 
-  filter(!season == "activelayer") %>% 
-  mutate(season = factor(season, levels = c("winter", "spring", "summer", "fall")))
+ftc_actdat_subset = 
+  ftc_actdat %>% 
+  filter(site %in% c("healy", "toolik"))
+
+ftc_fulldat_subset2 = 
+  ftc_fulldat %>% 
+  filter(site %in% c("Toolik")) 
 
 
-      
-#mutate(TRT = factor(TRT, levels = c("CON", "FTC")))
+# averages for geom_bar-------------------------------------------
+
+#FT
+ftc_avg = 
+  ftc_fulldat %>% 
+  filter(!season %in% "activelayer") %>% 
+  ## NOTE: USE ADDITIONAL FILTERS AS NEEDED. I SEE MULTIPLE ENTRIES IN YEAR, MAG.VEC, DURATION, ETC.
+  ## FOR NOW, I AM COMBINING ACROSS ALL THOSE VARIABLES, KEEPING ONLY DEPTH, SEASON, SITE AS GROUPING VARIABLES
+  
+  # create a `total` ftc column for annual total ftc
+  group_by(site, year, core, depth_cm) %>% 
+  dplyr::mutate(total = sum(Def1)) %>% 
+  ungroup() %>% 
+  
+  # now, incorporate the `total` data into `season`
+  # spread the `season` columns, and then recombine with `total`
+  spread(season, Def1) %>% 
+  gather(season, Def1, total:winter) %>%
+  # many NAs were introduced when forcing wide-form. remove all rows containing NAs
+  na.omit() %>% 
+  
+  # now, calculate mean FTC per site/depth/season
+  group_by(site, depth_cm, season) %>% 
+  dplyr::summarise(ftc = as.integer(mean(Def1))) %>% 
+  ungroup() %>% 
+  
+  # create new columns for depth range
+  # create bins of 5 cm depth increments
+  mutate(depth_bins = cut_width(depth_cm, width = 5, center=2.5)) %>% 
+  # now clean up
+  # remove brackets of different types
+  # I normally use the `stringr` package, but that doesn't like open brackets
+  # so I use the `stringi` package for this. You'll have to install it first
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "]",""),
+         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "[",""),
+         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "(","")) %>% 
+  # now separate this into two different columns
+  separate(depth_bins, sep = ",", into = c("depth_start_cm", "depth_stop_cm")) %>% 
+  mutate(depth_start_cm = as.integer(depth_start_cm),
+         depth_stop_cm = as.integer(depth_stop_cm))
+
+
+ftc_avg = ftc_avg %>% 
+  mutate(depth = depth_stop_cm - depth_start_cm)
+
+
+#GHG
+# calculate mean ghg
+
+ghg_avg = 
+  ghg_csv2 %>% 
+  #filter(!season %in% "activelayer") %>% 
+  ## NOTE: USE ADDITIONAL FILTERS AS NEEDED. I SEE MULTIPLE ENTRIES IN YEAR, MAG.VEC, DURATION, ETC.
+  ## FOR NOW, I AM COMBINING ACROSS ALL THOSE VARIABLES, KEEPING ONLY DEPTH, SEASON, SITE AS GROUPING VARIABLES
+  
+  # create a `total` ftc column for annual total ftc
+  group_by(site, horizon, trmt, mid) %>% 
+  dplyr::mutate(total = sum(gain_ug_g_oc)) %>% 
+  ungroup() %>% 
+  
+  # now, incorporate the `total` data into `season`
+  # spread the `season` columns, and then recombine with `total`
+  #spread(season, Def1) %>% 
+  #wgather(season, Def1, total:winter) %>%
+  # many NAs were introduced when forcing wide-form. remove all rows containing NAs
+  na.omit() %>% 
+  
+  # now, calculate mean FTC per site/depth/season
+  group_by(site, horizon, trmt, mid) %>% 
+  dplyr::summarise(gain_ug_g_oc = as.integer(mean(gain_ug_g_oc))) %>% 
+  ungroup() %>% 
+  
+  # create new columns for depth range
+  # create bins of 5 cm depth increments
+  mutate(depth_bins = cut_width(mid, width = 5, center=2.5)) %>% 
+  # now clean up
+  # remove brackets of different types
+  # I normally use the `stringr` package, but that doesn't like open brackets
+  # so I use the `stringi` package for this. You'll have to install it first
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "]",""),
+         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "[",""),
+         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "(","")) %>% 
+  # now separate this into two different columns
+  separate(depth_bins, sep = ",", into = c("depth_start_cm", "depth_stop_cm")) %>% 
+  mutate(depth_start_cm = as.integer(depth_start_cm),
+         depth_stop_cm = as.integer(depth_stop_cm))
 
 
 # ggplot set up-----------------------------------
@@ -126,44 +218,8 @@ theme_er <- function() {  # this for all the elements common across plots
 #
 
 
-# FT quant ggplots---------------------------------------
 
-#boxplots
-# ggplot(ftc_dat, aes(x = def1, y = depth_cm, fill = site)) + geom_boxplot() + theme_er() +
-#   scale_fill_manual (values = soil_palette("gley", 2)) + facet_grid(season~.)
-# 
-# #dotplots all failed
-# ggplot() + geom_dotplot(data = ftc_dat, aes(y = depth_m, x = def1, color = site)) + theme_er() +
-#   scale_color_manual (values = soil_palette("gley", 2)) + facet_wrap(season~.)
-# 
-# ggplot(ftc_dat, aes(x=def1, y=depth_cm, fill=site))
-
-#ridge and grid plots
-# ggplot(ftc_dat, aes(x = def1, y = depth_cm, color = season)) +
-# stat_bin2d( mapping = NULL, data = NULL, geom = "tile", position = "identity" + bins = 30 + binwidth = NULL + drop = TRUE)
-# 
-# ggplot(ftc_dat, aes(x = def1, y = site, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
-#   stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
-#   scale_fill_viridis_c(name = "Tail probablity", direction = -1) + theme_er() + facet_grid(season~.)
-# 
-# ggplot(ftc_dat, aes(x = def1, y = site, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
-#   stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
-#   scale_fill_viridis_c(name = "Tail probablity", direction = -1) + theme_er() + scale_x_continuous(limits = c(-5, 30)) + facet_grid(season~.)
-# 
-# ggplot(ftc_dat, aes(x = def1, y = site, fill = 0.5 - abs(0.5 - stat(ecdf)))) +
-#   stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE) +
-#   scale_fill_viridis_c(name = "Tail probablity", direction = -1) + theme_er() + scale_x_continuous(limits = c(-5, 30)) + facet_grid(season~.)
-# 
-# ggplot(ftc_dat, aes(x = depth_cm, y = site, height = def1)) +
-#   geom_density_ridges(stat = "identity") + theme_er() + facet_grid(season~.)
-
-#raster plots----------------------------------------------
-
-# ggplot(ftc_dat, aes(x = depth_cm, y = site, fill = def1)) +
-#   geom_raster(hjust = 0, vjust = 0) + theme_er() + facet_grid(season~.)
-
-# bubble plot with depth on y axis---------------------------------
-
+# FT quant bubble plot with depth on y axis---------------------------------
 
 ftc_fulldat %>% 
   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
@@ -181,7 +237,7 @@ ftc_fulldat %>%
   theme_er1() +
   facet_grid(~season)
 
-library(forcats) 
+# next plot
 
 ftc_fulldat %>% 
   filter(duration==1 & mag.vec==0.1 & depth_cm<100) %>%
@@ -200,7 +256,7 @@ ftc_fulldat %>%
   facet_grid(~season)
 
 
-###########
+# next plot
 
 ftc_dat %>% 
   filter(duration==24 & mag.vec==1.5) %>% 
@@ -213,6 +269,7 @@ ftc_dat %>%
   theme_er() +
   facet_grid(~season) 
   
+# next plot
 
 ftc_fulldat %>% 
   filter(duration==24 & mag.vec==1.5) %>% 
@@ -226,67 +283,7 @@ ftc_fulldat %>%
   theme_er() +
   facet_grid(~season)
 
-
-#ftc_actdat = ftc_actdat %>% 
- # filter(!Def1==NA)
-
-levels(as.factor(ftc_actdat$site)) 
-
-
-ftc_actdatheal = ftc_actdat %>% 
-  filter(site=="healy")
-
-ftc_actdattool = ftc_actdat %>% 
-  filter(site=="toolik")
-
-# ftc_actdatheal %>% 
-#   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
-#   ggplot(aes(y = depth_cm, x = site, color = Def1))+
-#   #geom_jitter()+
-#   geom_point(position = position_jitter(width = 0.2), size = 7)+
-#   scale_y_reverse()+
-#   annotate("segment", x = 1.5, xend = 0.5, y = 39, yend = 39, color = "pink", size= 2) +
-#   # scale_size_continuous()+
-#   scale_color_gradient(low = "light blue", high = "brown")+
-#   ggtitle("Healy") +
-#   theme_er()
-# 
-# ftc_actdattool %>% 
-#   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
-#   ggplot(aes(y = depth_cm, x = site, color = Def1))+
-#   #geom_jitter()+
-#   geom_point(position = position_jitter(width = 0.2), size = 7)+
-#   scale_y_reverse()+
-#   annotate("segment", x = 1.5, xend = 0.5, y = 9, yend = 9, color = "pink", size= 2) +
-#   # scale_size_continuous()+
-#   scale_color_gradient(low = "light blue", high = "brown")+
-#   ggtitle("Toolik") +
-#   theme_er()
-
-ftc_actdat_subset = 
-  ftc_actdat %>% 
-  filter(site %in% c("healy", "toolik"))
-
-ftc_fulldat_subset2 = 
-  ftc_fulldat %>% 
-  filter(site %in% c("Toolik")) 
-  
-
-# ftc_actdat_subset %>% 
-#   filter(duration==24 & mag.vec==1.5 & depth_cm<100) %>%
-#   ggplot(aes(y = depth_cm, x = site, color = as.character(Def1)))+
-#   geom_point(position = position_jitter(width = 0.2), size = 7)+
-#   scale_y_reverse()+
-#   annotate("segment", x = 0.7, xend = 1.3, y = 9, yend = 9, color = "pink", size= 2) +
-#   annotate("segment", x = 1.5, xend = 2.5, y = 10, yend = 10, color = "pink", size= 2) +
-#   #scale_color_gradient(low = "light blue", high = "brown")+
-#   annotate("text", label = "organic soil\n(5 cm)", x = 1.5, y = 25, size = 4)+
-#   annotate("text", label = "active layer", x = 1.5, y = 6, size = 4)+
-#   scale_color_manual(values = rev(PNWColors::pnw_palette("Sunset2")))+
-#   #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
-#   #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
-#   #           fill = "red", alpha = 0.5, color = "black", size = 3)+
-#   theme_er()
+#next plot
 
 ftc_fulldat_subset2 %>% 
   filter(Def1 > 0) %>% 
@@ -326,6 +323,69 @@ ftc_fulldat_subset2 %>%
   #           fill = "red", alpha = 0.5, color = "black", size = 4)+
   theme_er()
 
+
+
+
+
+# same as above but this time with geom_bar
+
+
+
+# misplaced code
+
+ftc_avg %>% 
+  filter(!season %in% "total",
+         site %in% "Toolik") %>%
+  #mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>%
+  #mutate(season = factor(season, levels = c("winter", "spring", "summer", "fall"))) %>%
+  ggplot(aes(y = depth, x = site, fill = ftc))+
+  geom_bar(position = "stack", stat= "identity")+
+  scale_y_reverse()+
+  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Starfish")))+  
+  theme_er()
+
+library(nord)
+
+
+ftc_avg %>% 
+  filter(!season %in% "total",
+         site %in% "Toolik",
+         depth_cm<100) %>%
+  ggplot(aes(y = depth, x = site, fill = ftc))+
+  geom_bar(position = "stack", stat= "identity")+
+  scale_y_reverse()+
+  #annotate("segment", x = 0.7, xend = 1.3, y = 50, yend = 50, color = "pink", size= 2) +
+  annotate("segment", x = 0.2, xend = 1.8, y = 19, yend = 19, color = "red", alpha = 0.4, size= 1.5) +
+  #scale_color_gradient(low = "light blue", high = "brown")+
+  annotate("text", label = "organic soil\n(0-20 cm)", x = 1.1, y = 10, size = 4, color="white")+
+  annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.1, y = 40, size = 4, color="white")+
+  annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.1, y = 65, size = 4, color="white")+
+  annotate("text", label = "Core B \n 40-50 cm", x = 0.61, y = 37, size = 4)+
+  annotate("text", label = "Core A \n 28-38 cm", x = 0.65, y = 23, size = 4)+
+  annotate("text", label = "Core C \n 41-50 cm", x = 0.58, y = 53, size = 4)+
+  annotate(
+    geom = "curve", x = 0.68, y = 41, xend = 0.8, yend = 44, 
+    curvature = 0.3, arrow = arrow(length = unit(2, "mm")))+ 
+  annotate(
+    geom = "curve", x = 0.72, y = 28, xend = 0.8, yend = 34, 
+    curvature = 0.25, arrow = arrow(length = unit(2, "mm")))+
+  annotate(
+    geom = "curve", x = 0.64, y = 51, xend = 0.8, yend = 47, 
+    curvature = -0.3, arrow = arrow(length = unit(2, "mm")))+ 
+  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Shuksan2")))+  
+  labs(
+    title = "Freeze/Thaw Soil Profile \n Toolik, Alaska \n ", 
+    y = "depth, cm",
+    x = "", 
+    color = "Freeze/Thaw Cycles")+
+  #legend.title = "Freeze/Thaw Cycles during Maximum Thaw",
+  #annotate("text", label = "perm", x = 1.5, y = 6, size = 4)+
+  #  annotate("rect", xmax = 0.5, xmin = 1.5, ymax = 5, ymin = 25, 
+  #           fill = "red", alpha = 0.5, color = "black", size = 4)+
+  theme_er()
+
+
+#
 
 
 
@@ -418,7 +478,7 @@ ftc_fulldat %>%
   #           fill = "red", alpha = 0.5, color = "black", size = 3)+
   theme_er()
 
-# bubble plot with depth on y axis--------------------------------------
+# GHG bubble plot with depth on y axis--------------------------------------
 ghg_csv2 %>% 
   filter(mid > 0) %>% 
   ggplot(aes(y = mid, x = site, size = gain_ug_g_oc, color = gain_ug_g_oc))+
@@ -432,45 +492,7 @@ ghg_csv2 %>%
   theme_er() +
   facet_grid(day~trmt)
 
-# calculate mean ghg
 
-ghg_avg = 
-  ghg_csv2 %>% 
-  #filter(!season %in% "activelayer") %>% 
-  ## NOTE: USE ADDITIONAL FILTERS AS NEEDED. I SEE MULTIPLE ENTRIES IN YEAR, MAG.VEC, DURATION, ETC.
-  ## FOR NOW, I AM COMBINING ACROSS ALL THOSE VARIABLES, KEEPING ONLY DEPTH, SEASON, SITE AS GROUPING VARIABLES
-  
-  # create a `total` ftc column for annual total ftc
-  group_by(site, horizon, trmt, mid) %>% 
-  dplyr::mutate(total = sum(gain_ug_g_oc)) %>% 
-  ungroup() %>% 
-  
-  # now, incorporate the `total` data into `season`
-  # spread the `season` columns, and then recombine with `total`
-  #spread(season, Def1) %>% 
-  #wgather(season, Def1, total:winter) %>%
-  # many NAs were introduced when forcing wide-form. remove all rows containing NAs
-  na.omit() %>% 
-  
-  # now, calculate mean FTC per site/depth/season
-  group_by(site, horizon, trmt, mid) %>% 
-  dplyr::summarise(gain_ug_g_oc = as.integer(mean(gain_ug_g_oc))) %>% 
-  ungroup() %>% 
-  
-  # create new columns for depth range
-  # create bins of 5 cm depth increments
-  mutate(depth_bins = cut_width(mid, width = 5, center=2.5)) %>% 
-  # now clean up
-  # remove brackets of different types
-  # I normally use the `stringr` package, but that doesn't like open brackets
-  # so I use the `stringi` package for this. You'll have to install it first
-  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "]",""),
-         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "[",""),
-         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "(","")) %>% 
-  # now separate this into two different columns
-  separate(depth_bins, sep = ",", into = c("depth_start_cm", "depth_stop_cm")) %>% 
-  mutate(depth_start_cm = as.integer(depth_start_cm),
-         depth_stop_cm = as.integer(depth_stop_cm))
 
 # Okay so here I am taking the averages that I got above and just adding a column for depth
 
