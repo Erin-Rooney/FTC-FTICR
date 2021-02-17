@@ -172,7 +172,7 @@ fticr_meta_chcl3 =
   # alternatively, use `starts_with()` if all your sample names start with the same prefix
   # dplyr::select(-starts_with("FT")) %>% 
   # select only necessary columns
-  dplyr::select(Mass, C, H, O, N, S, P, El_comp, Class) %>% 
+  dplyr::select(Mass, C, H, O, N, S, P, El_comp) %>% 
   # create columns for indices
   dplyr::mutate(AImod = round((1+C-(0.5*O)-S-(0.5*(N+P+H)))/(C-(0.5*O)-S-N-P),4),
                 NOSC =  round(4-(((4*C)+H-(3*N)-(2*O)-(2*S))/C),4),
@@ -189,7 +189,12 @@ fticr_meta_chcl3 =
                 formula_p = if_else(P>0,paste0("P",P),as.character(NA)),
                 formula = paste0(formula_c,formula_h, formula_o, formula_n, formula_s, formula_p),
                 formula = str_replace_all(formula,"NA","")) %>% 
-  dplyr::select(Mass, formula, El_comp, Class, HC, OC, AImod, NOSC, C:P)
+  dplyr::select(Mass, formula, El_comp, HC, OC, AImod, NOSC, C:P)%>% 
+  mutate(Class = case_when(AImod>0.66 ~ "condensed aromatic",
+                           AImod<=0.66 & AImod > 0.50 ~ "aromatic",
+                           AImod <= 0.50 & HC < 1.5 ~ "unsaturated/lignin",
+                           HC >= 1.5 ~ "aliphatic"),
+         Class = replace_na(Class, "other"))
 
 
 # subset of meta for HC/OC only, for Van Krevelen diagrams
@@ -776,3 +781,524 @@ fticr_chcl3_trt %>%
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
   theme_bw()
+
+
+# chcl3----------------------------------------------------------------------------
+# 2. NOSC and AImod plots_water-------------------------------
+fticr_chcl3 = 
+  fticr_data_chcl3 %>% 
+  select(ID, formula, Site, Trtmt, Material) 
+
+fticr_data_chcl3_summarized = 
+  fticr_chcl3 %>% 
+  distinct(Site, Trtmt, Material, formula) %>% mutate(presence = 1)
+
+
+#3. NOSC--------------------------------
+
+#merge _summarized with _meta
+
+fticr_chcl3_nosc = 
+  fticr_data_chcl3_summarized %>%
+  left_join(fticr_meta_chcl3) %>%
+  dplyr::select(formula, NOSC, HC, OC, Class, Material, Trtmt, Site)
+
+fticr_chcl3_nosc =
+  fticr_chcl3_nosc %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+#wait, am I supposed to merge meta and summarized before or after dplyr::select? This didn't work. 
+
+
+# fticr_meta_nosc_water =
+#   fticr_meta_water %>% 
+#   select(formula, Mass, Class, NOSC, AImod, HC, OC)
+
+# fticr_water_nosc_trt = 
+#   fticr_data_water_summarized %>% 
+#   distinct(Site, Trtmt, Material, formula) %>% 
+#   left_join(fticr_meta_nosc_water, by = "formula") %>% 
+#   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+
+
+# ggplot(fticr_water_nosc_trt, aes(NOSC, color = Trtmt, fill = Trtmt)) +
+#   geom_histogram(binwidth = 0.05) +
+#   facet_grid(Material ~ Site) +
+#   theme_er() +
+#   scale_color_manual (values = soil_palette("gley", 2)) +
+#   ggtitle("NOSC, Water Extracted by Treatment")
+
+library(nord)
+
+# overall NOSC by site/trt/depth  
+ggplot(fticr_chcl3_nosc, aes(NOSC, color = Site, fill = Site)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 120), width = 20, fill = NA)+
+  facet_grid(Material ~ .) +
+  theme_er() +
+  #scale_fill_manual(values = soil_palette("redox", 2)) +
+  #scale_color_manual(values = soil_palette("redox", 2)) + 
+  #scale_color_manual(values = rev(nord("afternoon_prarie", 2)))+
+  #scale_fill_manual(values =rev(nord("afternoon_prarie", 2)))+
+  scale_fill_nord("victory_bonds", 2)+
+  scale_color_nord("victory_bonds", 2)+
+  ggtitle("NOSC, Water Extracted by Site")+
+  facet_grid(Material~Trtmt)
+
+
+# NOSC by compound class
+fticr_chcl3_nosc %>% 
+  filter(Site == "HEAL") %>% 
+  ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 100), width = 20, fill = NA)+
+  facet_grid(Material ~ .) +
+  theme_er() +
+  scale_fill_manual(values = PNWColors::pnw_palette("Bay", 2))+
+  scale_color_manual(values = PNWColors::pnw_palette("Bay", 2))+
+  ggtitle("NOSC, Water Extracted HEAL")+
+  facet_grid(Material~Class)
+
+fticr_chcl3_nosc %>% 
+  filter(Site == "TOOL") %>% 
+  ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 100), width = 20, fill = NA)+
+  facet_grid(Material ~ .) +
+  theme_er() +
+  scale_fill_manual(values = PNWColors::pnw_palette("Bay", 2))+
+  scale_color_manual(values = PNWColors::pnw_palette("Bay", 2))+
+  ggtitle("NOSC, Water Extracted TOOL")+
+  facet_grid(Material~Class)
+
+fticr_chcl3_nosc %>% 
+  filter(Trtmt == "FTC") %>% 
+  ggplot(aes(NOSC, color = Site, fill = Site)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 100), width = 20, fill = NA)+
+  facet_grid(Material ~ .) +
+  theme_er() +
+  scale_fill_nord("victory_bonds", 2)+
+  scale_color_nord("victory_bonds", 2)+
+  ggtitle("NOSC, Water Extracted FTC")+
+  facet_grid(Material~Class)
+
+fticr_chcl3_nosc %>% 
+  filter(Trtmt == "CON") %>% 
+  ggplot(aes(NOSC, color = Site, fill = Site)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 100), width = 20, fill = NA)+
+  facet_grid(Material ~ .) +
+  theme_er() +
+  scale_fill_nord("victory_bonds", 2)+
+  scale_color_nord("victory_bonds", 2)+
+  ggtitle("NOSC, Water Extracted CON")+
+  facet_grid(Material~Class)
+
+
+ggplot(fticr_chcl3_nosc, aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.05) +
+  geom_boxplot(aes(y = 100), width = 20, fill = NA)+
+  facet_grid(Material ~ .) +
+  theme_er() +
+  scale_fill_manual (values = soil_palette("eutrostox", 2)) +
+  scale_color_manual(values = soil_palette("eutrostox", 2)) +
+  ggtitle("NOSC, Water Extracted by Treatment")
+
+ggplot(fticr_chcl3_nosc, aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.5, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 100), width = 20, fill = NA)+
+  facet_grid(Material ~ Site) +
+  theme_er() +
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Starfish", 2)))+
+  ggtitle("NOSC, Water Extracted")
+
+ggplot(fticr_chcl3_nosc, aes(NOSC, color = Site))+
+  geom_histogram(aes(y = stat(count)/sum(count))) +
+  scale_y_continuous(labels = scales::percent)
+
+library(soilpalettes)
+
+ggplot(fticr_chcl3_nosc, aes(x = NOSC, color = Site, fill = Site))+
+  geom_histogram(alpha = 0.5, position = "identity")+
+  facet_grid(Material~.) + 
+  theme_er() +
+  scale_fill_manual (values = soil_palette("gley", 2)) +
+  scale_color_manual (values = soil_palette("gley", 2)) +
+  ggtitle("NOSC, Water Extracted")
+
+
+# AImod-------------------------------------------
+soil_aromatic =
+  fticr_chcl3_nosc %>% 
+  dplyr::select(formula, Site, Trtmt, Material, Mass, AImod, HC, OC)
+
+## KP note: "aromatic" does not include lignin-like molecules because of definitions
+## alternative method is to classify as aliphatic/simple vs. complex
+soil_aromatic = soil_aromatic %>% 
+  dplyr::mutate(aromatic_col = case_when(AImod>0.5 ~ "aromatic",
+                                         (HC<2.0 & HC>1.5) ~ "aliphatic")) 
+#  soil_aromatic
+
+soil_aromatic %>%
+  drop_na %>%
+  group_by(Site, Trtmt, Material, aromatic_col) %>% 
+  dplyr::summarize(counts = n())->
+  soil_aromatic_counts
+
+
+#ggplots
+
+soil_aromatic_counts %>% 
+  ggplot(aes(y = count, x = Site, fill =aromatic_col))+ 
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_point(data = soil_aromatic, aes(x = site, y = aromatic_col))+
+  theme_er() + 
+  scale_fill_manual (values = soil_palette("podzol", 4)) +
+  facet_grid(Material ~.)
+
+ggplot(soil_aromatic_counts, aes(x=Site, y=counts, fill=aromatic_col, color=aromatic_col)) + 
+  geom_bar(stat = 'identity', position = "dodge", alpha = 0.5) + theme_er() +
+  scale_color_manual(values = (PNWColors::pnw_palette("Mushroom", 3)))+
+  scale_fill_manual(values = (PNWColors::pnw_palette("Mushroom", 3)))+
+  facet_grid(Material ~ Trtmt)
+
+CON_only = soil_aromatic_counts %>% 
+  filter(Trtmt == CON)
+
+ggplot() +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_er() + 
+  scale_fill_manual (values = soil_palette("alaquod", 4)) +
+  facet_grid(Material ~ .)
+
+
+
+##### KP edit ----
+
+## meta_sub = fticr_meta_water %>%  select(formula, HC, OC)
+## fticr_water %>% left_join(meta_sub)
+
+fticr_chcl3_arom = 
+  fticr_chcl3 %>% 
+  left_join(select(fticr_meta_chcl3, formula, AImod, HC, OC), by = "formula") %>%
+  dplyr::mutate(aromatic_col = case_when(AImod>0.5 ~ "aromatic",
+                                         (HC<2.0 & HC>1.5) ~ "aliphatic")) %>% 
+  drop_na %>%
+  group_by(ID, Site, Trtmt, Material, aromatic_col) %>% 
+  dplyr::summarize(counts = n())
+
+fticr_chcl3_arom %>% 
+  ggplot(aes(x=Trtmt, y=counts, shape=Trtmt, fill = aromatic_col)) + 
+  geom_boxplot() + 
+  geom_point(aes(group = aromatic_col), position = position_dodge(width = 0.5))+
+  theme_er() + 
+  scale_fill_manual (values = soil_palette("podzol", 4)) +
+  facet_grid(Material ~ Site)
+
+### ^^ the files above have aliph as well as aromatic for the same sample, which can be confusing/misleading
+### create an index combining them
+
+## aromatic rel_abund
+
+fticr_chcl3_relabund = 
+  fticr_data_chcl3_summarized %>% 
+  left_join(select(fticr_meta_chcl3, formula, Class), by = "formula") %>% 
+  ## create a column for group counts
+  group_by(Site, Trtmt, Material, Class) %>% 
+  dplyr::summarize(counts = n()) %>% 
+  ## create a column for total counts
+  group_by(Site, Trtmt, Material) %>%
+  dplyr::mutate(totalcounts = sum(counts)) %>% 
+  ungroup() %>% 
+  mutate(relabund = (counts/totalcounts)*100,
+         relabund = round(relabund, 2)) %>% 
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+fticr_chcl3_relabund_arom = 
+  fticr_chcl3 %>% 
+  left_join(select(fticr_meta_chcl3, formula, AImod, HC, OC), by = "formula") %>% 
+  dplyr::mutate(aromatic_col = case_when(AImod>0.5 ~ "aromatic",
+                                         (HC<2.0 & HC>1.5) ~ "aliphatic"),
+                aromatic_col = if_else(is.na(aromatic_col), "other", aromatic_col)) %>% 
+  ## create a column for group counts
+  group_by(ID, Site, Trtmt, Material, aromatic_col) %>% 
+  dplyr::summarize(counts = n()) %>% 
+  ## create a column for total counts
+  group_by(ID, Site, Trtmt, Material) %>%
+  dplyr::mutate(totalcounts = sum(counts)) %>% 
+  ungroup() %>% 
+  mutate(relabund = (counts/totalcounts)*100,
+         relabund = round(relabund, 2))
+
+
+## plot relabund of aromatic
+
+fticr_chcl3_relabund_arom %>% 
+  filter(aromatic_col %in% "aromatic") %>% 
+  ggplot(aes(x = Trtmt, y = relabund, color = Trtmt, shape = Trtmt))+
+  #geom_boxplot()+
+  geom_point()+
+  facet_grid(Material ~ Site)+
+  theme_er()
+
+fticr_chcl3_relabund_arom %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) %>% 
+  filter(aromatic_col %in% "aromatic") %>% 
+  ggplot(aes(x = Site, y = relabund, color = Trtmt, shape = Trtmt, size = 4))+
+  #geom_boxplot()+
+  geom_point(position = position_dodge(width = 0.3))+
+  facet_grid(Material ~ .)+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Lake", 2)))+
+  theme_er()
+## potential idea: do ANOVA with x = site, and report p-values in the graph
+## then do ANOVA with x = trtmt for each site, and report sig. as asterisks
+
+# stats for aromatic peaks
+
+
+
+
+
+# relative abundance ------------------------------------------------------
+fticr_data_chcl3_summarized = 
+  fticr_chcl3 %>% 
+  group_by(formula, Site, Trtmt, Material) %>% 
+  dplyr::summarise(n = n()) %>% 
+  mutate(presence = 1) %>% 
+  dplyr::select(-n)
+
+
+fticr_chcl3_relabund = 
+  fticr_data_chcl3 %>% 
+  left_join(select(fticr_meta_chcl3, formula, Class), by = "formula") %>% 
+  ## create a column for group counts
+  group_by(Site, Trtmt, Material, Class) %>% 
+  dplyr::summarize(counts = n()) %>% 
+  ## create a column for total counts
+  group_by(Site, Trtmt, Material) %>%
+  dplyr::mutate(totalcounts = sum(counts)) %>% 
+  ungroup() %>% 
+  mutate(relabund = (counts/totalcounts)*100,
+         relabund = round(relabund, 2)) %>% 
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+# run anova to get statistical significance
+# then use that to create the label file below
+
+label = tribble(
+  ~Site, ~Trtmt, ~Material, ~y, ~label,
+  ### THIS IS ONLY AN EXAMPLE 
+  "HEAL", "FTC", "Lower Mineral", 50, "*"
+) %>% 
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+# bar graph
+fticr_chcl3_relabund %>% 
+  ggplot(aes(x = Trtmt, y = relabund))+
+  geom_bar(aes(fill = Class), stat = "identity")+
+  facet_grid(Material ~ Site)+
+  #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "black")+
+  theme_er()+
+  scale_fill_manual(values = rev(pnw_palette("Sunset",4)))
+
+
+
+
+
+# van krevelen plots_water------------------------------------------------------
+
+fticr_chcl3_hcoc =
+  fticr_data_chcl3_summarized %>% 
+  left_join(fticr_meta_chcl3) %>% 
+  dplyr::select(formula, Site, Trtmt, Material, HC, OC)
+
+
+
+
+# fticr_water = 
+#   fticr_data_water %>% 
+#   select(formula, Site, Trtmt, Material) 
+# 
+# fticr_water_trt = 
+#   fticr_water %>% 
+#   distinct(Site, Trtmt, Material, formula) %>% 
+#   left_join(fticr_water_nosc_trt) %>% 
+#   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+# 
+fticr_chcl3_hcoc %>% 
+  filter(Trtmt %in% "CON") %>% 
+  ggplot(aes(x=OC, y=HC, color = NOSC))+
+  geom_point(alpha = 0.2, size = 1)+
+  #stat_ellipse(show.legend = F)+
+  #stat_ellipse()+
+  facet_grid(Material ~ Site)+
+  #geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  #geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  #geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  labs(title = "Water extracted FTICR-MS",
+       x = "O:C",
+       y = "H:C",
+       color = "NOSC")+
+  theme_er()+
+  scale_color_gradientn(colors = pnw_palette("Starfish"))
+
+fticr_chcl3_hcoc %>% 
+  ggplot(aes(x=OC, y=HC, color = Site))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  facet_grid(Material ~.)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("Water extracted FTICR-MS")+
+  theme_er() +
+  scale_color_manual (values = soil_palette("redox", 2))
+
+fticr_chcl3_hcoc %>% 
+  ggplot(aes(x=OC, y=HC, color = Site))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  facet_grid(Material ~ Trtmt)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  theme_bw()
+
+
+fticr_chcl3_hcoc %>% 
+  ggplot(aes(x=OC, y=HC, color = Trtmt))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  facet_grid(Material ~.)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("Water extracted FTICR-MS")+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  scale_color_manual (values = soil_palette("redox", 2))
+
+## calculate peaks lost/gained ---- 
+
+# this does only unique loss/gain by CON vs FTC
+fticr_chcl3_ftc_loss = 
+  fticr_data_chcl3_summarized %>% 
+  # calculate n to see which peaks were unique vs. common
+  group_by(formula, Site, Material) %>% 
+  dplyr::mutate(n = n()) %>% 
+  # n = 1 means unique to CON or FTC Trtmt
+  # n = 2 means common to both
+  filter(n == 1) %>% 
+  mutate(loss_gain = if_else(Trtmt == "CON", "lost", "gained")) %>% 
+  left_join(meta_hcoc_chcl3) %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+fticr_chcl3_ftc_loss_common = 
+  fticr_data_chcl3_summarized %>% 
+  # calculate n to see which peaks were unique vs. common
+  group_by(formula, Site, Material) %>% 
+  dplyr::mutate(n = n()) %>% 
+  # n = 1 means unique to CON or FTC Trtmt
+  # n = 2 means common to both
+  # filter(n == 1) %>% 
+  mutate(loss_gain = case_when(n == 2 ~ "common",
+                               (n == 1 & Trtmt == "CON") ~ "lost",
+                               (n == 1 & Trtmt == "FTC") ~ "gained")) %>% 
+  left_join(meta_hcoc_chcl3) %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+# plot only lost/gained
+fticr_chcl3_ftc_loss %>% 
+  ggplot(aes(x = OC, y = HC, color = loss_gain))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("Water extracted FTICR-MS")+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  scale_color_manual (values = rev(soil_palette("redox", 2)))
+
+# plot common as well as lost/gained
+fticr_chcl3_ftc_loss_common %>% 
+  filter(loss_gain == "common") %>% 
+  ggplot()+
+  geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
+  geom_point(data = fticr_chcl3_ftc_loss_common %>% filter(loss_gain != "common"), 
+             aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
+  #geom_point(alpha = 0.2, size = 1)+
+  #stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("Water extracted FTICR-MS")+
+  labs(caption = "grey = common to both")+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  scale_color_manual (values = rev(soil_palette("redox", 2)))
+
+
+# van krevelen plots_chcl3------------------------------------------------------
+
+fticr_chcl3 = 
+  fticr_data_chcl3 %>% 
+  select(ID, formula, Site, Trtmt, Material) 
+
+fticr_chcl3_trt = 
+  fticr_chcl3 %>% 
+  distinct(Site, Trtmt, Material, formula) %>% 
+  left_join(meta_hcoc_chcl3, by = "formula")
+
+fticr_chcl3_trt = fticr_chcl3_trt %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+fticr_chcl3_trt %>% 
+  ggplot(aes(x=OC, y=HC, color = Trtmt))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  stat_ellipse()+
+  facet_grid(Material ~ Site)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("CHCl3 extracted FTICR-MS")+
+  theme_er()
+#scale_color_manual (values = soil_palette("gley", 2))
+
+fticr_chcl3_trt %>% 
+  ggplot(aes(x=OC, y=HC, color = Site))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  stat_ellipse()+
+  facet_grid(Material ~.)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("CHCl3 extracted FTICR-MS")+
+  theme_er() +
+  scale_color_manual (values = soil_palette("redox", 2))
+
+fticr_chcl3_trt %>% 
+  ggplot(aes(x=OC, y=HC, color = Site))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  facet_grid(Material ~ Trtmt)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  theme_bw()
+
+
