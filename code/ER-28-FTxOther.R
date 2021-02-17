@@ -83,6 +83,7 @@ climate_data = read.csv("processed/climate_xseason_sommos.csv")
 #
 # 2. process files -----------------------------------------------------------
 
+#Precip
 
 precip = climate_data %>% 
  filter(site %in% c("BONA", "BARR", "HEAL", "TOOL")) %>% 
@@ -99,14 +100,14 @@ precip = climate_data %>%
                                                    "PPT_sm" = "Summer",
                                                    "PPT_at" = "Fall")) 
 
-precip %>% 
-  ggplot(aes(x=site, y = precip_cm, fill = site))+
-  geom_point()+
-  geom_boxplot(alpha = 0.5)+
-  theme_kp()+
-  facet_wrap(.~season)+
-  scale_fill_nord("afternoon_prarie", 4)+
-  labs(y = "precipitation, cm")
+# precip %>% 
+#   ggplot(aes(x=site, y = precip_cm, fill = site))+
+#   geom_point()+
+#   geom_boxplot(alpha = 0.5)+
+#   theme_kp()+
+#   facet_wrap(.~season)+
+#   scale_fill_nord("afternoon_prarie", 4)+
+#   labs(y = "precipitation, cm")
 
 precip %>% 
   ggplot(aes(x=season, y = precip_cm, color = site, group = site))+
@@ -116,6 +117,36 @@ precip %>%
   theme_kp()+
   scale_color_nord("afternoon_prarie", 4)+
   labs(y = "precipitation, cm")
+
+# PAS
+
+pas = climate_data %>% 
+  filter(site %in% c("BONA", "BARR", "HEAL", "TOOL")) %>% 
+  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>%
+  select(site, 'PAS_wt', 'PAS_sp', 'PAS_sm', 'PAS_at') %>% 
+  # select(site, 'PPT01', 'PPT02', 'PPT03', 'PPT04', 'PPT05', 'PPT06', 'PPT07', 'PPT08', 'PPT09') %>% 
+  tidyr::pivot_longer(
+    cols = starts_with("PAS"),
+    names_to = "season",
+    values_to = "precip_as_snow_cm") %>% 
+  mutate(season = factor(season, levels = c('PAS_wt', 'PAS_sp', 'PAS_sm', 'PAS_at')),
+         season = recode(season, "PAS_wt" = "Winter",
+                         "PAS_sp" = "Spring",
+                         "PAS_sm" = "Summer",
+                         "PAS_at" = "Fall")) 
+
+pas %>% 
+  ggplot(aes(x=season, y = precip_as_snow_cm, color = site, group = site))+
+  geom_point(size = 5)+
+  geom_line(size = 2)+
+  #geom_boxplot(alpha = 0.5)+
+  theme_kp()+
+  scale_color_nord("afternoon_prarie", 4)+
+  labs(y = "precipitation as snow, cm")
+
+
+
+#Temp
 
 
 temp = climate_data %>% 
