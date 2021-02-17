@@ -20,7 +20,7 @@ library(nord)
 
 theme_kp <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
-    theme(legend.position = "right",
+    theme(legend.position = "bottom",
           legend.key=element_blank(),
           legend.title = element_blank(),
           legend.text = element_text(size = 12),
@@ -116,6 +116,7 @@ precip %>%
   #geom_boxplot(alpha = 0.5)+
   theme_kp()+
   scale_color_nord("afternoon_prarie", 4)+
+  scale_x_discrete(position = "top") +
   labs(y = "precipitation, cm")
 
 # PAS
@@ -143,6 +144,7 @@ pas %>%
   theme_kp()+
   scale_color_nord("afternoon_prarie", 4)+
   labs(y = "precipitation as snow, cm")
+  
 
 
 
