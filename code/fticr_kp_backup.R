@@ -551,20 +551,29 @@ fticr_data_water_summarized =
   mutate(presence = 1) %>% 
   dplyr::select(-n)
 
-
+## NOTE: calculate relative abundance PER SAMPLE and then combine by treatment
 fticr_water_relabund = 
   fticr_data_water %>% 
   left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
   ## create a column for group counts
-  group_by(Site, Trtmt, Material, Class) %>% 
+  group_by(ID, Site, Trtmt, Material, Class) %>% 
   dplyr::summarize(counts = n()) %>% 
   ## create a column for total counts
-  group_by(Site, Trtmt, Material) %>%
+  group_by(ID, Site, Trtmt, Material) %>%
   dplyr::mutate(totalcounts = sum(counts)) %>% 
   ungroup() %>% 
   mutate(relabund = (counts/totalcounts)*100,
          relabund = round(relabund, 2)) %>% 
   mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+## use this file (relabund by sample) for PCA and PERMANOVA
+
+## but summarize for bar plots
+fticr_water_relabund_summarized = 
+  fticr_water_relabund %>% 
+  group_by(Site, Trtmt, Material, Class) %>% 
+  dplyr::summarise(relabund = mean(relabund))
+
+
 
 # run anova to get statistical significance
 # then use that to create the label file below
@@ -577,7 +586,7 @@ label = tribble(
   mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 # bar graph
-fticr_water_relabund %>% 
+fticr_water_relabund_summarized %>% 
   ggplot(aes(x = Trtmt, y = relabund))+
   geom_bar(aes(fill = Class), stat = "identity")+
   facet_grid(Material ~ Site)+
@@ -1302,3 +1311,138 @@ fticr_chcl3_trt %>%
   theme_bw()
 
 
+
+###################
+###################
+###################
+
+# PCA ---------------------------------------------------------------------
+## install the ggbiplot package from github
+## install the miraKlein version, not 
+
+## you will need relative abundance data for PCA 
+
+devtools::install_github("miraKlein/ggbiplot")
+library(ggbiplot)
+
+
+## all samples ----
+## first, make wider
+relabund_pca =
+  fticr_water_relabund %>% 
+  ungroup %>% 
+  dplyr::select(-c(counts, totalcounts)) %>% 
+  pivot_wider(names_from = "Class", values_from = "relabund") %>% 
+  replace(is.na(.),0)  %>% 
+  dplyr::select(-1)
+
+
+num = 
+  relabund_pca %>% 
+  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
+
+grp = 
+  relabund_pca %>% 
+  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) %>% 
+  dplyr::mutate(row = row_number())
+
+pca = prcomp(num, scale. = T)
+
+ggbiplot(pca, obs.scale = 1, var.scale = 1,
+           groups = as.character(grp$Trtmt), 
+           ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=1,stroke=1, aes(color = groups))+
+  xlim(-4,10)+
+  ylim(-3.5,5)+
+  NULL
+  
+
+
+# TOOL vs. HEAL (con, organic only) ----
+relabund_pca =
+  fticr_water_relabund %>% 
+  filter(Trtmt == "CON" & Material == "Organic") %>% 
+  ungroup %>% 
+  dplyr::select(-c(counts, totalcounts)) %>% 
+  pivot_wider(names_from = "Class", values_from = "relabund") %>% 
+  replace(is.na(.),0)  %>% 
+  dplyr::select(-1)
+
+num = 
+  relabund_pca %>% 
+  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
+
+grp = 
+  relabund_pca %>% 
+  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) %>% 
+  dplyr::mutate(row = row_number())
+
+pca = prcomp(num, scale. = T)
+
+ggbiplot(pca, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp$Site), 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=1,stroke=1, aes(color = groups))+
+  xlim(-4,10)+
+  ylim(-3.5,5)+
+  NULL
+
+
+# HEAL con vs ft  ----
+relabund_pca =
+  fticr_water_relabund %>% 
+  filter(Site == "HEAL") %>% 
+  ungroup %>% 
+  dplyr::select(-c(counts, totalcounts)) %>% 
+  pivot_wider(names_from = "Class", values_from = "relabund") %>% 
+  replace(is.na(.),0)  %>% 
+  dplyr::select(-1)
+
+num = 
+  relabund_pca %>% 
+  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
+
+grp = 
+  relabund_pca %>% 
+  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) %>% 
+  dplyr::mutate(row = row_number())
+
+pca = prcomp(num, scale. = T)
+
+ggbiplot(pca, obs.scale = 1, var.scale = 1,
+         groups = grp$Trtmt, 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = groups, shape = grp$Material))+
+  xlim(-4,5)+
+  ylim(-3.5,4)+
+  NULL
+
+
+# HEAL con vs ft ----
+relabund_pca =
+  fticr_water_relabund %>% 
+  filter(Site == "HEAL" & Material == "Lower Mineral") %>% 
+  ungroup %>% 
+  dplyr::select(-c(counts, totalcounts)) %>% 
+  pivot_wider(names_from = "Class", values_from = "relabund") %>% 
+  replace(is.na(.),0)  %>% 
+  dplyr::select(-1)
+
+num = 
+  relabund_pca %>% 
+  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
+
+grp = 
+  relabund_pca %>% 
+  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) %>% 
+  dplyr::mutate(row = row_number())
+
+pca = prcomp(num, scale. = T)
+
+ggbiplot(pca, obs.scale = 1, var.scale = 1,
+         groups = grp$Trtmt, 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = groups, shape = grp$Material))+
+  xlim(-4,5)+
+  ylim(-3.5,4)+
+  NULL
