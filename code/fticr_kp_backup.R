@@ -551,20 +551,29 @@ fticr_data_water_summarized =
   mutate(presence = 1) %>% 
   dplyr::select(-n)
 
-
+## NOTE: calculate relative abundance PER SAMPLE and then combine by treatment
 fticr_water_relabund = 
   fticr_data_water %>% 
   left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
   ## create a column for group counts
-  group_by(Site, Trtmt, Material, Class) %>% 
+  group_by(ID, Site, Trtmt, Material, Class) %>% 
   dplyr::summarize(counts = n()) %>% 
   ## create a column for total counts
-  group_by(Site, Trtmt, Material) %>%
+  group_by(ID, Site, Trtmt, Material) %>%
   dplyr::mutate(totalcounts = sum(counts)) %>% 
   ungroup() %>% 
   mutate(relabund = (counts/totalcounts)*100,
          relabund = round(relabund, 2)) %>% 
   mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+## use this file (relabund by sample) for PCA and PERMANOVA
+
+## but summarize for bar plots
+fticr_water_relabund_summarized = 
+  fticr_water_relabund %>% 
+  group_by(Site, Trtmt, Material, Class) %>% 
+  dplyr::summarise(relabund = mean(relabund))
+
+
 
 # run anova to get statistical significance
 # then use that to create the label file below
@@ -577,7 +586,7 @@ label = tribble(
   mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 # bar graph
-fticr_water_relabund %>% 
+fticr_water_relabund_summarized %>% 
   ggplot(aes(x = Trtmt, y = relabund))+
   geom_bar(aes(fill = Class), stat = "identity")+
   facet_grid(Material ~ Site)+
@@ -1301,4 +1310,9 @@ fticr_chcl3_trt %>%
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
   theme_bw()
 
+
+
+###################
+###################
+###################
 
