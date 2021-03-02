@@ -22,6 +22,19 @@ fticr_data_water_summarized =
   fticr_water %>% 
   distinct(Site, Trtmt, Material, formula) %>% mutate(presence = 1)
 
+fticr_water_relabund = 
+  fticr_data_water_summarized %>% 
+  left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
+  ## create a column for group counts
+  group_by(Site, Trtmt, Material, Class) %>% 
+  dplyr::summarize(counts = n()) %>% 
+  ## create a column for total counts
+  group_by(Site, Trtmt, Material) %>%
+  dplyr::mutate(totalcounts = sum(counts)) %>% 
+  ungroup() %>% 
+  mutate(relabund = (counts/totalcounts)*100,
+         relabund = round(relabund, 2)) %>% 
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 
 
@@ -34,6 +47,7 @@ fticr_data_water_summarized =
 ## install the miraKlein version, not 
 
 ## you will need relative abundance data for PCA 
+
 
 devtools::install_github("miraKlein/ggbiplot")
 library(ggbiplot)
@@ -131,10 +145,11 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1,
   NULL
 
 
-# HEAL con vs ft ----
+
+# Tool con vs ft ----
 relabund_pca =
   fticr_water_relabund %>% 
-  filter(Site == "HEAL" & Material == "Lower Mineral") %>% 
+  filter(Site == "TOOL" & Material == "Lower Mineral") %>% 
   ungroup %>% 
   dplyr::select(-c(counts, totalcounts)) %>% 
   pivot_wider(names_from = "Class", values_from = "relabund") %>% 
@@ -159,3 +174,4 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1,
   xlim(-4,5)+
   ylim(-3.5,4)+
   NULL
+
