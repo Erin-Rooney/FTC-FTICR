@@ -130,7 +130,7 @@ fticr_water_relabund_summarized %>%
   ggplot(aes(x = Trtmt, y = relabund))+
   geom_bar(aes(fill = Class), stat = "identity")+
   facet_grid(Material ~ Site)+
-  geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
+  #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
   theme_er()+
   scale_fill_manual(values = rev(pnw_palette("Sunset",4)))
 
