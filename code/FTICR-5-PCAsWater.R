@@ -56,12 +56,14 @@ library(ggbiplot)
 ## all samples ----
 ## first, make wider
 relabund_pca =
-  fticr_water_relabund %>% 
+  fticr_water_relabund %>%
+  filter(Trtmt == 'CON') %>% 
   ungroup %>% 
-  dplyr::select(-c(counts, totalcounts)) %>% 
+  dplyr::select(-c(counts, totalcounts),
+                Site, Trtmt, Material) %>% 
   pivot_wider(names_from = "Class", values_from = "relabund") %>% 
-  replace(is.na(.),0)  %>% 
-  dplyr::select(-1)
+  replace(is.na(.),0) 
+  #dplyr::select(-1)
 
 
 num = 
@@ -70,19 +72,22 @@ num =
 
 grp = 
   relabund_pca %>% 
-  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) %>% 
+  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`),
+                Site,Trtmt, Material) %>% 
   dplyr::mutate(row = row_number())
 
 pca = prcomp(num, scale. = T)
 
 ggbiplot(pca, obs.scale = 1, var.scale = 1,
-         groups = as.character(grp$Trtmt), 
+         groups = as.character(grp$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=1,stroke=1, aes(color = groups))+
   xlim(-4,10)+
   ylim(-3.5,5)+
-  NULL
-
+  NULL +
+  theme_er()+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))
+  
 
 
 # TOOL vs. HEAL (con, organic only) ----
@@ -92,8 +97,8 @@ relabund_pca =
   ungroup %>% 
   dplyr::select(-c(counts, totalcounts)) %>% 
   pivot_wider(names_from = "Class", values_from = "relabund") %>% 
-  replace(is.na(.),0)  %>% 
-  dplyr::select(-1)
+  replace(is.na(.),0)  
+  #dplyr::select(-1)
 
 num = 
   relabund_pca %>% 
