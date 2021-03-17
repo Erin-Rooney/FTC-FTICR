@@ -1,0 +1,17 @@
+horizon,id,site,horizon_type,top,bottom,hue,value ,chroma,pH
+Oaf,,BARR,A-horizon,,,10YR,3,3,4.89
+OACfjj,,BARR,Upper B-Horizon,,,2.5Y,3,3,5.55
+Af,,BARR,Lower B-Horizon,,,2.5Y,3,2,5.43
+Oea,,BONA,A-Horizon,,,10YR,3,4,4.01
+O/BCgjj,,BONA,NA,,,10YR,5,2,4.92
+Bfgjj,,BONA,Upper B-Horizon,,,10YR,5,2,4.91
+Cfgjj,,BONA,Lower B-Horizon,,,10YR,5,3,5.6
+Oei,,HEAL,NA,,,7.5YR,3,2,3.76
+Oae,,HEAL,A-Horizon,,,5YR,3,2,3.87
+Afjj,,HEAL,Upper B-Horizon,,,10YR,4,2,5.13
+BCfgjj,,HEAL,Lower B-Horizon,,,10YR,5,2,4.92
+OACfjj,,HEAL,NA,,,10YR,5,2,4.46
+Oi,,TOOL,NA,,,10YR,4,3,4.11
+Oaef,,TOOL,A-Horizon,,,10YR,3,2,4.37
+Af,,TOOL,Upper B-Horizon,,,10YR,4,2,4.51
+BCfjj,,TOOL,Lower B-Horizon,,,10YR,5,2,4.63
