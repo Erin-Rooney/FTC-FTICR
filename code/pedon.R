@@ -1,8 +1,7 @@
 library(aqp)
-library(plyr)
+#library(plyr)
 library(RColorBrewer)
 library(latticeExtra)
-library(plyr)
 library(reshape)
 library(tidyverse)
 
@@ -10,8 +9,10 @@ library(tidyverse)
 #load csv
 pedon <- read.csv("processed/ped_profiles_munsell_dry.csv", stringsAsFactors=FALSE)
 
-pedon %>% 
-  
+levels(as.factor(pedon$site))
+
+pedon = pedon %>% 
+  mutate(site = factor(site, levels = c('HEAL', 'BONA', 'TOOL', 'BARR')))
 
 #look at first several lines of imported file
 head(pedon)
@@ -37,6 +38,12 @@ depths(pedon) <- site ~ top + bottom
 str(pedon)
 class(pedon)
 summary(pedon)
+
+pedon$idcol = factor(pedon$idcol, levels = c('HEAL', 'BONA', 'TOOL', 'BARR'))
+
+pedon$site
+
+pedon$horizons
 
 #plot
 plot(pedon, name = 'horizon', color = 'soilcolor') 
