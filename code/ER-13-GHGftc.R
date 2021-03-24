@@ -643,6 +643,9 @@ ghg_csv2 %>%
   # scale_size_continuous()
   scale_color_manual(values = (PNWColors::pnw_palette("Bay", 4)))+
   ggtitle("Respiration (ug per g OC)") +
+  labs(y = "depth, cm",
+       x = 'OC ug/g soil',
+       title = "Respiration")+
   theme_er() +
   facet_grid(trmt~site)
 
