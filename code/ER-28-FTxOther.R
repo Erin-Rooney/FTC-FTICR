@@ -37,6 +37,7 @@ theme_kp <- function() {  # this for all the elements common across plots
           strip.background = element_rect(colour="white", fill="white"), #facet formatting
           panel.spacing.x = unit(1.5, "lines"), #facet spacing for x axis
           panel.spacing.y = unit(1.5, "lines"), #facet spacing for x axis
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
           strip.text.x = element_text(size=12, face="bold"), #facet labels
           strip.text.y = element_text(size=12, face="bold", angle = 270) #facet labels
     )
@@ -363,6 +364,24 @@ ftc_avg_depth %>%
   geom_bar(position = "stack", stat= "identity")+
   facet_grid(.~season)+
   scale_y_reverse()+
+  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
+  theme_kp()
+
+
+ftc_avg_depth %>% 
+  filter(!season %in% "total") %>% 
+  mutate(site = factor(site, levels = c("BARR", 'TOOL', "BONA", "HEAL"))) %>%
+  mutate(site = recode(site, "BARR" = "Barrow",
+                         "TOOL" = "Toolik",
+                         "BONA" = "Caribou Poker",
+                         "HEAL" = "Healy")) %>%  
+  mutate(season = factor(season, levels = c("spring", 'summer', "winter", "fall"))) %>%
+  ggplot(aes(y = depth, x = season, fill = ftc))+
+  geom_bar(position = "stack", stat= "identity")+
+  labs(y = "depth, cm")+
+  facet_grid(.~site)+
+  scale_y_reverse()+
+  ylim(50,0)+
   scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
   theme_kp()
 
