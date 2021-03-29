@@ -23,6 +23,9 @@ str(pedon)
 #gives the class of the object
 class(pedon)
 
+# pbindlist into single SPC, not that attribute names may not be the same
+#g <- pbindlist(list('HEAL', 'BONA', 'TOOL', 'BARR'))
+
 #create new column for hex color and convert munsell color to hex format
 pedon$soilcolor <- munsell2rgb(pedon$hue, pedon$value, pedon$chroma)
 
