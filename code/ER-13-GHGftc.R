@@ -343,9 +343,13 @@ ftc_avg %>%
   #mutate(season = factor(season, levels = c("winter", "spring", "summer", "fall"))) %>%
   ggplot(aes(y = depth, x = site, fill = ftc))+
   geom_bar(position = "stack", stat= "identity")+
+  #annotate("text", label = "organic soil\n(0-20 cm)", x = 1, y = 5, size = 3.5, color = "white")+
+  #annotate("text", label = "upper mineral\n(25-50 cm)", x = 1, y = 25, size = 3.5, color = "white")+
+  #annotate("text", label = "lower mineral\n(50-70 cm)", x = 1, y = 40, size = 3.5, color = "black")+
   scale_y_reverse()+
-  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Starfish")))+  
-  theme_er()
+  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Sunset2")))+  
+  theme_er()+
+  facet_wrap(.~season)
 
 
 pal=PNWColors::pnw_palette("Anemone",100)
@@ -354,33 +358,33 @@ pal=PNWColors::pnw_palette("Anemone",100)
 ftc_avg %>% 
   filter(!season %in% "total",
          site %in% "Toolik",
-         depth_cm<100) %>%
-  ggplot(aes(y = depth, x = site, fill = ftc))+
+         depth_cm<50) %>%
+  ggplot(aes(y = depth, x = season, fill = ftc))+
   geom_bar(position = "stack", stat= "identity")+
   scale_y_reverse()+
   #annotate("segment", x = 0.7, xend = 1.3, y = 50, yend = 50, color = "blue", size= 2) +
-  annotate("segment", x = 0.2, xend = 1.8, y = 25, yend = 25, color = "black", size= 1.5,
+  annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
            linetype = 2) +
   #scale_color_gradient(low = "light blue", high = "brown")+
-  annotate("text", label = "organic soil\n(0-20 cm)", x = 1.1, y = 10, size = 5, color = "white")+
-  annotate("text", label = "upper mineral\n(25-50 cm)", x = 1.1, y = 40, size = 5, color = "white")+
-  annotate("text", label = "lower mineral\n(50-70 cm)", x = 1.1, y = 65, size = 5, color = "white")+
+  #annotate("text", label = "organic soil\n(0-20 cm)", x = 1, y = 5, size = 3.5, color = "black")+
+  #annotate("text", label = "upper mineral\n(25-50 cm)", x = 1, y = 25, size = 3.5, color = "black")+
+  #annotate("text", label = "lower mineral\n(50-70 cm)", x = 1, y = 33, size = 3.5, color = "black")+
   # annotate("text", label = "Core B \n 40-50 cm", x = 0.40, y = 44, size = 4)+
   # annotate("text", label = "Core A \n 28-38 cm", x = 0.65, y = 31, size = 4)+
   # annotate("text", label = "Core C \n 41-50 cm", x = 0.59, y = 59, size = 4)+
-  annotate("text", label = "Core B", x = 0.40, y = 44, size = 5)+
-  annotate("text", label = "Core A", x = 0.40, y = 31, size = 5)+
-  annotate("text", label = "Core C", x = 0.40, y = 59, size = 5)+
-  annotate(
-    geom = "curve", x = 0.53, y = 43, xend = 0.8, yend = 44,
-    curvature = -0.1, arrow = arrow(length = unit(3, "mm")), color = "black", size = 0.75)+
-  annotate(
-    geom = "curve", x = 0.53, y = 31, xend = 0.8, yend = 34,
-    curvature = -0.1, arrow = arrow(length = unit(3, "mm")), color = "black", size = 0.75)+
-  annotate(
-    geom = "curve", x = 0.53, y = 58, xend = 0.8, yend = 47,
-    curvature = -0.1, arrow = arrow(length = unit(3, "mm")), color = "black", size = 0.75)+
-  scale_fill_gradientn(colors = rev(soil_palette("redox", 3)))+
+  #annotate("text", label = "Core B", x = 0.40, y = 44, size = 5)+
+  #annotate("text", label = "Core A", x = 0.40, y = 31, size = 5)+
+  #annotate("text", label = "Core C", x = 0.40, y = 59, size = 5)+
+  #annotate(
+  #   geom = "curve", x = 0.53, y = 43, xend = 0.8, yend = 44,
+  #   curvature = -0.1, arrow = arrow(length = unit(3, "mm")), color = "black", size = 0.75)+
+  # annotate(
+  #   geom = "curve", x = 0.53, y = 31, xend = 0.8, yend = 34,
+  #   curvature = -0.1, arrow = arrow(length = unit(3, "mm")), color = "black", size = 0.75)+
+  # annotate(
+  #   geom = "curve", x = 0.53, y = 58, xend = 0.8, yend = 47,
+  #   curvature = -0.1, arrow = arrow(length = unit(3, "mm")), color = "black", size = 0.75)+
+  scale_fill_gradientn(colors = (pnw_palette("Sunset2", 3)))+
   labs(
     #title = "Freeze/Thaw Soil Profile \n Toolik, Alaska \n ", 
     y = "depth, cm",
