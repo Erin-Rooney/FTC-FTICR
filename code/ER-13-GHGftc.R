@@ -80,9 +80,14 @@ ftc_avg =
   dplyr::summarise(ftc = as.integer(mean(Def1))) %>% 
   ungroup() %>% 
   
-  # create new columns for depth range
-  # create bins of 5 cm depth increments
-  mutate(depth_bins = cut_width(depth_cm, width = 5, center=2.5)) %>% 
+  # bin top 10 cm into 5-cm bins, and the rest into 10-cm bins
+  
+  mutate(depth_bins1 = case_when(depth_cm <= 10 ~ cut_width(depth_cm, width = 5, center=2.5)),
+         depth_bins2 = case_when(depth_cm > 10 ~ cut_width(depth_cm, width = 10, center=5)),
+         depth_bins = paste0(depth_bins1, depth_bins2),
+         depth_bins = str_remove(depth_bins, "NA")) %>% 
+  dplyr::select(-depth_bins1, -depth_bins2) %>% 
+
   # now clean up
   # remove brackets of different types
   # I normally use the `stringr` package, but that doesn't like open brackets
@@ -400,18 +405,20 @@ ftc_avg_seasnum %>%
 ftc_avg_seasnum %>%
   filter(seas_num < 5, site == "Toolik", depth_start_cm < 60) %>% 
   ggplot()+
-  geom_rect(aes(xmin = seas_num -0.2, xmax = seas_num + 0.2, 
-                ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.character(ftc)))+
+  geom_rect(aes(xmin = seas_num -0.35, xmax = seas_num + 0.35, 
+                ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.numeric(ftc)))+
   scale_y_reverse()+
   scale_x_continuous(breaks = 1:4,
                      labels = c("fall", "winter", "spring", "summer"))+
   annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
            linetype = 2) +
-  scale_fill_gradientn(values = (pnw_palette("Sunset2")))+
+  scale_fill_gradientn(colors = (pnw_palette("Sunset2", 6
+                                             )))+
   labs(
     y = "depth, cm",
-    x = "", 
-    color = "Freeze/Thaw Cycles")+
+    x = "",  
+    fill = "freeze-thaw cycles, count")+
+  
   theme_er()
 
 
