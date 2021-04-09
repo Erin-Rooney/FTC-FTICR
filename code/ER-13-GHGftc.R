@@ -385,7 +385,7 @@ ftc_avg_seasnum %>%
          site %in% "Toolik",
          depth_cm<60) %>%
   ggplot(aes(ymin = depth_start_cm, ymax = depth_stop_cm, xmin = seas_num, xmax = seas_num, fill = ftc))+
-  geom_rect(position = "stack", stat= "identity")+
+  geom_rect()+
   scale_y_reverse()+
   annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
            linetype = 2) +
@@ -395,6 +395,24 @@ ftc_avg_seasnum %>%
     x = "", 
     color = "Freeze/Thaw Cycles")+
    theme_er()
+
+
+ftc_avg_seasnum %>%
+  filter(seas_num < 5, site == "Toolik", depth_start_cm < 60) %>% 
+  ggplot()+
+  geom_rect(aes(xmin = seas_num -0.2, xmax = seas_num + 0.2, 
+                ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.character(ftc)))+
+  scale_y_reverse()+
+  scale_x_continuous(breaks = 1:4,
+                     labels = c("fall", "winter", "spring", "summer"))+
+  annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
+           linetype = 2) +
+  scale_fill_gradientn(values = (pnw_palette("Sunset2")))+
+  labs(
+    y = "depth, cm",
+    x = "", 
+    color = "Freeze/Thaw Cycles")+
+  theme_er()
 
 
 #
