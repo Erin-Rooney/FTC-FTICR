@@ -351,6 +351,20 @@ ftc_avg %>%
   theme_er()+
   facet_wrap(.~season)
 
+ftc_avg %>% 
+  filter(!season %in% "total",
+         site %in% "Toolik") %>%
+  #mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>%
+  #mutate(season = factor(season, levels = c("winter", "spring", "summer", "fall"))) %>%
+  ggplot(aes(y = depth_cm, x = ftc, color = season, size = 4))+
+  geom_line(aes(group = season))+
+  #annotate("text", label = "organic soil\n(0-20 cm)", x = 1, y = 5, size = 3.5, color = "white")+
+  #annotate("text", label = "upper mineral\n(25-50 cm)", x = 1, y = 25, size = 3.5, color = "white")+
+  #annotate("text", label = "lower mineral\n(50-70 cm)", x = 1, y = 40, size = 3.5, color = "black")+
+  scale_y_reverse()+
+  #scale_color_gradientn(colors = (PNWColors::pnw_palette("Sunset2")))+  
+  theme_er()
+  #facet_wrap(.~season)
 
 pal=PNWColors::pnw_palette("Anemone",100)
 
