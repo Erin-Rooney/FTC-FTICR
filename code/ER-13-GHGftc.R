@@ -6,7 +6,8 @@
 # load data---------------------------------
 ghg_csv2 = read.csv("processed/ghg_depth.csv")
 #ftc_dat = read.csv("processed/FTC_quant_inprocess.csv")
-ftc_dat = read.csv("processed/final_dat2.csv")
+#ftc_dat = read.csv("processed/final_dat2.csv")
+ftc_dat = read.csv("processed/combined_TOOL.csv")
 sommos_oc = read.csv("processed/oc_sommos_neonoc.csv")
 probe_loc = read.csv("processed/Probe Locations.csv")
 
@@ -21,33 +22,37 @@ library(soilpalettes)
 #rename site codes and set levels, exclude active layer, set season levels
 #this data is for a full profile that does not need active layer (september) isolated
 
-ftc_fulldat = ftc_dat %>% 
-      mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")),
-             site = recode (site, "HEAL" = "Healy",
-                            "BONA" = "Caribou-poker",
-                            "BARR" = "Barrow",
-                            "TOOL" = "Toolik"))%>% 
-      filter(!season == "activelayer" & !is.na(Def1)) %>%       
-      mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))  
+# ftc_fulldat = ftc_dat %>% 
+#       mutate(site = factor (site, levels = c("HEAL", "BONA", "BARR", "TOOL")),
+#              site = recode (site, "HEAL" = "Healy",
+#                             "BONA" = "Caribou-poker",
+#                             "BARR" = "Barrow",
+#                             "TOOL" = "Toolik"))%>% 
+#       filter(!season == "activelayer" & !is.na(Def1)) %>%       
+#       mutate(season = factor(season, levels = c("spring", "summer", "fall", "winter")))  
     
+ftc_fulldat = ftc_dat %>% 
+  mutate(site = recode (site, "TOOL" = "Toolik"))%>% 
+  filter(!is.na(Def1)) %>%       
+  mutate(season = factor(season, levels = c("fall", "winter", "spring", "summer")))  
 
 #next, isolate active layer, recode site names, and set levels
 #this data is specifically for active layer plots
              
-ftc_actdat = ftc_dat %>% 
-  filter(season=="activelayer" & !is.na(Def1)) %>% 
-  mutate(site = recode (site, "HEAL" = "Healy",
-                        "BONA" = "Caribou-poker",
-                        "BARR" = "Barrow",
-                        "TOOL" = "Toolik"))%>% 
-  mutate(site = factor (site, levels = c("healy", "caribou-poker", "barrow", "toolik"))) 
+# ftc_actdat = ftc_dat %>% 
+#   filter(season=="activelayer" & !is.na(Def1)) %>% 
+#   mutate(site = recode (site, "HEAL" = "Healy",
+#                         "BONA" = "Caribou-poker",
+#                         "BARR" = "Barrow",
+#                         "TOOL" = "Toolik"))%>% 
+#   mutate(site = factor (site, levels = c("healy", "caribou-poker", "barrow", "toolik"))) 
 
 
 #subset. why do this instead of filtering?
 
-ftc_actdat_subset = 
-  ftc_actdat %>% 
-  filter(site %in% c("healy", "toolik"))
+# ftc_actdat_subset = 
+#   ftc_actdat %>% 
+#   filter(site %in% c("healy", "toolik"))
 
 ftc_fulldat_subset2 = 
   ftc_fulldat %>% 
@@ -59,7 +64,8 @@ ftc_fulldat_subset2 =
 #FT
 ftc_avg = 
   ftc_fulldat %>% 
-  filter(!season %in% "activelayer") %>% 
+  mutate(depth_cm = depth_m*100) %>% 
+  #filter(!season %in% "activelayer") %>% 
   ## NOTE: USE ADDITIONAL FILTERS AS NEEDED. I SEE MULTIPLE ENTRIES IN YEAR, MAG.VEC, DURATION, ETC.
   ## FOR NOW, I AM COMBINING ACROSS ALL THOSE VARIABLES, KEEPING ONLY DEPTH, SEASON, SITE AS GROUPING VARIABLES
   
@@ -71,7 +77,7 @@ ftc_avg =
   # now, incorporate the `total` data into `season`
   # spread the `season` columns, and then recombine with `total`
   spread(season, Def1) %>% 
-  gather(season, Def1, total:winter) %>%
+  gather(season, Def1, total:summer) %>%
   # many NAs were introduced when forcing wide-form. remove all rows containing NAs
   na.omit() %>% 
   
@@ -101,7 +107,7 @@ ftc_avg =
          depth_stop_cm = as.integer(depth_stop_cm))
 
 
-ftc_avg = ftc_avg %>% 
+ftc_avg2 = ftc_avg %>% 
   mutate(depth = depth_stop_cm - depth_start_cm)
 
 
@@ -341,7 +347,7 @@ ftc_fulldat_subset2 %>%
 
 # misplaced code
 
-ftc_avg %>% 
+ftc_avg2 %>% 
   filter(!season %in% "total",
          site %in% "Toolik") %>%
   #mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>%
