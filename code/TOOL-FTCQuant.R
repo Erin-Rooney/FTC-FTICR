@@ -67,7 +67,7 @@ ftc_fulldat = ftc_dat %>%
 # averages for geom_bar-------------------------------------------
 
 #FT
-ftc_avg = 
+ftc_sum = 
   ftc_fulldat %>% 
   mutate(depth_cm = depth_m*(-100)) %>% 
   #filter(!season %in% "activelayer") %>% 
@@ -88,7 +88,7 @@ ftc_avg =
   
   # now, calculate mean FTC per site/depth/season
   group_by(site, depth_cm, season) %>% 
-  dplyr::summarise(ftc = as.integer(mean(Def1))) %>% 
+  dplyr::summarise(ftc = as.integer(sum(Def1))) %>% 
   ungroup() %>% 
   
   # bin top 10 cm into 5-cm bins, and the rest into 10-cm bins
@@ -114,8 +114,8 @@ ftc_avg =
 
 #Recode seasons as numbers
 
-ftc_avg_seasnum = 
-  ftc_avg %>% 
+ftc_sum_seasnum = 
+  ftc_sum %>% 
   mutate(season = factor(season)) %>% 
   mutate(seas_num = recode(season, "fall" = 1,
                            "winter" = 2,
@@ -125,7 +125,7 @@ ftc_avg_seasnum =
 
 #
 
-ftc_avg_seasnum %>%
+ftc_sum_seasnum %>%
   filter(seas_num < 5) %>% 
   ggplot()+
   geom_rect(aes(xmin = seas_num -0.35, xmax = seas_num + 0.35, 
