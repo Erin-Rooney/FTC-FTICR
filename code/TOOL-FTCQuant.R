@@ -87,10 +87,11 @@ ftc_sum =
   na.omit() %>% 
   
   # now, calculate mean FTC per site/depth/season
+  # changed to sum and added in year in group by.
   group_by(site, depth_cm, season) %>% 
-  dplyr::summarise(ftc = as.integer(sum(Def1))) %>% 
+  dplyr::summarise(ftc = (max(Def1))) %>%
   ungroup() %>% 
-  
+
   # bin top 10 cm into 5-cm bins, and the rest into 10-cm bins
   
   mutate(depth_bins1 = case_when(depth_cm <= 10 ~ cut_width(depth_cm, width = 5, center=2.5)),
@@ -129,13 +130,13 @@ ftc_sum_seasnum %>%
   filter(seas_num < 5) %>% 
   ggplot()+
   geom_rect(aes(xmin = seas_num -0.35, xmax = seas_num + 0.35, 
-                ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.numeric(ftc)))+
+                ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.character(ftc)))+
   scale_y_reverse()+
   scale_x_continuous(breaks = 1:4,
                      labels = c("fall", "winter", "spring", "summer"))+
   annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
            linetype = 2) +
-  scale_fill_gradientn(colors = (pnw_palette("Sunset2", 6
+  scale_fill_manual(values = (pnw_palette("Sunset2", 3
   )))+
   labs(
     y = "depth, cm",
