@@ -126,10 +126,10 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1,
   scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))
 
 
-# TOOL vs. HEAL (con, organic only) ----
+# TOOL vs. HEAL (no filtering) ----
 relabund_pca =
   fticr_water_relabund %>% 
-  filter(Trtmt == "CON" & Material == "Organic") %>% 
+  #filter(Material == "Organic") %>% 
   ungroup %>% 
   dplyr::select(-c(counts, totalcounts)) %>% 
   pivot_wider(names_from = "Class", values_from = "relabund") %>% 
@@ -150,9 +150,19 @@ pca = prcomp(num, scale. = T)
 ggbiplot(pca, obs.scale = 1, var.scale = 1,
          groups = as.character(grp$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=1,stroke=1, aes(color = groups))+
+  geom_point(size=5,stroke=1, aes(color = groups, shape = grp$Trtmt))+
   xlim(-4,10)+
   ylim(-3.5,5)+
+  NULL
+
+ggbiplot(pca, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp$Site), 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=5,stroke=1, aes(color = grp$Material, shape = grp$Trtmt))+
+  xlim(-4,10)+
+  ylim(-3.5,5)+
+  ggtitle("PCA, No filtering")+
+  theme_er()+
   NULL
 
 
