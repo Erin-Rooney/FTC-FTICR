@@ -1,7 +1,7 @@
 # Feb-24-2021
 # FTICR
 # Water Analysis
-# PCAs
+# PCAs and Permanovas
 
 #load packages
 source("code/FTICR-0-packages.R")
@@ -226,3 +226,17 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1,
   ylim(-3.5,4)+
   NULL
 
+# Permanovas----------------------
+
+relabund_wide = 
+  fticr_water_relabund %>% 
+  dplyr::select(Core, SampleAssignment, class, relabund, 
+                Moisture, Wetting, Suction, Homogenization, Amendments) %>% 
+  spread(class, relabund) %>% 
+  replace(is.na(.), 0)
+
+permanova_fticr_all = 
+  adonis(relabund_wide %>% select(aliphatic:condensed_arom) ~ (Amendments+Moisture+Wetting+Suction+Homogenization)^2, 
+         data = relabund_wide)
+
+broom::tidy(permanova_fticr_all$aov.tab)
