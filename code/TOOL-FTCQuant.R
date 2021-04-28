@@ -136,8 +136,8 @@ ftc_sum_seasnum %>%
                      labels = c("fall", "winter", "spring", "summer"))+
   annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
            linetype = 2) +
-  scale_fill_manual(values = (pnw_palette("Sunset2", 3
-  )))+
+  scale_fill_manual(values = c("#d7b1c5", "#64a8a8"
+  ))+
   labs(
     y = "depth, cm",
     x = "",  
