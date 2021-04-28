@@ -55,6 +55,7 @@ library(ggbiplot)
 
 ## all samples ----
 ## first, make wider
+# CON ONLY
 relabund_pca =
   fticr_water_relabund %>%
   filter(Trtmt == 'CON') %>% 
@@ -81,13 +82,48 @@ pca = prcomp(num, scale. = T)
 ggbiplot(pca, obs.scale = 1, var.scale = 1,
          groups = as.character(grp$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=1,stroke=1, aes(color = groups))+
+  geom_point(size=3,stroke=1, aes(color = groups, shape = grp$Material))+
   xlim(-4,10)+
   ylim(-3.5,5)+
+  ggtitle("Control")+
   NULL +
   theme_er()+
   scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))
   
+# FTC ONLY
+relabund_pca =
+  fticr_water_relabund %>%
+  filter(Trtmt == 'FTC') %>% 
+  ungroup %>% 
+  dplyr::select(-c(counts, totalcounts),
+                Site, Trtmt, Material) %>% 
+  pivot_wider(names_from = "Class", values_from = "relabund") %>% 
+  replace(is.na(.),0) 
+#dplyr::select(-1)
+
+
+num = 
+  relabund_pca %>% 
+  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
+
+grp = 
+  relabund_pca %>% 
+  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`),
+                Site,Trtmt, Material) %>% 
+  dplyr::mutate(row = row_number())
+
+pca = prcomp(num, scale. = T)
+
+ggbiplot(pca, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp$Site), 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = groups, shape = grp$Material))+
+  xlim(-4,10)+
+  ylim(-3.5,5)+
+  ggtitle("Freeze-Thaw")+
+  NULL +
+  theme_er()+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))
 
 
 # TOOL vs. HEAL (con, organic only) ----
