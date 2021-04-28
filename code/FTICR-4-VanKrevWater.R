@@ -44,21 +44,16 @@ fticr_water_hcoc =
 # 
 fticr_water_hcoc %>% 
   filter(Trtmt %in% "CON") %>% 
-  ggplot(aes(x=OC, y=HC, color = OC))+
-  geom_point(alpha = 0.2, size = 1)+
+  gg_vankrev(aes(x=OC, y=HC, color = Site))+
   #stat_ellipse(show.legend = F)+
   #stat_ellipse()+
-  facet_grid(Material ~ Site)+
-  #geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  #geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  #geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  facet_grid(Material ~.)+
   labs(title = "Water extracted FTICR-MS",
        x = "O:C",
        y = "H:C",
        color = "NOSC")+
   theme_er()+
-  scale_color_gradientn(colors = pnw_palette("Starfish"))
+  scale_color_manual(values = pnw_palette("Bay", 2))
 
 fticr_water_hcoc %>% 
   ggplot(aes(x=OC, y=HC, color = Site))+
@@ -141,6 +136,55 @@ fticr_water_ftc_loss %>%
   facet_grid(Material ~ Site)+
   theme_er() +
   scale_color_manual (values = rev(soil_palette("redox", 2)))
+
+# plot common as well as lost/gained
+fticr_water_ftc_loss_common %>% 
+  filter(loss_gain == "common") %>% 
+  ggplot()+
+  geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
+  geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
+             aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
+  #geom_point(alpha = 0.2, size = 1)+
+  #stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  ggtitle("Water extracted FTICR-MS")+
+  labs(caption = "grey = common to both")+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  scale_color_manual (values = rev(soil_palette("redox", 2)))
+
+
+## calculate peaks unique peaks by site ---- 
+
+# this does only unique by site
+fticr_uniquesite = 
+  fticr_data_water_summarized %>% 
+  filter(Trtmt == "CON") %>% 
+  # calculate n to see which peaks were unique vs. common
+  group_by(formula, Material) %>% 
+  dplyr::mutate(n = n()) %>% 
+  # n = 1 means unique to site
+  # n = 2 means common to both
+  mutate(unique = case_when(n == 1 ~ Site, 
+                            n == 2 ~ "common")) %>% 
+  left_join(meta_hcoc_water) %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+
+# plot only unique
+fticr_uniquesite %>% 
+  filter(!unique == "common") %>% 
+  gg_vankrev(aes(x = OC, y = HC, color = unique))+
+  stat_ellipse(show.legend = F)+
+  labs(title = "Water Extractable FTICR-MS",
+       subtitle = "Control Soils, Unique by Site")+
+  facet_grid(Material ~ .)+
+  theme_er() +
+  scale_color_manual (values = rev(soil_palette("redox", 2
+                                          )))
 
 # plot common as well as lost/gained
 fticr_water_ftc_loss_common %>% 
