@@ -142,17 +142,19 @@ ggbiplot(pca_ftc, obs.scale = 1, var.scale = 1,
 
 
 #
-# Permanovas----------------------
+# PERMANOVA ---------------------------------------------------------------
+## use relabund_wide for PERMANOVA
+## general format is: [all numeric columns] ~ [independent variables]
+## broom::tidy summarizes the info from the model as a dataframe
 
-relabund_wide = 
-  fticr_water_relabund %>% 
-  dplyr::select(Core, SampleAssignment, class, relabund, 
-                Moisture, Wetting, Suction, Homogenization, Amendments) %>% 
-  spread(class, relabund) %>% 
-  replace(is.na(.), 0)
+## P-value tells you if a factor is significant
+## R2 tells you the relative contribution of the factor to total variation
+## e.g. R2 = 0.28 means "Material" accounted for 28 % of total variation
 
-permanova_fticr_all = 
-  adonis(relabund_wide %>% select(aliphatic:condensed_arom) ~ (Amendments+Moisture+Wetting+Suction+Homogenization)^2, 
-         data = relabund_wide)
+library(vegan)
+# permanova_fticr_all = 
+  adonis(relabund_wide %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
+         (Site+Trtmt+Material)^2, 
+       data = relabund_wide) 
 
-broom::tidy(permanova_fticr_all$aov.tab)
+# broom::tidy(permanova_fticr_all$aov.tab)
