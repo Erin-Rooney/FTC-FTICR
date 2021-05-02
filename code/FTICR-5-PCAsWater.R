@@ -26,7 +26,7 @@ fticr_water_relabund =
   group_by(ID, Site, Trtmt, Material, Class) %>% 
   dplyr::summarize(counts = n()) %>% 
   ## create a column for total counts
-  group_by(Site, Trtmt, Material) %>%
+  group_by(ID, Site, Trtmt, Material) %>%
   dplyr::mutate(totalcounts = sum(counts)) %>% 
   ungroup() %>% 
   mutate(relabund = (counts/totalcounts)*100,
