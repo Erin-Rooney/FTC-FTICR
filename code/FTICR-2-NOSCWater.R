@@ -49,6 +49,23 @@ ggplot(fticr_water_nosc, aes(NOSC, color = Site, fill = Site)) +
   ggtitle("NOSC, Water Extracted by Site")+
   facet_grid(Material~Trtmt)
 
+fticr_water_nosc %>% 
+  filter(Trtmt == 'CON') %>% 
+  ggplot(aes(NOSC, color = Site, fill = Site)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 120), width = 20, fill = NA)+
+  facet_grid(Material ~ .) +
+  theme_er() +
+  #scale_fill_manual(values = soil_palette("redox", 2)) +
+  #scale_color_manual(values = soil_palette("redox", 2)) + 
+  #scale_color_manual(values = rev(nord("afternoon_prarie", 2)))+
+  #scale_fill_manual(values =rev(nord("afternoon_prarie", 2)))+
+  scale_fill_manual (values = soil_palette("redox", 2)) +
+  scale_color_manual (values = soil_palette("redox", 2))+
+labs(title = "NOSC, Water Extracted by Site",
+       subtitle = "control-only")+
+  facet_grid(Material~.)
+
 # NOSC by compound class
 fticr_water_nosc %>% 
   filter(Site == "HEAL") %>% 
