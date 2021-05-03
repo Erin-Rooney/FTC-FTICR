@@ -10,7 +10,7 @@ source("code/FTICR-0-packages.R")
 
 fticr_data_water = read.csv("fticr_data_water.csv") %>% select(ID, formula, Site, Trtmt, Material) 
 fticr_meta_water = read.csv("fticr_meta_water.csv")
-meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
+# meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 ## fticr_data_water contains peaks for each sample, i.e. each replicate
 
@@ -31,7 +31,7 @@ fticr_water_relabund =
   ungroup() %>% 
   mutate(relabund = (counts/totalcounts)*100,
          relabund = round(relabund, 2)) %>% 
-  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) 
 
 #
 # 3. PCA ---------------------------------------------------------------------
@@ -149,12 +149,12 @@ ggbiplot(pca_ftc, obs.scale = 1, var.scale = 1,
 
 ## P-value tells you if a factor is significant
 ## R2 tells you the relative contribution of the factor to total variation
-## e.g. R2 = 0.28 means "Material" accounted for 28 % of total variation
+## e.g. R2 = 0.115 means "Material" accounted for 11.5 % of total variation
 
 library(vegan)
 # permanova_fticr_all = 
   adonis(relabund_wide %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
-         (Site+Trtmt+Material)^2, 
+         (Site*Trtmt*Material), 
        data = relabund_wide) 
 
-# broom::tidy(permanova_fticr_all$aov.tab)
+# b = broom::tidy(permanova_fticr_all$aov.tab)
