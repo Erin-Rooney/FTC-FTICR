@@ -6,73 +6,61 @@
 #load packages
 source("code/FTICR-0-packages.R")
 
-# 1. Load files-----------------------------------
+# 1. load files -----------------------------------------------------------
 
-fticr_data_water = read.csv("fticr_data_water.csv")
+fticr_data_water = read.csv("fticr_data_water.csv") %>% select(ID, formula, Site, Trtmt, Material) 
 fticr_meta_water = read.csv("fticr_meta_water.csv")
-meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
-### ^^ the files above have aliph as well as aromatic for the same sample, which can be confusing/misleading
-### create an index combining them
+# meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
-fticr_water = 
-  fticr_data_water %>% 
-  select(ID, formula, Site, Trtmt, Material) 
+## fticr_data_water contains peaks for each sample, i.e. each replicate
 
-fticr_data_water_summarized = 
-  fticr_water %>% 
-  distinct(Site, Trtmt, Material, formula) %>% mutate(presence = 1)
+
+
+# 2. calculate relabund ---------------------------------------------------
+## for PCA and PERMANOVA (and related stats), calculate relabund for each core
 
 fticr_water_relabund = 
-  fticr_data_water_summarized %>% 
+  fticr_data_water %>% 
   left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
   ## create a column for group counts
-  group_by(Site, Trtmt, Material, Class) %>% 
+  group_by(ID, Site, Trtmt, Material, Class) %>% 
   dplyr::summarize(counts = n()) %>% 
   ## create a column for total counts
-  group_by(Site, Trtmt, Material) %>%
+  group_by(ID, Site, Trtmt, Material) %>%
   dplyr::mutate(totalcounts = sum(counts)) %>% 
   ungroup() %>% 
   mutate(relabund = (counts/totalcounts)*100,
          relabund = round(relabund, 2)) %>% 
-  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+  mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) 
 
-
-
-###################
-###################
-###################
-
-# PCA ---------------------------------------------------------------------
-## install the ggbiplot package from github
-## install the miraKlein version, not 
-
+#
+# 3. PCA ---------------------------------------------------------------------
 ## you will need relative abundance data for PCA 
 
+## install the ggbiplot package from github
+## install the miraKlein version, not vqv
 
-devtools::install_github("miraKlein/ggbiplot")
+## devtools::install_github("miraKlein/ggbiplot")
 library(ggbiplot)
 
 
-## all samples ----
-## first, make wider
-# CON ONLY
-relabund_pca =
+## 3a. all samples ---------------------------------------------------------
+## step i. make wider
+relabund_wide =
   fticr_water_relabund %>%
-  filter(Trtmt == 'CON') %>% 
   ungroup %>% 
   dplyr::select(-c(counts, totalcounts),
                 Site, Trtmt, Material) %>% 
   pivot_wider(names_from = "Class", values_from = "relabund") %>% 
   replace(is.na(.),0) 
-  #dplyr::select(-1)
 
-
+## step ii. split into numeric/factor dataframes, and run PCA on those
 num = 
-  relabund_pca %>% 
+  relabund_wide %>% 
   dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
 
 grp = 
-  relabund_pca %>% 
+  relabund_wide %>% 
   dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`),
                 Site,Trtmt, Material) %>% 
   dplyr::mutate(row = row_number())
@@ -83,160 +71,90 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1,
          groups = as.character(grp$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(color = groups, shape = grp$Material))+
-  xlim(-4,10)+
-  ylim(-3.5,5)+
-  ggtitle("Control")+
-  NULL +
+  labs(title = "all samples, CON and FTC")+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
   theme_er()+
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))
-  
-# FTC ONLY
-relabund_pca =
-  fticr_water_relabund %>%
-  filter(Trtmt == 'FTC') %>% 
-  ungroup %>% 
-  dplyr::select(-c(counts, totalcounts),
-                Site, Trtmt, Material) %>% 
-  pivot_wider(names_from = "Class", values_from = "relabund") %>% 
-  replace(is.na(.),0) 
-#dplyr::select(-1)
+  NULL
 
 
-num = 
-  relabund_pca %>% 
+#
+## 3b. CON only ---------------------------------------------------------
+# use the format above for CON soils only
+# append the grp, num, pca files with "_con" to distinguish from previous
+
+num_con = 
+  relabund_wide %>% 
+  filter(Trtmt == "CON") %>% 
   dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
 
-grp = 
-  relabund_pca %>% 
+grp_con = 
+  relabund_wide %>% 
+  filter(Trtmt == "CON") %>% 
   dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`),
                 Site,Trtmt, Material) %>% 
   dplyr::mutate(row = row_number())
 
-pca = prcomp(num, scale. = T)
+pca_con = prcomp(num_con, scale. = T)
 
-ggbiplot(pca, obs.scale = 1, var.scale = 1,
-         groups = as.character(grp$Site), 
+ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp_con$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=3,stroke=1, aes(color = groups, shape = grp$Material))+
-  xlim(-4,10)+
-  ylim(-3.5,5)+
-  ggtitle("Freeze-Thaw")+
-  NULL +
-  theme_er()+
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))
-
-
-# TOOL vs. HEAL (no filtering) ----
-relabund_pca =
-  fticr_water_relabund %>% 
-  #filter(Material == "Organic") %>% 
-  ungroup %>% 
-  dplyr::select(-c(counts, totalcounts)) %>% 
-  pivot_wider(names_from = "Class", values_from = "relabund") %>% 
-  replace(is.na(.),0)  
-  #dplyr::select(-1)
-
-num = 
-  relabund_pca %>% 
-  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
-
-grp = 
-  relabund_pca %>% 
-  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) %>% 
-  dplyr::mutate(row = row_number())
-
-pca = prcomp(num, scale. = T)
-
-ggbiplot(pca, obs.scale = 1, var.scale = 1,
-         groups = as.character(grp$Site), 
-         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=5,stroke=1, aes(color = groups, shape = grp$Trtmt))+
-  xlim(-4,10)+
-  ylim(-3.5,5)+
-  NULL
-
-ggbiplot(pca, obs.scale = 1, var.scale = 1,
-         groups = as.character(grp$Site), 
-         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=5,stroke=1, aes(color = grp$Material, shape = grp$Trtmt))+
-  xlim(-4,10)+
-  ylim(-3.5,5)+
-  ggtitle("PCA, No filtering")+
+  geom_point(size=3,stroke=1, aes(color = groups, shape = grp_con$Material))+
+  labs(title = "CON only")+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
   theme_er()+
   NULL
 
+#
+## 3c. FTC only ---------------------------------------------------------
+# use the format above for FTC soils only
+# append the grp, num, pca files with "_ftc" to distinguish from previous
 
-# HEAL con vs ft  ----
-relabund_pca =
-  fticr_water_relabund %>% 
-  filter(Site == "HEAL") %>% 
-  ungroup %>% 
-  dplyr::select(-c(counts, totalcounts)) %>% 
-  pivot_wider(names_from = "Class", values_from = "relabund") %>% 
-  replace(is.na(.),0)  %>% 
-  dplyr::select(-1)
-
-num = 
-  relabund_pca %>% 
+num_ftc = 
+  relabund_wide %>% 
+  filter(Trtmt == "FTC") %>% 
   dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
 
-grp = 
-  relabund_pca %>% 
-  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) %>% 
+grp_ftc = 
+  relabund_wide %>% 
+  filter(Trtmt == "FTC") %>% 
+  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`),
+                Site,Trtmt, Material) %>% 
   dplyr::mutate(row = row_number())
 
-pca = prcomp(num, scale. = T)
+pca_ftc = prcomp(num_ftc, scale. = T)
 
-ggbiplot(pca, obs.scale = 1, var.scale = 1,
-         groups = grp$Trtmt, 
+ggbiplot(pca_ftc, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp_ftc$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=3,stroke=1, aes(color = groups, shape = grp$Material))+
-  xlim(-4,5)+
-  ylim(-3.5,4)+
+  geom_point(size=3,stroke=1, aes(color = groups, shape = grp_ftc$Material))+
+  labs(title = "FTC only")+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
+  theme_er()+
   NULL
 
+#
+## 3d. HEAL only ---------------------------------------------------------
 
 
-# Tool con vs ft ----
-relabund_pca =
-  fticr_water_relabund %>% 
-  filter(Site == "TOOL" & Material == "Lower Mineral") %>% 
-  ungroup %>% 
-  dplyr::select(-c(counts, totalcounts)) %>% 
-  pivot_wider(names_from = "Class", values_from = "relabund") %>% 
-  replace(is.na(.),0)  %>% 
-  dplyr::select(-1)
+#
+## 3e. TOOL only ---------------------------------------------------------
 
-num = 
-  relabund_pca %>% 
-  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
 
-grp = 
-  relabund_pca %>% 
-  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) %>% 
-  dplyr::mutate(row = row_number())
+#
+# PERMANOVA ---------------------------------------------------------------
+## use relabund_wide for PERMANOVA
+## general format is: [all numeric columns] ~ [independent variables]
+## broom::tidy summarizes the info from the model as a dataframe
 
-pca = prcomp(num, scale. = T)
+## P-value tells you if a factor is significant
+## R2 tells you the relative contribution of the factor to total variation
+## e.g. R2 = 0.115 means "Material" accounted for 11.5 % of total variation
 
-ggbiplot(pca, obs.scale = 1, var.scale = 1,
-         groups = grp$Trtmt, 
-         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=3,stroke=1, aes(color = groups, shape = grp$Material))+
-  xlim(-4,5)+
-  ylim(-3.5,4)+
-  NULL
+library(vegan)
+# permanova_fticr_all = 
+  adonis(relabund_wide %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
+         (Site*Trtmt*Material), 
+       data = relabund_wide) 
 
-# Permanovas----------------------
-
-relabund_wide = 
-  fticr_water_relabund %>% 
-  dplyr::select(Core, SampleAssignment, class, relabund, 
-                Moisture, Wetting, Suction, Homogenization, Amendments) %>% 
-  spread(class, relabund) %>% 
-  replace(is.na(.), 0)
-
-permanova_fticr_all = 
-  adonis(relabund_wide %>% select(aliphatic:condensed_arom) ~ (Amendments+Moisture+Wetting+Suction+Homogenization)^2, 
-         data = relabund_wide)
-
-broom::tidy(permanova_fticr_all$aov.tab)
+# b = broom::tidy(permanova_fticr_all$aov.tab)
