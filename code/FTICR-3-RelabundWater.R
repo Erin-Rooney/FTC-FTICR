@@ -103,6 +103,51 @@ label = tribble(
 ) %>% 
   mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
-## NEXT STEPS:
-# full summary table for relabund (with HSD stats)
-# asterisks for bar plots
+#
+# 4. relabund summary table ----------------------------------------------------------------
+## step 1: prepare the data, combine mean +/- se
+## unicode "\u00b1" gives plus-minus symbol
+
+relabund_table = 
+  fticr_water_relabund_summarized %>% 
+  mutate(summary = paste(relabundance, "\u00b1", se)) %>% 
+  dplyr::select(-relabundance, -se)
+
+## step 2: create ANOVA function for relabund ~ Trtmt, for each combination of Site-Material-Class
+
+fit_aov = function(dat){
+    
+    aov(relabund ~ Trtmt, data = dat) %>% 
+      broom::tidy() %>% # convert to clean dataframe
+      rename(pvalue = `p.value`) %>% 
+      filter(term == "Trtmt") %>% 
+      mutate(asterisk = case_when(pvalue <= 0.05 ~ "*")) %>% 
+    dplyr::select(asterisk) %>% # we need only the asterisk column
+    # two steps below, we need to left-join. 
+    # set Trtmt = "FTC" so the asterisks will be added to the FTC values only
+    mutate(Trtmt = "FTC")   
+  
+  }
+  
+
+## step 3: run the fit_anova function 
+## do this on the original relabund file, because we need all the reps
+
+relabund_asterisk = 
+  fticr_water_relabund %>% 
+  group_by(Site, Material, Class) %>% 
+  do(fit_aov(.))
+
+## step 4: combine the summarized values with the asterisks
+relabund_table_with_asterisk = 
+  relabund_table %>% 
+  left_join(relabund_asterisk) %>%
+  # combine the values with the asterisk notation
+  mutate(value = paste(summary, asterisk),
+  # this will also add " NA" for the blank cells
+  # use str_remove to remove the string
+         value = str_remove(value, " NA")) %>% 
+  dplyr::select(-summary, -asterisk) %>% 
+  pivot_wider(names_from = "Trtmt", values_from = "value")
+
+relabund_table_with_asterisk %>% knitr::kable() # prints a somewhat clean table in the console
