@@ -10,7 +10,7 @@ source("code/FTICR-0-packages.R")
 
 fticr_data_water = read.csv("fticr_data_water.csv") %>% select(ID, formula, Site, Trtmt, Material) 
 fticr_meta_water = read.csv("fticr_meta_water.csv")
-meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
+#meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 #
 # 2. calculate relabund ---------------------------------------------------
@@ -60,23 +60,6 @@ fticr_water_relabund_arom =
 # 3. plots ----------------------------------------------------------------
 ## 3a. plot relabund of aromatic ----
 
-fticr_water_relabund_arom %>% 
-  filter(aromatic_col %in% "aromatic") %>% 
-  ggplot(aes(x = Trtmt, y = relabund, color = Trtmt, shape = Trtmt))+
-  #geom_boxplot()+
-  geom_point()+
-  facet_grid(Material ~ Site)+
-  theme_er()
-
-fticr_water_relabund_arom %>% 
-  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) %>% 
-  filter(aromatic_col %in% "aromatic") %>% 
-  ggplot(aes(x = Site, y = relabund, color = Trtmt, shape = Trtmt))+
-  #geom_boxplot()+
-  geom_point(position = position_dodge(width = 0.3), size = 2)+
-  facet_grid(Material ~ .)+
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Lake", 2)))+
-  theme_er()
 ## potential idea: do ANOVA with x = site, and report p-values in the graph
 ## then do ANOVA with x = trtmt for each site, and report sig. as asterisks
 
@@ -87,10 +70,25 @@ fticr_water_relabund_arom %>%
 fticr_water_relabund_summarized %>% 
   ggplot(aes(x = Trtmt, y = relabundance))+
   geom_bar(aes(fill = Class), stat = "identity")+
+  scale_fill_manual(values = rev(pnw_palette("Sunset",4)))+
   facet_grid(Material ~ Site)+
   #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
   theme_er()+
-  scale_fill_manual(values = rev(pnw_palette("Sunset",4)))
+  theme(legend.position = "bottom")+
+  NULL
+
+# bar graph_control only
+fticr_water_relabund_summarized %>% 
+  filter(Trtmt == "CON") %>% 
+  ggplot(aes(x = Site, y = relabundance))+
+  geom_bar(aes(fill = Class), stat = "identity")+
+  scale_fill_manual(values = rev(pnw_palette("Sunset",4)))+
+  facet_grid(Material ~ .)+
+  #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
+  theme_er()+
+  theme(legend.position = "bottom")+
+  NULL
+
 
 
 # run anova to get statistical significance
@@ -151,3 +149,50 @@ relabund_table_with_asterisk =
   pivot_wider(names_from = "Trtmt", values_from = "value")
 
 relabund_table_with_asterisk %>% knitr::kable() # prints a somewhat clean table in the console
+
+write.csv(relabund_table_with_asterisk, "output/trtmt_aovstats.csv", row.names = FALSE)
+
+
+## step 2: create ANOVA function for relabund ~ Trtmt, for each combination of Site-Material-Class
+
+fit_aov_site = function(dat){
+  
+ aov(relabund ~ Site, data = dat) %>% 
+    broom::tidy() %>% # convert to clean dataframe
+    rename(pvalue = `p.value`) %>% 
+    filter(term == "Site") %>% 
+    mutate(asterisk = case_when(pvalue <= 0.05 ~ "*")) %>% 
+    dplyr::select(asterisk) %>% # we need only the asterisk column
+    # two steps below, we need to left-join. 
+    # set Trtmt = "FTC" so the asterisks will be added to the FTC values only
+    mutate(Site = "HEAL") %>% 
+    identity()
+  
+}
+
+
+## step 3: run the fit_anova function 
+## do this on the original relabund file, because we need all the reps
+
+relabund_asterisk_sitecon = 
+  fticr_water_relabund %>% 
+  filter(Trtmt == "CON") %>% 
+  group_by(Material, Class) %>% 
+  do(fit_aov_site(.))
+
+## step 4: combine the summarized values with the asterisks
+relabund_table_with_asterisk_sitecon = 
+  relabund_table %>% 
+  left_join(relabund_asterisk_sitecon) %>%
+  # combine the values with the asterisk notation
+  mutate(value = paste(summary, asterisk),
+         # this will also add " NA" for the blank cells
+         # use str_remove to remove the string
+         value = str_remove(value, " NA")) %>% 
+  dplyr::select(-summary, -asterisk) %>% 
+  pivot_wider(names_from = "Site", values_from = "value")
+
+relabund_table_with_asterisk_sitecon %>% knitr::kable() # prints a somewhat clean table in the console
+
+write.csv(relabund_table_with_asterisk_sitecon, "output/site_aovstats.csv", row.names = FALSE)
+

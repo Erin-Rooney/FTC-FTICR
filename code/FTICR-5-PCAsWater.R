@@ -99,9 +99,9 @@ pca_con = prcomp(num_con, scale. = T)
 ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
          groups = as.character(grp_con$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=3,stroke=1, aes(color = groups, shape = grp_con$Material))+
-  labs(title = "CON only")+
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
+  geom_point(size=3,stroke=1, aes(color = grp_con$Material, shape = grp_con$Site))+
+  labs(title = "Control only")+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay", 5)))+
   theme_er()+
   NULL
 
@@ -136,10 +136,55 @@ ggbiplot(pca_ftc, obs.scale = 1, var.scale = 1,
 #
 ## 3d. HEAL only ---------------------------------------------------------
 
+num_heal = 
+  relabund_wide %>% 
+  filter(Site == "HEAL") %>% 
+  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
+
+grp_heal = 
+  relabund_wide %>% 
+  filter(Site == "HEAL") %>% 
+  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`),
+                Site,Trtmt, Material) %>% 
+  dplyr::mutate(row = row_number())
+
+pca_heal = prcomp(num_heal, scale. = T)
+
+ggbiplot(pca_heal, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp_heal$Trtmt), 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = groups, shape = grp_heal$Material))+
+  labs(title = "Healy only")+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
+  theme_er()+
+  NULL
 
 #
 ## 3e. TOOL only ---------------------------------------------------------
 
+
+num_tool = 
+  relabund_wide %>% 
+  filter(Site == "TOOL") %>% 
+  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
+
+grp_tool = 
+  relabund_wide %>% 
+  filter(Site == "TOOL") %>% 
+  dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`),
+                Site,Trtmt, Material) %>% 
+  dplyr::mutate(row = row_number())
+
+pca_tool = prcomp(num_tool, scale. = T)
+
+ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp_tool$Trtmt), 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = groups, shape = grp_tool$Material))+
+  labs(title = "Toolik only")+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
+  theme_er()+
+  NULL
 
 #
 # PERMANOVA ---------------------------------------------------------------
