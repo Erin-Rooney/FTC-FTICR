@@ -170,23 +170,23 @@ library(gapminder)
 
 #these plots were used to determine means within certain depth ranges.
 
-neon_tool_proc %>% 
-ggplot() +
-  geom_boxplot(aes(x = ctonRatio, y = biogeoCenterDepth)) +
-  ylim(28, 38)+
-  labs(y = "OC", x = "Depth")
-  
-neon_tool_proc %>% 
-  ggplot() +
-  geom_boxplot(aes(x = biogeoCenterDepth, y = carbonTot)) +
- # ylim(28, 38)+
-  labs(y = "OC", x = "Depth")
-
-neon_tool_proc %>% 
-  ggplot() +
-  geom_boxplot(aes(x = biogeoCenterDepth, y = ctonRatio)) +
-  #ylim()+
-  labs(y = "C:N", x = "Depth")
+# neon_tool_proc %>% 
+# ggplot() +
+#   geom_boxplot(aes(x = ctonRatio, y = biogeoCenterDepth)) +
+#   ylim(28, 38)+
+#   labs(y = "OC", x = "Depth")
+#   
+# neon_tool_proc %>% 
+#   ggplot() +
+#   geom_boxplot(aes(x = biogeoCenterDepth, y = carbonTot)) +
+#  # ylim(28, 38)+
+#   labs(y = "OC", x = "Depth")
+# 
+# neon_tool_proc %>% 
+#   ggplot() +
+#   geom_boxplot(aes(x = biogeoCenterDepth, y = ctonRatio)) +
+#   #ylim()+
+#   labs(y = "C:N", x = "Depth")
 
 #These plots are combo figures from NEON metadata
 
@@ -227,11 +227,10 @@ ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
   facet_grid(.~siteID)
 
 neon_proc_DC %>% 
-  ggplot(aes(y=biogeoCenterDepth, x=DC_AO, color=siteID)) +
-  geom_point(alpha = 0.4, size = 5) +
+  ggplot(aes(y=biogeoCenterDepth, x=DC_AO, fill=siteID)) +
+  geom_point(alpha = 0.4, size = 4, color = "grey10", shape = c(21)) +
   theme_erclean() +
-  scale_color_nord("afternoon_prarie", 4)+
-  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Lake", 5)))+
   labs(y = "Depth, cm", x = "DC:AO, log10")+
   scale_y_reverse()+
  # scale_x_log10()+
@@ -258,6 +257,77 @@ neon_proc %>%
   scale_y_reverse()+
   facet_grid(.~siteID)
 
+neon_proc %>% 
+  filter(siteID == "BARR") %>% 
+  ggplot(aes(y=DC_AO, x=OlsenPExtractable, fill=siteID)) +
+  geom_point(alpha = 0.4, size = 5, shape = c(21), color = "grey10") +
+  theme_erclean() +
+  #scale_color_nord("afternoon_prarie", 4)+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Winter", 4)))+
+  labs(title = "Barrow", y = "DC to AO ratio", x = "Extractable Olsen P")+
+  #facet_grid(.~siteID)+
+  NULL
+
+neon_proc %>% 
+  filter(siteID == "BARR") %>% 
+  ggplot(aes(y=DC_AO, x=OlsenPExtractable, color=siteID)) +
+  geom_point(alpha = 0.4, size = 5) +
+  theme_erclean() +
+  scale_color_nord("afternoon_prarie", 4)+
+  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(title = "Barrow", y = "DC to AO ratio", x = "Extractable Olsen P")+
+  #scale_y_reverse()+
+  #facet_grid(.~siteID)+
+  NULL
+
+neon_proc %>% 
+  filter(siteID == "BARR") %>% 
+  ggplot(aes(y=DC_AO, x=carbonTot, fill=siteID)) +
+  geom_point(alpha = 0.4, size = 5, color = "grey10", shape = c(21)) +
+  theme_erclean() +
+  #scale_color_nord("afternoon_prarie", 4)+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Winter", 4)))+
+  labs(title = "Barrow", y = "DC to AO ratio", x = "Total Carbon")+
+  #scale_y_reverse()+
+  #facet_grid(.~siteID)+
+  NULL
+
+neon_proc %>% 
+  filter(siteID == "BARR") %>% 
+  ggplot(aes(y=DC_AO, x=acidity, fill=siteID)) +
+  geom_point(alpha = 0.4, size = 5, shape = c(21)) +
+  theme_erclean() +
+  scale_color_nord("afternoon_prarie", 4)+
+  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(title = "Barrow", y = "DC to AO ratio", x = "Acidity")+
+  #scale_y_reverse()+
+  #facet_grid(.~siteID)+
+  NULL
+
+neon_proc %>% 
+  #filter(siteID == "BARR") %>% 
+  ggplot(aes(y=DC_AO, x=estimatedOC, color=siteID)) +
+  geom_point(alpha = 0.4, size = 5) +
+  theme_erclean() +
+  scale_color_nord("afternoon_prarie", 4)+
+  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "DC to AO ratio", x = "Estimated OC")+
+  #scale_y_reverse()+
+  facet_wrap(siteID~.)+
+  NULL
+
+neon_proc %>% 
+  #filter(siteID == "BARR") %>% 
+  ggplot(aes(y=DC_AO, x=waterSatx, color=siteID)) +
+  geom_point(alpha = 0.4, size = 5) +
+  theme_erclean() +
+  scale_color_nord("afternoon_prarie", 4)+
+  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "DC to AO ratio", x = "Water Saturation")+
+  #scale_y_reverse()+
+  ylim(0,1.5)+
+  facet_wrap(siteID~.)+
+  NULL
 
 neon_proc %>% 
 ggplot() +

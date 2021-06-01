@@ -281,7 +281,8 @@ ftc_dat %>%
   # scale_size_continuous()+
   scale_color_gradient(low = "blue", high = "red")+
   theme_er() +
-  facet_grid(~season) 
+  #facet_grid(~season)+
+  NULL
   
 # next plot
 

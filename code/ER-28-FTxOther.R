@@ -359,13 +359,20 @@ ftc_avg_depth = ftc_avg %>%
 
 ftc_avg_depth %>% 
   filter(!season %in% "total") %>% 
-  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL"))) %>% 
-  ggplot(aes(y = depth, x = site, fill = ftc))+
+  mutate(site = factor(site, levels = c("BARR", "TOOL", "BONA", "HEAL")),
+         site = recode(site, "BARR" = "Barrow",
+                              "TOOL" = "Toolik",
+                              "BONA" = "Caribou Poker",
+                              "HEAL" = "Healy")) %>% 
+  ggplot(aes(y = depth, x = season, fill = ftc))+
   geom_bar(position = "stack", stat= "identity")+
-  facet_grid(.~season)+
+  facet_grid(.~site)+
   scale_y_reverse()+
+  ylim(100,0)+
   scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
-  theme_kp()
+  theme_kp()+
+  theme(legend.position = "right")+
+  NULL
 
 
 ftc_avg_depth %>% 
