@@ -227,6 +227,11 @@ ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
   facet_grid(.~siteID)
 
 neon_proc_DC %>% 
+  mutate(siteID = factor(siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")),
+         siteID = recode(siteID, "BARR" = "Barrow",
+                       "TOOL" = "Toolik",
+                       "BONA" = "Caribou Poker",
+                       "HEAL" = "Healy")) %>% 
   ggplot(aes(y=biogeoCenterDepth, x=DC_AO, fill=siteID)) +
   geom_point(alpha = 0.4, size = 4, color = "grey10", shape = c(21)) +
   theme_erclean() +
@@ -259,12 +264,12 @@ neon_proc %>%
 
 neon_proc %>% 
   filter(siteID == "BARR") %>% 
-  ggplot(aes(y=DC_AO, x=OlsenPExtractable, fill=siteID)) +
+  ggplot(aes(x=DC_AO, y=OlsenPExtractable, fill=siteID)) +
   geom_point(alpha = 0.4, size = 5, shape = c(21), color = "grey10") +
   theme_erclean() +
   #scale_color_nord("afternoon_prarie", 4)+
   scale_fill_manual(values = rev(PNWColors::pnw_palette("Winter", 4)))+
-  labs(title = "Barrow", y = "DC to AO ratio", x = "Extractable Olsen P")+
+  labs(title = "Barrow", x = "DC to AO ratio", y = "Extractable Olsen P")+
   #facet_grid(.~siteID)+
   NULL
 
@@ -282,12 +287,12 @@ neon_proc %>%
 
 neon_proc %>% 
   filter(siteID == "BARR") %>% 
-  ggplot(aes(y=DC_AO, x=carbonTot, fill=siteID)) +
+  ggplot(aes(x=DC_AO, y=carbonTot, fill=siteID)) +
   geom_point(alpha = 0.4, size = 5, color = "grey10", shape = c(21)) +
   theme_erclean() +
   #scale_color_nord("afternoon_prarie", 4)+
   scale_fill_manual(values = rev(PNWColors::pnw_palette("Winter", 4)))+
-  labs(title = "Barrow", y = "DC to AO ratio", x = "Total Carbon")+
+  labs(title = "Barrow", x = "DC to AO ratio", y = "Total Carbon")+
   #scale_y_reverse()+
   #facet_grid(.~siteID)+
   NULL
