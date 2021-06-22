@@ -392,3 +392,4 @@ ftc_avg_depth %>%
   scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
   theme_kp()
 
+
