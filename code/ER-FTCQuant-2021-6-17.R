@@ -266,7 +266,7 @@ ftc_mean_seasnum %>%
   ggplot()+
   geom_rect(aes(xmin = seas_num -0.4, xmax = seas_num + 0.4, 
                 ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.numeric(ftc)))+
-  ylim(40,0)+
+  scale_y_reverse()+
   scale_x_continuous(breaks = 1:4,
                      labels = c("fall", "winter", "spring", "summer"))+
   # annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
