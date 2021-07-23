@@ -384,7 +384,15 @@ max_ftc_tabledata_wider =
 
 max_ftc_tabledata_longer =
   max_ftc_tabledata_wider %>% 
+  mutate(across(everything(), ~ ifelse(is.na(.), 0, .))) %>% 
   #select(site, depth_cm, depth_start_cm, depth_stop_cm, depth2, season, ) %>% 
+  dplyr::mutate(site = factor(site)) %>% 
+  mutate(season = factor(season)) %>% 
+  mutate(seas_num = recode(season, "fall" = 1,
+                           "winter" = 2,
+                           "spring" = 3,
+                           "summer" = 4,
+                           "total" = 5)) %>% 
   pivot_longer(cols = c(site, season, depth_start_cm, depth_stop_cm, depth2), names_to = 'depth_cm', values_to = 'ftc')
 
 
