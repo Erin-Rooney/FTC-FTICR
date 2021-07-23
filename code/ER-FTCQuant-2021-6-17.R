@@ -45,6 +45,8 @@ theme_kp <- function() {  # this for all the elements common across plots
     )
 }
 
+
+
 theme_kpnone <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
     theme(legend.position = "right",
@@ -97,7 +99,7 @@ theme_er <- function() {  # this for all the elements common across plots
 
 
 
-ftc_full = read.csv("processed/final_dat2.csv")
+ftc_full = read.csv("raw/FTC_1.5_4.csv")
 
 
 ## 2.1 calculate mean ftc
@@ -190,7 +192,7 @@ ftc_full = read.csv("processed/final_dat2.csv")
 #########################
 
 ftc_fulldat = ftc_full %>% 
-  filter(season != "activelayer") %>% 
+  #filter(season != "activelayer") %>% 
   mutate(site = recode (site, "TOOL" = "Toolik", 
                         "HEAL" = "Healy",
                         "BARR" = "Utqiaġvik",
@@ -204,7 +206,7 @@ ftc_fulldat = ftc_full %>%
 
 ftc_mean = 
   ftc_fulldat %>%
-  filter(mag.vec == 1 & duration == 24) %>% 
+  #filter(mag.vec == 1.5 & duration == 4) %>% 
   mutate(depth_cm = depth_m*(-100)) %>% 
   #filter(!season %in% "activelayer") %>% 
   ## NOTE: USE ADDITIONAL FILTERS AS NEEDED. I SEE MULTIPLE ENTRIES IN YEAR, MAG.VEC, DURATION, ETC.
@@ -285,7 +287,7 @@ ftc_mean_seasnum %>%
 
 ftc_max = 
   ftc_fulldat %>%
-  filter(mag.vec == 1 & duration == 24) %>% 
+  #filter(mag.vec == 1 & duration == 24) %>% 
   mutate(depth_cm = depth_m*(-100)) %>% 
   #filter(!season %in% "activelayer") %>% 
   ## NOTE: USE ADDITIONAL FILTERS AS NEEDED. I SEE MULTIPLE ENTRIES IN YEAR, MAG.VEC, DURATION, ETC.
@@ -367,5 +369,22 @@ ftc_max_seasnum %>%
   facet_grid(.~site)+
   theme_kpnone()
 
+###
+
+max_ftc_tabledata =
+  ftc_max %>% 
+  select(site, depth_cm, depth_start_cm, depth_stop_cm, depth2, season, ftc) %>% 
+  pivot_wider(id_cols = c(site, depth_cm, depth_start_cm, depth_stop_cm, depth2), names_from = season, values_from = ftc)
+
+
+max_ftc_tabledata_wider =
+  ftc_max %>% 
+  select(site, depth_cm, depth_start_cm, depth_stop_cm, depth2, season, ftc) %>% 
+  pivot_wider(id_cols = c(site, season, depth_start_cm, depth_stop_cm, depth2), names_from = depth_cm, values_from = ftc)
+
+max_ftc_tabledata_longer =
+  max_ftc_tabledata_wider %>% 
+  #select(site, depth_cm, depth_start_cm, depth_stop_cm, depth2, season, ) %>% 
+  pivot_longer(cols = c(site, season, depth_start_cm, depth_stop_cm, depth2), names_to = 'depth_cm', values_to = 'ftc')
 
 
