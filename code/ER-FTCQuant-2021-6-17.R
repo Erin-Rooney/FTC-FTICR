@@ -1,6 +1,7 @@
 #FTC Quant
 #Erin C Rooney
 #6 17 2021
+# updated 7 29 2021
 
 #trying to fix some issues and use
 #for NSF postdoc proposal
