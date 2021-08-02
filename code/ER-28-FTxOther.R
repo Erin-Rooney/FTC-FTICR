@@ -101,6 +101,8 @@ precip = climate_data %>%
                                                    "PPT_sm" = "Summer",
                                                    "PPT_at" = "Fall")) 
 
+  write.csv(precip, "processed/precip.csv")
+
 # precip %>% 
 #   ggplot(aes(x=site, y = precip_cm, fill = site))+
 #   geom_point()+
@@ -166,6 +168,9 @@ temp = climate_data %>%
                          "Tave_sp" = "Spring",
                          "Tave_sm" = "Summer",
                          "Tave_at" = "Fall")) 
+
+write.csv(temp, "processed/temp.csv")
+
 
 # temp = climate_data %>% 
 #   filter(site %in% c("BONA", "BARR", "HEAL", "TOOL")) %>% 

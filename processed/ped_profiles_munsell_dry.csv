@@ -1,20 +1,20 @@
 site,horizon,top,bottom,hue,value ,chroma
-BARR,Oie,0,16.67,10YR,3,3
-BARR,Oae,16.67,64.79,10YR,3,3
-BARR,Oaf,64.79,86.13,10YR,3,3
-BARR,OACfjj,86.13,109.96,2.5Y,3,3
-BARR,Af,109.96,127.82,2.5Y,3,2
-BARR,W,127.82,152.02,,,
-BONA,Oea,0,14,10YR,3,4
-BONA,O/BCgjj,14,20,10YR,5,2
-BONA,Bfgjj,20,50,10YR,5,2
-BONA,Cfgjj,50,165.8,10YR,5,3
-HEAL,Oei,0,10.25,7.5YR,3,2
-HEAL,Oae,10.25,26,5YR,3,2
-HEAL,Afjj,26,45.8,10YR,4,2
-HEAL,BCfgjj,45.8,59.2,10YR,5,2
-HEAL,OACfjj,59.2,73,10YR,5,2
-TOOL,Oi,0,12,10YR,4,3
-TOOL,Oaef,12,44,10YR,3,2
-TOOL,Af,44,63,10YR,4,2
-TOOL,BCfjj,63,79,10YR,5,2
+Utqiagvik,Oie,0,16.67,10YR,3,3
+Utqiagvik,Oae,16.67,64.79,10YR,3,3
+Utqiagvik,Oaf,64.79,86.13,10YR,3,3
+Utqiagvik,OACfjj,86.13,109.96,2.5Y,3,3
+Utqiagvik,Af,109.96,127.82,2.5Y,3,2
+Utqiagvik,W,127.82,152.02,,,
+Caribou Poker,Oea,0,14,10YR,3,4
+Caribou Poker,O/BCgjj,14,20,10YR,5,2
+Caribou Poker,Bfgjj,20,50,10YR,5,2
+Caribou Poker,Cfgjj,50,165.8,10YR,5,3
+Healy,Oei,0,10.25,7.5YR,3,2
+Healy,Oae,10.25,26,5YR,3,2
+Healy,Afjj,26,45.8,10YR,4,2
+Healy,BCfgjj,45.8,59.2,10YR,5,2
+Healy,OACfjj,59.2,73,10YR,5,2
+Toolik,Oi,0,12,10YR,4,3
+Toolik,Oaef,12,44,10YR,3,2
+Toolik,Af,44,63,10YR,4,2
+Toolik,BCfjj,63,79,10YR,5,2

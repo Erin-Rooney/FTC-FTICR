@@ -1,5 +1,6 @@
 # Erin C Rooney
 # SOMMOS data
+# AO:DC ratios for manuscript
 
 #load libraries-------------------------------
 library(tidyverse)
@@ -110,6 +111,27 @@ summary(sommos_aov1)
 SPDC_hsd = HSD.test(sommos_aov1,"site")
 print(SPDC_hsd)
 print(SPDC_hsd$groups)
+
+dcao_aov1 = aov(data = neon_proc_DC, DC_AO ~ siteID)
+summary(dcao_aov1)
+
+dcao_hsd = HSD.test(dcao_aov1,"siteID")
+print(dcao_hsd)
+print(dcao_hsd$groups)
+
+
+
+
+dcao_aov1 = aov(data = neon_proc_DC, DC_AO ~ siteID * biogeoCenterDepth)
+summary(dcao_aov1)
+
+dcao_hsd = HSD.test(dcao_aov1,"siteID")
+print(dcao_hsd)
+print(dcao_hsd$groups)
+
+dcao2_hsd = HSD.test(dcao_aov1,"biogeoCenterDepth")
+print(dcao2_hsd)
+print(dcao2_hsd$groups)
 
 neon_aov1 = aov(data = neon_proc, AO_DC * ctonRatio ~ siteID)
 summary(neon_aov1)
@@ -226,9 +248,12 @@ ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
   scale_y_reverse()+
   facet_grid(.~siteID)
 
+
+#for manuscript! 7 29 2021
+
 neon_proc_DC %>% 
   mutate(siteID = factor(siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")),
-         siteID = recode(siteID, "BARR" = "Barrow",
+         siteID = recode(siteID, "BARR" = "Utqiaġvik",
                        "TOOL" = "Toolik",
                        "BONA" = "Caribou Poker",
                        "HEAL" = "Healy")) %>% 
@@ -236,7 +261,7 @@ neon_proc_DC %>%
   geom_point(alpha = 0.4, size = 4, color = "grey10", shape = c(21)) +
   theme_erclean() +
   scale_fill_manual(values = rev(PNWColors::pnw_palette("Lake", 5)))+
-  labs(y = "Depth, cm", x = "DC:AO, log10")+
+  labs(y = "Depth, cm", x = "DC:AO")+
   scale_y_reverse()+
  # scale_x_log10()+
   facet_grid(.~siteID)

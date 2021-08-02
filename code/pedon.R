@@ -14,7 +14,10 @@ tool <- read.csv("processed/ped_profiles_munsell_dry.csv", stringsAsFactors=FALS
 levels(as.factor(pedon$site))
 
 pedon = pedon %>% 
-  mutate(site = factor(site, levels = c('HEAL', 'BONA', 'TOOL', 'BARR'))) 
+  mutate(site = recode(site, "BARR" = "Utqiaġvik",
+                         "TOOL" = "Toolik",
+                         "BONA" = "Caribou Poker",
+                         "HEAL" = "Healy")) 
 
 #look at first several lines of imported file
 head(pedon)
@@ -46,6 +49,7 @@ depths(tool) <- site ~ top + bottom
 str(pedon)
 class(pedon)
 summary(pedon)
+
 
 #pedon$idcol = factor(pedon$idcol, levels = c('HEAL', 'BONA', 'TOOL', 'BARR'))
 

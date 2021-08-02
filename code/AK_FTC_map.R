@@ -37,7 +37,7 @@ theme_er <- function() {  # this for all the elements common across plots
 }
 
 #FTC Quantification dataset 
-FTC_dat = readRDS("processed/final_dat.RData")
+FTC_dat = read.csv("raw/FTC_1.5_4.csv")
 
 #SOMMOS site-level data (latitude and longitude)
 site_dat = read.csv("processed/SOMMOS_Site_11-25-19.csv")
@@ -68,6 +68,7 @@ FTC_example = summarySE(plot_dat, measurevar = "Def1", groupvars = c("longitude.
 
 colnames(FTC_example)=c("lon","lat","site","N","Def1","sd","se","ci")
 plot_dat_transformed <- usmap_transform(FTC_example)
+
 
 #This is giving a warning related to the projection, because checking the projection used in the function gives this warning: 
 usmap_crs() 
