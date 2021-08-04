@@ -298,6 +298,17 @@ neon_proc %>%
   #facet_grid(.~siteID)+
   NULL
 
+a = neon_proc %>% 
+  filter(siteID == "BARR") %>% 
+  ggplot(aes(x=DC_AO, y=OlsenPExtractable, fill=siteID)) +
+  geom_point(alpha = 0.4, size = 5, shape = c(21), color = "grey10") +
+  theme_erclean() +
+  #scale_color_nord("afternoon_prarie", 4)+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Winter", 4)))+
+  labs(x = "DC:AO", y = "Extractable Olsen P, mg per kg")+
+  #facet_grid(.~siteID)+
+  NULL
+
 neon_proc %>% 
   filter(siteID == "BARR") %>% 
   ggplot(aes(y=DC_AO, x=OlsenPExtractable, color=siteID)) +
@@ -321,6 +332,29 @@ neon_proc %>%
   #scale_y_reverse()+
   #facet_grid(.~siteID)+
   NULL
+
+b = neon_proc %>% 
+  filter(siteID == "BARR") %>% 
+  ggplot(aes(x=DC_AO, y=carbonTot, fill=siteID)) +
+  geom_point(alpha = 0.4, size = 5, color = "grey10", shape = c(21)) +
+  theme_erclean() +
+  #scale_color_nord("afternoon_prarie", 4)+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Winter", 4)))+
+  labs(x = "DC:AO", y = "Total Carbon, mg per kg")+
+  #scale_y_reverse()+
+  #facet_grid(.~siteID)+
+  NULL
+
+###manuscriptfigure####
+
+library(cowplot)
+library(patchwork)
+
+a+b
+
+
+
+
 
 neon_proc %>% 
   filter(siteID == "BARR") %>% 

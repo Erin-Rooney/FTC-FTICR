@@ -5,12 +5,14 @@
 
 #load packages
 source("code/FTICR-0-packages.R")
+library(wesanderson)
+library(nord)
 
 # 1. Load files-----------------------------------
 
-fticr_data_water = read.csv("fticr_data_water.csv")
-fticr_meta_water = read.csv("fticr_meta_water.csv")
-meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
+fticr_data_water = read.csv("processed/fticr_data_water.csv")
+fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
+meta_hcoc_water  = read.csv("processed/fticr_meta_hcoc_water.csv") %>% select(-Mass)
 ### ^^ the files above have aliph as well as aromatic for the same sample, which can be confusing/misleading
 ### create an index combining them
 
@@ -68,6 +70,7 @@ fticr_water_hcoc %>%
   theme_er() +
   scale_color_manual (values = soil_palette("redox", 2))
 
+
 fticr_water_hcoc %>% 
   ggplot(aes(x=OC, y=HC, color = Site))+
   geom_point(alpha = 0.2, size = 1)+
@@ -124,7 +127,10 @@ fticr_water_ftc_loss_common =
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 # plot only lost/gained
+#fig currently used in manuscript
 fticr_water_ftc_loss %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
   ggplot(aes(x = OC, y = HC, color = loss_gain))+
   geom_point(alpha = 0.2, size = 1)+
   stat_ellipse(show.legend = F)+
@@ -132,10 +138,15 @@ fticr_water_ftc_loss %>%
   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  ggtitle("Water extracted FTICR-MS")+
+  labs(
+       y = "H:C",
+       x = "O:C")+
   facet_grid(Material ~ Site)+
   theme_er() +
-  scale_color_manual (values = rev(soil_palette("redox", 2)))
+  scale_color_manual(values = pnw_palette("Bay", 2))+
+  theme(legend.position = "bottom")
+  #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
+
 
 # plot common as well as lost/gained
 fticr_water_ftc_loss_common %>% 
@@ -171,20 +182,25 @@ fticr_uniquesite =
   mutate(unique = case_when(n == 1 ~ Site, 
                             n == 2 ~ "common")) %>% 
   left_join(meta_hcoc_water) %>% 
-  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy"))
 
 
 # plot only unique
-fticr_uniquesite %>% 
+fticr_uniquesite %>%
   filter(!unique == "common") %>% 
   gg_vankrev(aes(x = OC, y = HC, color = unique))+
   stat_ellipse(show.legend = F)+
-  labs(title = "Water Extractable FTICR-MS",
-       subtitle = "Control Soils, Unique by Site")+
+  labs(x = 'O:C',
+       y = "H:C")+
   facet_grid(Material ~ .)+
   theme_er() +
-  scale_color_manual (values = rev(soil_palette("redox", 2
-                                          )))
+  #scale_color_manual(values = c("#bf9bdd", "#64a8a8"))+
+  scale_color_manual(values = c("#e69b99", "#64a8a8"))+
+  theme(legend.position = "bottom")
+  #scale_color_nord(palette = "lake_superior", reverse = TRUE)
+ # scale_color_manual (values = rev(nord_palettes("aurora", 2)))
 
 # plot common as well as lost/gained
 fticr_water_ftc_loss_common %>% 

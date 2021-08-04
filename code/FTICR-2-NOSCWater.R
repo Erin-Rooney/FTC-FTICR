@@ -8,9 +8,9 @@ source("code/FTICR-0-packages.R")
 
 # 1. Load files-----------------------------------
 
-fticr_data_water = read.csv("fticr_data_water.csv")
-fticr_meta_water = read.csv("fticr_meta_water.csv")
-meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
+fticr_data_water = read.csv("processed/fticr_data_water.csv")
+fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
+meta_hcoc_water  = read.csv("processed/fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 # 2. NOSC and AImod plots_water-------------------------------
 fticr_water = 
@@ -40,31 +40,35 @@ ggplot(fticr_water_nosc, aes(NOSC, color = Site, fill = Site)) +
   geom_boxplot(aes(y = 120), width = 20, fill = NA)+
   facet_grid(Material ~ .) +
   theme_er() +
-  #scale_fill_manual(values = soil_palette("redox", 2)) +
-  #scale_color_manual(values = soil_palette("redox", 2)) + 
+  scale_fill_manual(values = rev(pnw_palette("Winter", 2))) +
+  scale_color_manual(values = rev(pnw_palette("Winter", 2))) + 
   #scale_color_manual(values = rev(nord("afternoon_prarie", 2)))+
   #scale_fill_manual(values =rev(nord("afternoon_prarie", 2)))+
-  scale_fill_nord("victory_bonds", 2)+
-  scale_color_nord("victory_bonds", 2)+
-  ggtitle("NOSC, Water Extracted by Site")+
-  facet_grid(Material~Trtmt)
+  # scale_color_manual(values = c("#e69b99", "#64a8a8"))+
+  # scale_fill_manual(values = c("#e69b99", "#64a8a8"))+
+  # scale_fill_nord("victory_bonds", 2)+
+  # scale_color_nord("victory_bonds", 2)+
+  labs(title = "NOSC, Water Extracted by Site",
+       x = 'nominal oxidation state of carbon')+
+  facet_grid(Material~Trtmt)+
+  theme(legend.position = "bottom")
+
+library(viridis)
 
 fticr_water_nosc %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
   filter(Trtmt == 'CON') %>% 
   ggplot(aes(NOSC, color = Site, fill = Site)) +
   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
   geom_boxplot(aes(y = 120), width = 20, fill = NA)+
   facet_grid(Material ~ .) +
   theme_er() +
-  #scale_fill_manual(values = soil_palette("redox", 2)) +
-  #scale_color_manual(values = soil_palette("redox", 2)) + 
-  #scale_color_manual(values = rev(nord("afternoon_prarie", 2)))+
-  #scale_fill_manual(values =rev(nord("afternoon_prarie", 2)))+
-  scale_fill_manual (values = soil_palette("redox", 2)) +
-  scale_color_manual (values = soil_palette("redox", 2))+
-labs(title = "NOSC, Water Extracted by Site",
-       subtitle = "control-only")+
-  facet_grid(Material~.)
+  scale_color_manual(values = c("#e69b99", "#64a8a8"))+
+  scale_fill_manual(values = c("#e69b99", "#64a8a8"))+
+  labs(x = 'nominal oxidation state of carbon')+
+  facet_grid(Material~.)+
+  theme(legend.position = "bottom")
 
 # NOSC by compound class
 fticr_water_nosc %>% 

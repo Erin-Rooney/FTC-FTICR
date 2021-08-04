@@ -8,8 +8,8 @@ source("code/FTICR-0-packages.R")
 
 # 1. load files -----------------------------------------------------------
 
-fticr_data_water = read.csv("fticr_data_water.csv") %>% select(ID, formula, Site, Trtmt, Material) 
-fticr_meta_water = read.csv("fticr_meta_water.csv")
+fticr_data_water = read.csv("processed/fticr_data_water.csv") %>% select(ID, formula, Site, Trtmt, Material) 
+fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
 #meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 #
@@ -67,10 +67,16 @@ fticr_water_relabund_arom =
 
 # relabund bar plots ----
 # bar graph
-fticr_water_relabund_summarized %>% 
+fticr_water_relabund_summarized %>%
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy"),
+         Trtmt = recode(Trtmt, "CON" = "freeze-only",
+                        "FTC" = "freeze-thaw")) %>% 
   ggplot(aes(x = Trtmt, y = relabundance))+
+  labs(x = " ",
+       y = "relative abundance, %")+
   geom_bar(aes(fill = Class), stat = "identity")+
-  scale_fill_manual(values = rev(pnw_palette("Sunset",4)))+
+  scale_fill_manual(values = rev(pnw_palette("Shuksan",4)))+
   facet_grid(Material ~ Site)+
   #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
   theme_er()+
@@ -79,6 +85,8 @@ fticr_water_relabund_summarized %>%
 
 # bar graph_control only
 fticr_water_relabund_summarized %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
   filter(Trtmt == "CON") %>% 
   ggplot(aes(x = Site, y = relabundance))+
   geom_bar(aes(fill = Class), stat = "identity")+
@@ -86,7 +94,7 @@ fticr_water_relabund_summarized %>%
   facet_grid(Material ~ .)+
   #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
   theme_er()+
-  theme(legend.position = "bottom")+
+  theme(legend.position = "right")+
   NULL
 
 
