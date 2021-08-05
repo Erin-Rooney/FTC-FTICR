@@ -181,3 +181,14 @@ plot_usmap(include=c("AK")) +
         legend.title = element_text(size=12, color="black"), 
         legend.text = element_text(size=10, color="black"))
 
+#manuscript figure, black points only
+
+plot_usmap(include=c("AK")) +
+  geom_point(aes(x=lon.1, y=lat.1), pch=19, data=plot_dat_transformed, size=4, fill="black", show.legend=TRUE) + 
+  geom_label_repel(aes(x=lon.1, y=lat.1, label=site), data=plot_dat_transformed, size=4.5, point.padding = 0.2) + 
+  labs(fill="Precipitation, cm") + 
+    theme(legend.position=c(0.1,-0.3),
+        plot.margin = unit(c(2,2,2,2), "cm"), 
+        legend.title = element_text(size=12, color="black"), 
+        legend.text = element_text(size=10, color="black"))
+
