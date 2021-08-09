@@ -101,7 +101,7 @@ precip = climate_data %>%
                                                    "PPT_sm" = "Summer",
                                                    "PPT_at" = "Fall")) 
 
-  write.csv(precip, "processed/precip.csv")
+
 
 # precip %>% 
 #   ggplot(aes(x=site, y = precip_cm, fill = site))+

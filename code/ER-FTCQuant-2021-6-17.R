@@ -19,7 +19,7 @@ library(PNWColors)
 library(nord)
 library(viridis)
 library(wesanderson)
-
+library(agricolae)
 
 
 
@@ -267,7 +267,15 @@ ftc_mean_seasnum =
                            "summer" = 4,
                            "total" = 5))
 
-#
+#manuscript 
+
+# library(nlme)
+# l = lme(Def1 ~ site * depth_m, random = ~1|season, na.action = na.omit, data = ftc_fulldat) 
+# anova(l)
+# 
+# lb = lme(Def1 ~ season, random = ~1|site, na.action = na.omit, data = ftc_fulldat) 
+# anova(lb)
+
 
 ftc_mean_seasnum %>%
   filter(seas_num < 5) %>% 

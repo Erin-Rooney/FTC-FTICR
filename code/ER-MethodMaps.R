@@ -43,6 +43,7 @@ site_dat = read.csv("processed/SOMMOS_Site_11-25-19.csv")
 permafrost_sites = subset(site_dat, site == "HEAL" | site == "BARR" | site == "BONA" | site == "TOOL")
 dim(permafrost_sites) #should by 4 x 262
 
+
 #Merge with FTC_dat
 temp_site = temp_data %>% right_join(permafrost_sites, by=c("site")) 
 head(temp_site)
