@@ -109,6 +109,7 @@ label = tribble(
 ) %>% 
   mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
+
 #
 # 4. relabund summary table ----------------------------------------------------------------
 ## step 1: prepare the data, combine mean +/- se
@@ -135,9 +136,29 @@ fit_aov = function(dat){
   
   }
   
+fit_aov2 = function(dat){
+  
+  aov(relabund ~ Site, data = dat) %>% 
+    broom::tidy() %>% # convert to clean dataframe
+    rename(pvalue = `p.value`) %>% 
+    filter(term == "Site") %>% 
+    mutate(asterisk = case_when(pvalue <= 0.05 ~ "*")) %>% 
+    dplyr::select(asterisk)  # we need only the asterisk column
+    # two steps below, we need to left-join. 
+    # set Trtmt = "FTC" so the asterisks will be added to the FTC values only
+       
+  
+}
+
 
 ## step 3: run the fit_anova function 
 ## do this on the original relabund file, because we need all the reps
+
+relabund_asterisk2 = 
+  fticr_water_relabund %>% 
+  filter(Trtmt == "CON") %>% 
+  group_by(Material, Class) %>% 
+  do(fit_aov2(.))
 
 relabund_asterisk = 
   fticr_water_relabund %>% 
@@ -156,10 +177,27 @@ relabund_table_with_asterisk =
   dplyr::select(-summary, -asterisk) %>% 
   pivot_wider(names_from = "Trtmt", values_from = "value")
 
+
+
+relabund_table_with_asterisk2 = 
+  relabund_table %>% 
+  left_join(relabund_asterisk2) %>%
+  # combine the values with the asterisk notation
+  mutate(value = paste(summary, asterisk),
+         # this will also add " NA" for the blank cells
+         # use str_remove to remove the string
+         value = str_remove(value, " NA")) %>% 
+  dplyr::select(-summary, -asterisk) %>% 
+  pivot_wider(names_from = "Site", values_from = "value")
+
+relabund_table_with_asterisk2 %>% knitr::kable() # prints a somewhat clean table in the console
+
+
 relabund_table_with_asterisk %>% knitr::kable() # prints a somewhat clean table in the console
 
 write.csv(relabund_table_with_asterisk, "output/trtmt_aovstats.csv", row.names = FALSE)
 
+write.csv(relabund_table_with_asterisk2, "output/site_aovstats.csv", row.names = FALSE)
 
 ## step 2: create ANOVA function for relabund ~ Trtmt, for each combination of Site-Material-Class
 

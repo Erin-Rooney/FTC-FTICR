@@ -8,8 +8,8 @@ source("code/FTICR-0-packages.R")
 
 # 1. load files -----------------------------------------------------------
 
-fticr_data_water = read.csv("fticr_data_water.csv") %>% select(ID, formula, Site, Trtmt, Material) 
-fticr_meta_water = read.csv("fticr_meta_water.csv")
+fticr_data_water = read.csv("processed/fticr_data_water.csv") %>% select(ID, formula, Site, Trtmt, Material) 
+fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
 # meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 ## fticr_data_water contains peaks for each sample, i.e. each replicate
@@ -201,5 +201,13 @@ library(vegan)
   adonis(relabund_wide %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
          (Site*Trtmt*Material), 
        data = relabund_wide) 
+  
+  relabund_wide2 =
+    relabund_wide %>% 
+    filter(Trtmt == "CON")
+  
+  adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
+           (Site*Material), 
+         data = relabund_wide2) 
 
 # b = broom::tidy(permanova_fticr_all$aov.tab)

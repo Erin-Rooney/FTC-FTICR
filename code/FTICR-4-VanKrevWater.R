@@ -143,7 +143,8 @@ fticr_water_ftc_loss %>%
        x = "O:C")+
   facet_grid(Material ~ Site)+
   theme_er() +
-  scale_color_manual(values = pnw_palette("Bay", 2))+
+  #scale_color_manual(values = pnw_palette("Bay", 2))+
+  scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
   theme(legend.position = "bottom")
   #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
 
