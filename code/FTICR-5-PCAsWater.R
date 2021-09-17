@@ -146,6 +146,8 @@ grp_heal =
   filter(Site == "HEAL") %>% 
   dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`),
                 Site,Trtmt, Material) %>% 
+  mutate(Trtmt = recode(Trtmt, "FTC" = "freeze-thaw",
+                        "CON" = "control")) %>% 
   dplyr::mutate(row = row_number())
 
 pca_heal = prcomp(num_heal, scale. = T)
@@ -155,7 +157,16 @@ ggbiplot(pca_heal, obs.scale = 1, var.scale = 1,
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(color = groups, shape = grp_heal$Material))+
   labs(title = "Healy only")+
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
+  scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
+  theme_er()+
+  NULL
+
+a = ggbiplot(pca_heal, obs.scale = 1, var.scale = 1,
+             groups = as.character(grp_heal$Trtmt), 
+             ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = groups))+
+  labs(title = "Healy")+
+  scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
   theme_er()+
   NULL
 
@@ -166,25 +177,44 @@ ggbiplot(pca_heal, obs.scale = 1, var.scale = 1,
 num_tool = 
   relabund_wide %>% 
   filter(Site == "TOOL") %>% 
-  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`))
+  dplyr::select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) 
 
 grp_tool = 
   relabund_wide %>% 
   filter(Site == "TOOL") %>% 
   dplyr::select(-c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`),
                 Site,Trtmt, Material) %>% 
+  mutate(Trtmt = recode(Trtmt, "FTC" = "freeze-thaw",
+                                 "CON" = "control")) %>% 
   dplyr::mutate(row = row_number())
 
 pca_tool = prcomp(num_tool, scale. = T)
+
+
 
 ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
          groups = as.character(grp_tool$Trtmt), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(color = groups, shape = grp_tool$Material))+
   labs(title = "Toolik only")+
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
+  scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
   theme_er()+
   NULL
+
+b = ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
+             groups = as.character(grp_tool$Trtmt), 
+             ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = groups))+
+  labs(title = "Toolik")+
+  scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  theme_er()+
+  NULL
+
+
+library(cowplot)
+library(patchwork)
+
+a + b
 
 #
 # PERMANOVA ---------------------------------------------------------------
@@ -206,8 +236,24 @@ library(vegan)
     relabund_wide %>% 
     filter(Trtmt == "CON")
   
+  relabund_wideHEAL =
+    relabund_wide %>% 
+    filter(Site == "HEAL")
+  
+  relabund_wideTOOL =
+    relabund_wide %>% 
+    filter(Site == "TOOL")
+  
   adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
            (Site*Material), 
          data = relabund_wide2) 
+  
+  adonis(relabund_wideHEAL %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
+           (Trtmt), 
+         data = relabund_wideHEAL) 
+  
+  adonis(relabund_wideTOOL %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
+           (Trtmt), 
+         data = relabund_wideTOOL) 
 
 # b = broom::tidy(permanova_fticr_all$aov.tab)

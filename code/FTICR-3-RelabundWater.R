@@ -42,6 +42,13 @@ fticr_water_relabund_summarized =
   dplyr::summarise(relabundance = round(mean(relabund), 2),
                    se = round(sd(relabund)/sqrt(n()),2))
 
+
+fticr_water_relabund_summarized3 = 
+  fticr_water_relabund %>% 
+  group_by(Site, Trtmt, Class) %>% 
+  dplyr::summarise(relabundance = round(mean(relabund), 2),
+                   se = round(sd(relabund)/sqrt(n()),2))
+
 ## 2c. aromatic relabund ----
 ## start with the first relabund (by cores) and recode to aromatic/not aromatic
 
@@ -78,6 +85,23 @@ fticr_water_relabund_summarized %>%
   geom_bar(aes(fill = Class), stat = "identity")+
   scale_fill_manual(values = rev(pnw_palette("Shuksan",4)))+
   facet_grid(Material ~ Site)+
+  #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
+  theme_er()+
+  theme(legend.position = "bottom")+
+  NULL
+
+
+fticr_water_relabund_summarized %>%
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy"),
+         Trtmt = recode(Trtmt, "CON" = "freeze-only",
+                        "FTC" = "freeze-thaw")) %>% 
+  ggplot(aes(x = Trtmt, y = relabundance))+
+  labs(x = " ",
+       y = "relative abundance, %")+
+  geom_bar(aes(fill = Class), stat = "identity")+
+  scale_fill_manual(values = rev(pnw_palette("Shuksan",4)))+
+  facet_grid(. ~ Site)+
   #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
   theme_er()+
   theme(legend.position = "bottom")+
@@ -120,6 +144,11 @@ relabund_table =
   mutate(summary = paste(relabundance, "\u00b1", se)) %>% 
   dplyr::select(-relabundance, -se)
 
+relabund_table3 = 
+  fticr_water_relabund_summarized3 %>%
+  mutate(summary = paste(relabundance, "\u00b1", se)) %>% 
+  dplyr::select(-relabundance, -se)
+
 ## step 2: create ANOVA function for relabund ~ Trtmt, for each combination of Site-Material-Class
 
 fit_aov = function(dat){
@@ -151,6 +180,22 @@ fit_aov2 = function(dat){
 }
 
 
+fit_aov3 = function(dat){
+  
+  aov(relabund ~ Trtmt, data = dat) %>% 
+    broom::tidy() %>% # convert to clean dataframe
+    rename(pvalue = `p.value`) %>% 
+    filter(term == "Trtmt") %>% 
+    mutate(asterisk = case_when(pvalue <= 0.05 ~ "*")) %>% 
+    dplyr::select(asterisk) %>%  # we need only the asterisk column
+  # two steps below, we need to left-join. 
+  # set Trtmt = "FTC" so the asterisks will be added to the FTC values only
+    mutate(Trtmt = "FTC")   
+  
+  
+}
+
+
 ## step 3: run the fit_anova function 
 ## do this on the original relabund file, because we need all the reps
 
@@ -164,6 +209,11 @@ relabund_asterisk =
   fticr_water_relabund %>% 
   group_by(Site, Material, Class) %>% 
   do(fit_aov(.))
+
+relabund_asterisk3 = 
+  fticr_water_relabund %>% 
+  group_by(Site, Class) %>% 
+  do(fit_aov3(.))
 
 ## step 4: combine the summarized values with the asterisks
 relabund_table_with_asterisk = 
@@ -190,7 +240,23 @@ relabund_table_with_asterisk2 =
   dplyr::select(-summary, -asterisk) %>% 
   pivot_wider(names_from = "Site", values_from = "value")
 
+
+relabund_table_with_asterisk3 = 
+  relabund_table3 %>% 
+  left_join(relabund_asterisk3) %>%
+  # combine the values with the asterisk notation
+  mutate(value = paste(summary, asterisk),
+         # this will also add " NA" for the blank cells
+         # use str_remove to remove the string
+         value = str_remove(value, " NA")) %>% 
+  dplyr::select(-summary, -asterisk) %>% 
+  pivot_wider(names_from = "Site", values_from = "value")
+
 relabund_table_with_asterisk2 %>% knitr::kable() # prints a somewhat clean table in the console
+
+
+relabund_table_with_asterisk3 %>% knitr::kable() # prints a somewhat clean table in the console
+
 
 
 relabund_table_with_asterisk %>% knitr::kable() # prints a somewhat clean table in the console
@@ -198,6 +264,9 @@ relabund_table_with_asterisk %>% knitr::kable() # prints a somewhat clean table 
 write.csv(relabund_table_with_asterisk, "output/trtmt_aovstats.csv", row.names = FALSE)
 
 write.csv(relabund_table_with_asterisk2, "output/site_aovstats.csv", row.names = FALSE)
+
+write.csv(relabund_table_with_asterisk3, "output/siteandtrtmt_aovstats.csv", row.names = FALSE)
+
 
 ## step 2: create ANOVA function for relabund ~ Trtmt, for each combination of Site-Material-Class
 

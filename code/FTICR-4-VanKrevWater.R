@@ -149,6 +149,27 @@ fticr_water_ftc_loss %>%
   #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
 
 
+fticr_water_ftc_loss %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  ggplot(aes(x = OC, y = HC, color = loss_gain))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  labs(
+    y = "H:C",
+    x = "O:C")+
+  facet_grid(~ Site)+
+  theme_er() +
+  #scale_color_manual(values = pnw_palette("Bay", 2))+
+  scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
+  theme(legend.position = "bottom")
+#scale_color_manual(values = wes_palette("GrandBudapest1", 2))
+
+
 # plot common as well as lost/gained
 fticr_water_ftc_loss_common %>% 
   filter(loss_gain == "common") %>% 
@@ -168,6 +189,25 @@ fticr_water_ftc_loss_common %>%
   theme_er() +
   scale_color_manual (values = rev(soil_palette("redox", 2)))
 
+
+fticr_water_ftc_loss_common %>% 
+  filter(loss_gain == "common") %>% 
+  ggplot()+
+  geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
+  geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
+             aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
+  #geom_point(alpha = 0.2, size = 1)+
+  #stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  #ggtitle("Water extracted FTICR-MS")+
+  labs(caption = "grey = common to both")+
+  facet_grid(. ~ Site)+
+  theme_er() +
+  scale_color_manual(values = c("#02c39a", "black"))
+  
 
 ## calculate peaks unique peaks by site ---- 
 

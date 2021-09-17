@@ -53,6 +53,24 @@ ggplot(fticr_water_nosc, aes(NOSC, color = Site, fill = Site)) +
   facet_grid(Material~Trtmt)+
   theme(legend.position = "bottom")
 
+ggplot(fticr_water_nosc, aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 120), width = 20, fill = NA)+
+  facet_grid(Material ~ .) +
+  theme_er() +
+  scale_fill_manual(values = rev(pnw_palette("Mushroom", 2))) +
+  scale_color_manual(values = rev(pnw_palette("Mushroom", 2))) + 
+  #scale_color_manual(values = rev(nord("afternoon_prarie", 2)))+
+  #scale_fill_manual(values =rev(nord("afternoon_prarie", 2)))+
+  # scale_color_manual(values = c("#e69b99", "#64a8a8"))+
+  # scale_fill_manual(values = c("#e69b99", "#64a8a8"))+
+  # scale_fill_nord("victory_bonds", 2)+
+  # scale_color_nord("victory_bonds", 2)+
+  labs(title = "NOSC, Water Extracted by Site",
+       x = 'nominal oxidation state of carbon')+
+  facet_grid(Material~Site)+
+  theme(legend.position = "bottom")
+
 library(viridis)
 
 fticr_water_nosc %>% 
@@ -78,21 +96,65 @@ fticr_water_nosc %>%
   geom_boxplot(aes(y = 100), width = 20, fill = NA)+
   facet_grid(Material ~ .) +
   theme_er() +
-  scale_fill_manual(values = PNWColors::pnw_palette("Bay", 2))+
-  scale_color_manual(values = PNWColors::pnw_palette("Bay", 2))+
-  ggtitle("NOSC, Water Extracted HEAL")+
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  ggtitle("Healy")+
   facet_grid(Material~Class)
 
 fticr_water_nosc %>% 
   filter(Site == "TOOL") %>% 
   ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 100), width = 20, fill = NA)+
   facet_grid(Material ~ .) +
   theme_er() +
-  scale_fill_manual(values = PNWColors::pnw_palette("Bay", 2))+
-  scale_color_manual(values = PNWColors::pnw_palette("Bay", 2))+
-  ggtitle("NOSC, Water Extracted TOOL")+
-  facet_grid(Material~Class)
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  ggtitle("Toolik")+
+  facet_grid(Material~Class)+
+  ylim(0, 110)
+
+fticr_water_nosc %>% 
+  filter(Site == "HEAL") %>% 
+  ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.4, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 250), width = 20, fill = NA)+
+  theme_er() +
+  scale_fill_manual(values = PNWColors::pnw_palette("Moth", 4))+
+  scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
+  ggtitle("Healy")+
+  facet_wrap(.~Class)
+
+fticr_water_nosc %>% 
+  filter(Site == "TOOL") %>% 
+  ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 250), width = 20, fill = NA)+
+  theme_er() +
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  ggtitle("Toolik")+
+  facet_wrap(.~Class)
+
+fticr_water_nosc %>% 
+  filter(Site == "HEAL") %>% 
+  ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.4, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 300), width = 20, fill = NA)+
+  scale_fill_manual(values = PNWColors::pnw_palette("Moth", 4))+
+  scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
+  ggtitle("Healy")+
+  theme_er() 
+
+fticr_water_nosc %>% 
+  filter(Site == "TOOL") %>% 
+  ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
+  geom_boxplot(aes(y = 350), width = 20, fill = NA)+
+  theme_er() +
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  ggtitle("Toolik")
 
 fticr_water_nosc %>% 
   filter(Trtmt == "FTC") %>% 
