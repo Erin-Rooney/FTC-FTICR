@@ -71,6 +71,7 @@ ggplot(fticr_water_nosc, aes(NOSC, color = Trtmt, fill = Trtmt)) +
   facet_grid(Material~Site)+
   theme(legend.position = "bottom")
 
+
 library(viridis)
 
 fticr_water_nosc %>% 
@@ -87,6 +88,52 @@ fticr_water_nosc %>%
   labs(x = 'nominal oxidation state of carbon')+
   facet_grid(Material~.)+
   theme(legend.position = "bottom")
+
+######
+fticr_water_nosc %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>%
+  ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
+  geom_boxplot(alpha = 0.5)+
+  geom_point()+
+  facet_wrap(~Site)+
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  theme_er()
+
+fticr_water_nosc %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>%
+  filter(Site == 'Toolik') %>% 
+  ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
+  geom_boxplot(alpha = 0.5)+
+  geom_point()+
+  facet_grid(Material~Class)+
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  theme_er()
+
+
+fticr_water_nosc %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>%
+  filter(Trtmt == 'FTC') %>% 
+  ggplot(aes(x = Site, y = NOSC, fill = Site)) +
+  geom_boxplot(alpha = 0.5)+
+  facet_grid(Material~Class)+
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  theme_er()
+
+fticr_water_nosc %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>%
+  ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
+  geom_boxplot(alpha = 0.5)+
+  facet_grid(Material~Site)+
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  theme_er()
+
+
+
+
 
 # NOSC by compound class
 fticr_water_nosc %>% 
@@ -206,3 +253,103 @@ ggplot(fticr_water_nosc, aes(x = NOSC, color = Site, fill = Site))+
   scale_fill_manual (values = soil_palette("gley", 2)) +
   scale_color_manual (values = soil_palette("gley", 2)) +
   ggtitle("NOSC, Water Extracted")
+
+
+###########################################
+
+#common-loss
+
+fticr_nosc_water_ftc_loss = 
+  fticr_data_water_summarized %>% 
+  # calculate n to see which peaks were unique vs. common
+  group_by(formula, Site, Material) %>% 
+  dplyr::mutate(n = n()) %>% 
+  # n = 1 means unique to CON or FTC Trtmt
+  # n = 2 means common to both
+  filter(n == 1) %>% 
+  mutate(loss_gain = if_else(Trtmt == "CON", "lost", "gained")) %>% 
+  left_join(fticr_meta_water) %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+fticr_nosc_water_ftc_loss_common = 
+  fticr_data_water_summarized %>% 
+  # calculate n to see which peaks were unique vs. common
+  group_by(formula, Site, Material) %>% 
+  dplyr::mutate(n = n()) %>% 
+  # n = 1 means unique to CON or FTC Trtmt
+  # n = 2 means common to both
+  # filter(n == 1) %>% 
+  mutate(loss_gain = case_when(n == 2 ~ "common",
+                               (n == 1 & Trtmt == "CON") ~ "lost",
+                               (n == 1 & Trtmt == "FTC") ~ "gained")) %>% 
+  left_join(fticr_meta_water) %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+
+fticr_nosc_water_ftc_loss_common %>% 
+  filter(loss_gain != 'common') %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy"),
+         Trtmt = recode(Trtmt, "CON" = "control",
+                        "FTC" = "freeze-thaw cycles")) %>%
+  ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
+  geom_boxplot(alpha = 0.5)+
+  facet_wrap(~Site)+
+  labs(x = "")+
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  theme_er()+
+  theme(legend.position = "bottom")
+
+fticr_nosc_water_ftc_loss_common %>% 
+  filter(loss_gain != 'common') %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy"),
+         Trtmt = recode(Trtmt, "CON" = "control",
+                        "FTC" = "freeze-thaw")) %>%
+  ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
+  geom_boxplot(alpha = 0.5)+
+  facet_grid(Site~Class)+
+  labs(x = "")+
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  theme_er()+
+  theme(legend.position = "bottom", 
+        axis.text.x.bottom = element_text 
+        (vjust = 0.5, hjust=0.6, angle = 0)
+)
+
+fticr_nosc_water_ftc_loss_common %>% 
+  filter(loss_gain != 'common') %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy"),
+         Trtmt = recode(Trtmt, "CON" = "control",
+                        "FTC" = "freeze-thaw cycles")) %>%
+  ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
+  geom_boxplot(alpha = 0.5)+
+  #geom_point(alpha = 0.2, size = 1)+
+  facet_grid(Material~Site)+
+  labs(x = "")+
+  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  theme_er()+
+  theme(legend.position = "bottom")
+
+
+
+nosc_uniqueonly = 
+  fticr_nosc_water_ftc_loss_common %>% 
+  filter(loss_gain != 'common')
+
+
+
+library(nlme)
+a = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL'))
+summary(a)
+print(a)
+anova(a)
+
+b = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL'))
+summary(b)
+print(b)
+anova(b)
+
+
+
