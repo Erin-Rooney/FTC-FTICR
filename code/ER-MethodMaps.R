@@ -64,7 +64,7 @@ plot_dat=temp_site[,c("longitude.dec_deg","latitude.dec_deg","site","temp_C","se
 
 
 plot_dat =
-  plot_dat %>% 
+  plot_dat %>%
   mutate(site = recode(site, "BARR" = "Utqiaġvik",
                          "TOOL" = "Toolik",
                          "BONA" = "Caribou Poker",
@@ -124,7 +124,10 @@ precip_data = read.csv("processed/precip.csv")
 site_dat = read.csv("processed/SOMMOS_Site_11-25-19.csv")
 
 #Subset permafrost sites only 
-permafrost_sites = subset(site_dat, site == "HEAL" | site == "BARR" | site == "BONA" | site == "TOOL")
+#permafrost_sites = subset(site_dat, site == "HEAL" | site == "BARR" | site == "BONA" | site == "TOOL")
+#dim(permafrost_sites) #should by 4 x 262
+
+permafrost_sites = subset(site_dat, site == "HEAL" | site == "TOOL")
 dim(permafrost_sites) #should by 4 x 262
 
 #Merge with FTC_dat
@@ -151,6 +154,15 @@ plot_dat =
                        "TOOL" = "Toolik",
                        "BONA" = "Caribou Poker",
                        "HEAL" = "Healy"))
+
+
+plot_dat2 =
+  plot_dat %>% 
+  mutate(site = recode(site, "BARR" = "Utqiaġvik",
+                       "TOOL" = "Toolik",
+                       "BONA" = "Caribou Poker",
+                       "HEAL" = "Healy")) %>% 
+  filter(site == "Toolik" & "Healy")
 
 #Here can calculate what you want to average over (in this example, average over everything but site) 
 temp_example = summarySE(plot_dat, measurevar = "precip_cm", groupvars = c("longitude.dec_deg", "latitude.dec_deg","site"), na.rm=TRUE)
