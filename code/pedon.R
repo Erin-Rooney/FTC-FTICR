@@ -9,15 +9,22 @@ library(tidyverse)
 #load csv
 pedon <- read.csv("processed/ped_profiles_munsell_dry.csv", stringsAsFactors=FALSE)
 
-tool <- read.csv("processed/ped_profiles_munsell_dry.csv", stringsAsFactors=FALSE) %>% filter(site == "TOOL")
+tool <- read.csv("processed/ped_profiles_munsell_dry.csv", stringsAsFactors=FALSE) %>% filter(site == "Toolik")
+
+heal <- read.csv("processed/ped_profiles_munsell_dry.csv", stringsAsFactors=FALSE) %>% filter(site == "Healy")
+
+pedon = 
+  heal %>% 
+  combine(tool)
+
 
 levels(as.factor(pedon$site))
 
-pedon = pedon %>% 
-  mutate(site = recode(site, "BARR" = "Utqiaġvik",
-                         "TOOL" = "Toolik",
-                         "BONA" = "Caribou Poker",
-                         "HEAL" = "Healy")) 
+# pedon = pedon %>% 
+#   mutate(site = recode(site, "BARR" = "Utqiaġvik",
+#                          "TOOL" = "Toolik",
+#                          "BONA" = "Caribou Poker",
+#                          "HEAL" = "Healy")) 
 
 #look at first several lines of imported file
 head(pedon)
