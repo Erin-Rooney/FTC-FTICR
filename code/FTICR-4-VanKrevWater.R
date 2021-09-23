@@ -196,11 +196,12 @@ fticr_water_ftc_loss_common %>%
   geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
   geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
              aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
   #geom_point(alpha = 0.2, size = 1)+
   #stat_ellipse(show.legend = F)+
-  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  #geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  #geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  #geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
   #ggtitle("Water extracted FTICR-MS")+
   labs(caption = "grey = common to both")+
@@ -244,20 +245,37 @@ fticr_uniquesite %>%
  # scale_color_manual (values = rev(nord_palettes("aurora", 2)))
 
 # plot common as well as lost/gained
-fticr_water_ftc_loss_common %>% 
-  filter(loss_gain == "common") %>% 
-  ggplot()+
-  geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
-  geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
-             aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
+fticr_water_ftc_loss %>%
+  mutate(Trtmt = recode(Trtmt, "CON" = "control",
+                       "FTC" = "freeze-thaw cycles"),
+         Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
   #geom_point(alpha = 0.2, size = 1)+
-  #stat_ellipse(show.legend = F)+
+  stat_ellipse(show.legend = F)+
   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  ggtitle("Water extracted FTICR-MS")+
-  labs(caption = "grey = common to both")+
+  #labs(caption = "grey = common to both")+
+  scale_color_manual(values = pnw_palette("Winter", 2))+
+  facet_grid(.~Site)+
+  theme_er() 
+
+fticr_water_ftc_loss %>%
+  mutate(Trtmt = recode(Trtmt, "CON" = "control",
+                        "FTC" = "freeze-thaw cycles"),
+         Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
+  #geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  #labs(caption = "grey = common to both")+
+  scale_color_manual(values = pnw_palette("Winter", 2))+
   facet_grid(Material ~ Site)+
-  theme_er() +
-  scale_color_manual (values = rev(soil_palette("redox", 2)))
+  theme_er() 
+  
