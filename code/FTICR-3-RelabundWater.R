@@ -29,6 +29,7 @@ fticr_water_relabund =
          relabund = round(relabund, 2)) %>% 
   mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
+
 ## ^^ use this for PCA and PERMANOVA (and related stats)
 
 ## 2b. relabund summary by treatment ----
@@ -91,7 +92,7 @@ fticr_water_relabund_summarized %>%
   NULL
 
 
-fticr_water_relabund_summarized %>%
+fticr_water_relabund_summarized3 %>%
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy"),
          Trtmt = recode(Trtmt, "CON" = "control",
