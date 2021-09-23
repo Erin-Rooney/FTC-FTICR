@@ -77,8 +77,8 @@ fticr_water_relabund_arom =
 fticr_water_relabund_summarized %>%
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy"),
-         Trtmt = recode(Trtmt, "CON" = "freeze-only",
-                        "FTC" = "freeze-thaw")) %>% 
+         Trtmt = recode(Trtmt, "CON" = "control",
+                        "FTC" = "freeze-thaw cycles")) %>% 
   ggplot(aes(x = Trtmt, y = relabundance))+
   labs(x = " ",
        y = "relative abundance, %")+
@@ -94,8 +94,8 @@ fticr_water_relabund_summarized %>%
 fticr_water_relabund_summarized %>%
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy"),
-         Trtmt = recode(Trtmt, "CON" = "freeze-only",
-                        "FTC" = "freeze-thaw")) %>% 
+         Trtmt = recode(Trtmt, "CON" = "control",
+                        "FTC" = "freeze-thaw cycles")) %>%  
   ggplot(aes(x = Trtmt, y = relabundance))+
   labs(x = " ",
        y = "relative abundance, %")+
@@ -210,6 +210,8 @@ relabund_asterisk =
   group_by(Site, Material, Class) %>% 
   do(fit_aov(.))
 
+#hypothesis 1
+
 relabund_asterisk3 = 
   fticr_water_relabund %>% 
   group_by(Site, Class) %>% 
@@ -241,6 +243,8 @@ relabund_table_with_asterisk2 =
   pivot_wider(names_from = "Site", values_from = "value")
 
 
+#hypothesis 1
+
 relabund_table_with_asterisk3 = 
   relabund_table3 %>% 
   left_join(relabund_asterisk3) %>%
@@ -254,6 +258,7 @@ relabund_table_with_asterisk3 =
 
 relabund_table_with_asterisk2 %>% knitr::kable() # prints a somewhat clean table in the console
 
+#hypothesis 1
 
 relabund_table_with_asterisk3 %>% knitr::kable() # prints a somewhat clean table in the console
 
