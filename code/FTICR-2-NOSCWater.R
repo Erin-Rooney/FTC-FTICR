@@ -285,6 +285,7 @@ fticr_nosc_water_ftc_loss_common =
   left_join(fticr_meta_water) %>% 
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
+#Figure for manuscript
 
 fticr_nosc_water_ftc_loss_common %>% 
   filter(loss_gain != 'common') %>% 
@@ -294,8 +295,10 @@ fticr_nosc_water_ftc_loss_common %>%
                         "FTC" = "freeze-thaw cycles")) %>%
   ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
   geom_boxplot(alpha = 0.5)+
+  geom_jitter(width = 0.2, alpha = 0.7, size = 0.5)+
   facet_wrap(~Site)+
   labs(x = "")+
+  ylim(-2,2)+
   scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
   theme_er()+
   theme(legend.position = "bottom")
@@ -308,8 +311,10 @@ fticr_nosc_water_ftc_loss_common %>%
                         "FTC" = "freeze-thaw")) %>%
   ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
   geom_boxplot(alpha = 0.5)+
+  geom_jitter(width = 0.2, alpha = 0.7, size = 0.5)+
   facet_grid(Site~Class)+
   labs(x = "")+
+  ylim(-2,2)+
   scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
   theme_er()+
   theme(legend.position = "bottom", 
@@ -325,14 +330,17 @@ fticr_nosc_water_ftc_loss_common %>%
                         "FTC" = "freeze-thaw cycles")) %>%
   ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
   geom_boxplot(alpha = 0.5)+
+  geom_jitter(width = 0.2, alpha = 0.7, size = 0.5)+
   #geom_point(alpha = 0.2, size = 1)+
   facet_grid(Material~Site)+
+  ylim(-2,2)+
   labs(x = "")+
   scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
   theme_er()+
   theme(legend.position = "bottom")
 
 
+#common-loss stats--------------------
 
 nosc_uniqueonly = 
   fticr_nosc_water_ftc_loss_common %>% 
@@ -351,5 +359,97 @@ summary(b)
 print(b)
 anova(b)
 
+
+c = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
+                                                                                                         Class == 'aliphatic'))
+summary(c)
+print(c)
+anova(c)
+
+d = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
+                                                                                                   Class == 'aromatic'))
+summary(d)
+print(d)
+anova(d)
+
+
+e = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
+                                                                                                         Class == 'condensed aromatic'))
+summary(e)
+print(e)
+anova(e)
+
+
+f = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
+                                                                                                   Class == 'unsaturated/lignin'))
+summary(f)
+print(f)
+anova(f)
+
+
+
+g = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
+                                                                                                   Class == 'aliphatic'))
+summary(g)
+print(g)
+anova(g)
+
+
+h = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
+                                                                                                   Class == 'aromatic'))
+summary(h)
+print(h)
+anova(h)
+
+i = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
+                                                                                                   Class == 'condensed aromatic'))
+summary(i)
+print(i)
+anova(i)
+
+
+j = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
+                                                                                                   Class == 'unsaturated/lignin'))
+summary(j)
+print(j)
+anova(j)
+
+
+k = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
+                                                                                                   Material == 'Organic'))
+summary(k)
+print(k)
+anova(k)
+
+k = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
+                                                                                                Material == 'Lower Mineral'))
+summary(k)
+print(k)
+anova(k)
+
+
+l = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
+                                                                                                Material == 'Organic'))
+summary(l)
+print(l)
+anova(l)
+
+m = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
+                                                                                                Material == 'Lower Mineral'))
+summary(m)
+print(m)
+anova(m)
+
+
+############
+#counts
+
+nosc_uniqueonly %>% 
+  group_by(Site, Trtmt) %>% 
+  dplyr::summarise(count = n())
+
+fticr_nosc_water_ftc_loss_common %>% 
+  group_by(Site, Trtmt) %>% 
+  dplyr::summarise(count = n())
 
 
