@@ -248,24 +248,38 @@ ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
   scale_y_reverse()+
   facet_grid(.~siteID)
 
+neon_proc %>% 
+  ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
+  geom_point(alpha = 0.4, size = 5) +
+  theme_erclean() +
+  scale_color_nord("afternoon_prarie", 4)+
+  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  labs(y = "Depth, cm", x = "C:N Ratio")+
+  scale_y_reverse()+
+  facet_grid(.~siteID)
+
 
 #for manuscript! 7 29 2021
 
 neon_proc_DC %>% 
-  filter(plotID == "TOOL_013") %>% 
-  mutate(siteID = factor(siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")),
-         siteID = recode(siteID, "BARR" = "Utqiaġvik",
-                       "TOOL" = "Toolik",
-                       "BONA" = "Caribou Poker",
-                       "HEAL" = "Healy")) %>% 
+  filter(siteID == c("TOOL", "HEAL")) %>% 
+  # mutate(siteID = factor(siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")),
+  #        siteID = recode(siteID, "BARR" = "Utqiaġvik",
+  #                      "TOOL" = "Toolik",
+  #                      "BONA" = "Caribou Poker",
+  #                      "HEAL" = "Healy")) %>% 
+  mutate(siteID = factor(siteID, levels = c("TOOL", "HEAL")),
+         siteID = recode(siteID, "TOOL" = "Toolik",
+                         "HEAL" = "Healy")) %>% 
   ggplot(aes(y=biogeoCenterDepth, x=DC_AO, fill=siteID)) +
-  geom_point(alpha = 0.4, size = 4, color = "grey10", shape = c(21)) +
+  geom_point(alpha = 0.4, size = 5, color = "grey10", shape = c(21)) +
   theme_er() +
-  scale_fill_manual(values = rev(PNWColors::pnw_palette("Lake", 5)))+
-  labs(y = "Depth, cm", x = "DC:AO")+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Lake", 2)))+
+  labs(y = "Depth, cm", x = "crystalline Fe/Al: non-crystalline Fe/Al")+
   scale_y_reverse()+
  # scale_x_log10()+
-  facet_grid(.~siteID, scales = "free_x")
+  #facet_grid(.~siteID, scales = "free_x")
+  facet_grid(.~siteID)
   
 
 neon_proc %>% 
