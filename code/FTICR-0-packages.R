@@ -10,9 +10,9 @@ library(soilpalettes)
 library(PNWColors)
 theme_er <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
-    theme(legend.position = "right",
+    theme(legend.position = "bottom",
           legend.key=element_blank(),
-          legend.title = element_blank(),
+          #legend.title = element_blank(),
           legend.text = element_text(size = 12),
           legend.key.size = unit(1.5, 'lines'),
           panel.border = element_rect(color="black",size=2, fill = NA),
