@@ -455,3 +455,7 @@ fticr_nosc_water_ftc_loss_common %>%
 nosc_uniqueonly %>% 
   group_by(Site, Material, Trtmt) %>% 
   dplyr::summarise(count = n())
+
+fticr_nosc_water_ftc_loss_common %>% 
+  group_by(Site, Class, Trtmt) %>% 
+  dplyr::summarise(count = n())
