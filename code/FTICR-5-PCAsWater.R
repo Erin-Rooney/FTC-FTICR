@@ -156,19 +156,31 @@ ggbiplot(pca_heal, obs.scale = 1, var.scale = 1,
          groups = as.character(grp_heal$Trtmt), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(color = groups, shape = grp_heal$Material))+
-  labs(title = "Healy only")+
-  scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
+  #labs(title = "Healy only")+
+  #scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
+  ylim(-7,7)+
+  xlim(-7,7)+
   theme_er()+
   NULL
 
 a = ggbiplot(pca_heal, obs.scale = 1, var.scale = 1,
-             groups = as.character(grp_heal$Trtmt), 
-             ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+         groups = as.character(grp_heal$Trtmt), 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(color = groups))+
-  labs(title = "Healy")+
-  scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
+  #scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
+  ylim(-7,7)+
+  xlim(-7,7)+
   theme_er()+
   NULL
+
+# a = ggbiplot(pca_heal, obs.scale = 1, var.scale = 1,
+#              groups = as.character(grp_heal$Trtmt), 
+#              ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+#   geom_point(size=3,stroke=1, aes(color = groups))+
+#   labs(title = "Healy")+
+#   #scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
+#   theme_er()+
+#   NULL
 
 #
 ## 3e. TOOL only ---------------------------------------------------------
@@ -192,29 +204,34 @@ pca_tool = prcomp(num_tool, scale. = T)
 
 
 
-ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
+b = ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
          groups = as.character(grp_tool$Trtmt), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=3,stroke=1, aes(color = groups, shape = grp_tool$Material))+
-  labs(title = "Toolik only")+
-  scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  geom_point(size=3,stroke=1, aes(color = groups))+
+  #labs(title = "Toolik only")+
+  ylim(-7,7)+
+  xlim(-7,7)+
+  #scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
   theme_er()+
   NULL
 
-b = ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
-             groups = as.character(grp_tool$Trtmt), 
-             ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=3,stroke=1, aes(color = groups))+
-  labs(title = "Toolik")+
-  scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
-  theme_er()+
-  NULL
+# b = ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
+#              groups = as.character(grp_tool$Trtmt), 
+#              ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+#   geom_point(size=3,stroke=1, aes(color = groups))+
+#   labs(title = "Toolik")+
+#   ylim(-7,7)+
+#   xlim(-7,7)+
+#   #scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
+#   theme_er()+
+#   NULL
 
 
 library(cowplot)
 library(patchwork)
 
-a + b
+a + b + plot_layout(guides = "collect")+
+  theme_er()# sets a common legend
 
 #
 # PERMANOVA ---------------------------------------------------------------
