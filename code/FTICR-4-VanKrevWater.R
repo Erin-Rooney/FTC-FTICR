@@ -71,16 +71,53 @@ fticr_water_hcoc %>%
   scale_color_manual (values = soil_palette("redox", 2))
 
 
-fticr_water_hcoc %>% 
-  ggplot(aes(x=OC, y=HC, color = Site))+
+# gg_all = fticr_water_hcoc %>% 
+#   ggplot(aes(x=OC, y=HC, color = Trtmt))+
+#   geom_point(alpha = 0.2, size = 1)+
+#   stat_ellipse(show.legend = F)+
+#   facet_grid(. ~ Site)+
+#   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+#   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+#   ggtitle("Water extracted FTICR-MS")+
+#   theme_er() +
+#   scale_color_manual (values = soil_palette("redox", 2))
+# 
+# ggMarginal(gg_all,groupColour = TRUE, groupFill = TRUE)
+
+#van krevelen with all peaks compared by site and treatment
+
+fticr_water_hcoc %>%
+  mutate(Trtmt = recode(Trtmt, "CON" = "control",
+                        "FTC" = "freeze-thaw"),
+         Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  ggplot(aes(x=OC, y=HC, color = Trtmt))+
   geom_point(alpha = 0.2, size = 1)+
   stat_ellipse(show.legend = F)+
-  facet_grid(Material ~ Trtmt)+
+  facet_grid(. ~ Site)+
   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  theme_bw()
+  labs(color="",
+       y="H/C",
+       x="O/C")+
+  theme_er() 
+
+
+
+# fticr_water_hcoc %>% 
+#   ggplot(aes(x=OC, y=HC, color = Site))+
+#   geom_point(alpha = 0.2, size = 1)+
+#   stat_ellipse(show.legend = F)+
+#   facet_grid(Material ~ Trtmt)+
+#   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+#   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+#   theme_bw()
 
 
 fticr_water_hcoc %>% 
