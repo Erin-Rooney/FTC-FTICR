@@ -244,10 +244,12 @@ fticr_uniquesite %>%
   #scale_color_nord(palette = "lake_superior", reverse = TRUE)
  # scale_color_manual (values = rev(nord_palettes("aurora", 2)))
 
+#Van Krevelin with marginal distribution plot
+
 # plot common as well as lost/gained
-fticr_water_ftc_loss %>%
+gg_fm = fticr_water_ftc_loss %>%
   mutate(Trtmt = recode(Trtmt, "CON" = "control",
-                       "FTC" = "freeze-thaw cycles"),
+                       "FTC" = "freeze-thaw"),
          Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy")) %>% 
   gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
@@ -258,13 +260,20 @@ fticr_water_ftc_loss %>%
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
   #labs(caption = "grey = common to both")+
-  scale_color_manual(values = pnw_palette("Winter", 2))+
+  #scale_color_manual(values = pnw_palette("Winter", 2))+
   facet_grid(.~Site)+
-  theme_er() 
+  theme_er() +
+  labs(color="Peaks unique to:")
+
+
+ggMarginal(gg_fm,groupColour = TRUE, groupFill = TRUE)
+
+#Van Krevelin only
+
 
 fticr_water_ftc_loss %>%
   mutate(Trtmt = recode(Trtmt, "CON" = "control",
-                        "FTC" = "freeze-thaw cycles"),
+                        "FTC" = "freeze-thaw"),
          Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy")) %>% 
   gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
