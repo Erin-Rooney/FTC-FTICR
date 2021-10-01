@@ -44,18 +44,20 @@ fticr_water_hcoc =
 #   left_join(fticr_water_nosc_trt) %>% 
 #   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 # 
-fticr_water_hcoc %>% 
+gg_all = fticr_water_hcoc %>% 
   filter(Trtmt %in% "CON") %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
   gg_vankrev(aes(x=OC, y=HC, color = Site))+
-  #stat_ellipse(show.legend = F)+
-  #stat_ellipse()+
-  facet_grid(Material ~.)+
-  labs(title = "Water extracted FTICR-MS",
-       x = "O:C",
-       y = "H:C",
-       color = "NOSC")+
+  stat_ellipse(show.legend = F)+
+  stat_ellipse()+
+  labs(x = "O/C",
+       y = "H/C")+
   theme_er()+
   scale_color_manual(values = pnw_palette("Bay", 2))
+
+ggMarginal(gg_all,groupColour = TRUE, groupFill = TRUE)
+
 
 fticr_water_hcoc %>% 
   ggplot(aes(x=OC, y=HC, color = Site))+
@@ -167,7 +169,10 @@ fticr_water_ftc_loss_common =
 #fig currently used in manuscript
 fticr_water_ftc_loss %>% 
   mutate(Site = recode(Site, "TOOL" = "Toolik",
-                       "HEAL" = "Healy")) %>% 
+                       "HEAL" = "Healy"),
+         loss_gain = recode(loss_gain, "lost" = "control",
+                            "gained" = "freeze-thaw")) %>% 
+  filter(Site == "Healy") %>% 
   ggplot(aes(x = OC, y = HC, color = loss_gain))+
   geom_point(alpha = 0.2, size = 1)+
   stat_ellipse(show.legend = F)+
@@ -181,9 +186,67 @@ fticr_water_ftc_loss %>%
   facet_grid(Material ~ Site)+
   theme_er() +
   #scale_color_manual(values = pnw_palette("Bay", 2))+
-  scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
+  #scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
   theme(legend.position = "bottom")
   #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
+
+healy = fticr_water_ftc_loss %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy"),
+         loss_gain = recode(loss_gain, "lost" = "control",
+                            "gained" = "freeze-thaw")) %>% 
+  filter(Site == "Healy") %>% 
+  ggplot(aes(x = OC, y = HC, color = loss_gain))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  labs(
+    y = "H/C",
+    x = "O/C",
+    color = "peaks unique to:")+
+  theme_er() +
+  #scale_color_manual(values = pnw_palette("Bay", 2))+
+  #scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
+  theme(legend.position = "bottom")
+#scale_color_manual(values = wes_palette("GrandBudapest1", 2))
+
+a = ggMarginal(healy,groupColour = TRUE, groupFill = TRUE)
+a
+
+toolik = fticr_water_ftc_loss %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy"),
+         loss_gain = recode(loss_gain, "lost" = "control",
+                            "gained" = "freeze-thaw")) %>% 
+  filter(Site == "Toolik") %>% 
+  ggplot(aes(x = OC, y = HC, color = loss_gain))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  labs(
+    y = "H/C",
+    x = "O/C",
+    color = "peaks unique to:")+
+  theme_er() +
+  #scale_color_manual(values = pnw_palette("Bay", 2))+
+  #scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
+  theme(legend.position = "bottom")
+#scale_color_manual(values = wes_palette("GrandBudapest1", 2))
+
+b = ggMarginal(toolik,groupColour = TRUE, groupFill = TRUE)
+
+b
+a
+
+library(cowplot)
+library(patchwork)
+a + b + plot_layout(guides = "collect")
 
 
 fticr_water_ftc_loss %>% 
@@ -199,52 +262,77 @@ fticr_water_ftc_loss %>%
   labs(
     y = "H:C",
     x = "O:C")+
-  facet_grid(~ Site)+
+  facet_grid(Material ~ Site)+
   theme_er() +
   #scale_color_manual(values = pnw_palette("Bay", 2))+
   scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
   theme(legend.position = "bottom")
-#scale_color_manual(values = wes_palette("GrandBudapest1", 2))
+
+
+
+
+# fticr_water_ftc_loss %>% 
+#   mutate(Site = recode(Site, "TOOL" = "Toolik",
+#                        "HEAL" = "Healy")) %>% 
+#   ggplot(aes(x = OC, y = HC, color = loss_gain))+
+#   geom_point(alpha = 0.2, size = 1)+
+#   stat_ellipse(show.legend = F)+
+#   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+#   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+#   labs(
+#     y = "H:C",
+#     x = "O:C")+
+#   facet_grid(~ Site)+
+#   theme_er() +
+#   #scale_color_manual(values = pnw_palette("Bay", 2))+
+#   scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
+#   theme(legend.position = "bottom")
+# #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
 
 
 # plot common as well as lost/gained
-fticr_water_ftc_loss_common %>% 
-  filter(loss_gain == "common") %>% 
-  ggplot()+
-  geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
-  geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
-             aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
-  #geom_point(alpha = 0.2, size = 1)+
-  #stat_ellipse(show.legend = F)+
-  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  ggtitle("Water extracted FTICR-MS")+
-  labs(caption = "grey = common to both")+
-  facet_grid(Material ~ Site)+
-  theme_er() +
-  scale_color_manual (values = rev(soil_palette("redox", 2)))
+# fticr_water_ftc_loss_common %>% 
+#   filter(loss_gain == "common") %>% 
+#   ggplot()+
+#   geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
+#   geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
+#              aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
+#   #geom_point(alpha = 0.2, size = 1)+
+#   #stat_ellipse(show.legend = F)+
+#   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+#   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+#   ggtitle("Water extracted FTICR-MS")+
+#   labs(caption = "grey = common to both")+
+#   facet_grid(Material ~ Site)+
+#   theme_er() +
+#   scale_color_manual (values = rev(soil_palette("redox", 2)))
+
+# 
+# fticr_water_ftc_loss_common %>% 
+#   filter(loss_gain == "common") %>% 
+#   ggplot()+
+#   geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
+#   geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
+#              aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
+#   stat_ellipse(show.legend = F)+
+#   #geom_point(alpha = 0.2, size = 1)+
+#   #stat_ellipse(show.legend = F)+
+#   #geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+#   #geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+#   #geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+#   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+#   #ggtitle("Water extracted FTICR-MS")+
+#   labs(caption = "grey = common to both")+
+#   facet_grid(. ~ Site)+
+#   theme_er() +
+#   #scale_color_manual(values = c("#02c39a", "black"))+
+#   NULL
 
 
-fticr_water_ftc_loss_common %>% 
-  filter(loss_gain == "common") %>% 
-  ggplot()+
-  geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
-  geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
-             aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
-  stat_ellipse(show.legend = F)+
-  #geom_point(alpha = 0.2, size = 1)+
-  #stat_ellipse(show.legend = F)+
-  #geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  #geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  #geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  #ggtitle("Water extracted FTICR-MS")+
-  labs(caption = "grey = common to both")+
-  facet_grid(. ~ Site)+
-  theme_er() +
-  scale_color_manual(values = c("#02c39a", "black"))
   
 
 ## calculate peaks unique peaks by site ---- 
