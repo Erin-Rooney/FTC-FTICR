@@ -76,6 +76,27 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1,
   theme_er()+
   NULL
 
+###
+
+
+ggbiplot(pca, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp$Site),
+         alpha = 0,
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(fill = groups, color = groups, shape = interaction(grp$Material, grp$Trtmt)))+
+  labs(shape = "", fill = "", color = "",
+       caption = "solids = control")+
+  scale_shape_manual(values = c(21, 22, 25, 1, 0, 6))+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
+  ylim(-3,5)+
+  xlim(-3,5)+
+  theme_er()+
+  guides(fill=guide_legend(override.aes=list(fill="black")))+
+  NULL
+
+
+
 
 #
 ## 3b. CON only ---------------------------------------------------------
@@ -99,9 +120,9 @@ pca_con = prcomp(num_con, scale. = T)
 ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
          groups = as.character(grp_con$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=3,stroke=1, aes(color = grp_con$Material, shape = grp_con$Site))+
+  geom_point(size=3,stroke=1, aes(color = grp_con$Site, shape = grp_con$Material))+
   labs(title = "Control only")+
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay", 5)))+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
   theme_er()+
   NULL
 
@@ -194,6 +215,17 @@ grp_tool =
 
 pca_tool = prcomp(num_tool, scale. = T)
 
+ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp_tool$Trtmt), 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = groups, shape = grp_tool$Material))+
+  #labs(title = "Toolik only")+
+  ylim(-7,7)+
+  xlim(-7,7)+
+  #scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  theme_er()+
+  NULL
+
 
 
 b = ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
@@ -239,24 +271,24 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
          data = relabund_wide2) 
   
   
-  relabund_wideHEAL =
-    relabund_wide %>% 
-    filter(Site == "HEAL")
-  
-  relabund_wideTOOL =
-    relabund_wide %>% 
-    filter(Site == "TOOL")
+  # relabund_wideHEAL =
+  #   relabund_wide %>% 
+  #   filter(Site == "HEAL")
+  # 
+  # relabund_wideTOOL =
+  #   relabund_wide %>% 
+  #   filter(Site == "TOOL")
   
   adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
            (Site*Material), 
          data = relabund_wide2) 
   
-  adonis(relabund_wideHEAL %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
-           (Trtmt), 
-         data = relabund_wideHEAL) 
-  
-  adonis(relabund_wideTOOL %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
-           (Trtmt), 
-         data = relabund_wideTOOL) 
+  # adonis(relabund_wideHEAL %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
+  #          (Trtmt), 
+  #        data = relabund_wideHEAL) 
+  # 
+  # adonis(relabund_wideTOOL %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
+  #          (Trtmt), 
+  #        data = relabund_wideTOOL) 
 
 # b = broom::tidy(permanova_fticr_all$aov.tab)
