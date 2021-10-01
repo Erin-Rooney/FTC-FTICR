@@ -230,9 +230,14 @@ library(vegan)
          (Site*Trtmt*Material), 
        data = relabund_wide) 
   
-  relabund_wide2 =
+relabund_wide2 =
     relabund_wide %>% 
     filter(Trtmt == "CON")
+  
+adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
+           (Site*Material), 
+         data = relabund_wide2) 
+  
   
   relabund_wideHEAL =
     relabund_wide %>% 
