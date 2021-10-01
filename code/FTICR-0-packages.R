@@ -6,6 +6,7 @@
 library(tidyverse)
 library(reshape2)
 library(nord)
+library(ggExtra)
 library(soilpalettes)
 library(PNWColors)
 theme_er <- function() {  # this for all the elements common across plots
