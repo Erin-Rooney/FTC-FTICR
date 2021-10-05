@@ -60,6 +60,7 @@ ggMarginal(gg_all,groupColour = TRUE, groupFill = TRUE)
 
 
 fticr_water_hcoc %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) %>% 
   ggplot(aes(x=OC, y=HC, color = Site))+
   geom_point(alpha = 0.2, size = 1)+
   stat_ellipse(show.legend = F)+
@@ -68,9 +69,31 @@ fticr_water_hcoc %>%
   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  ggtitle("Water extracted FTICR-MS")+
+  #ggtitle("Water extracted FTICR-MS")+
   theme_er() +
-  scale_color_manual (values = soil_palette("redox", 2))
+  #scale_color_manual (values = soil_palette("redox", 2))+
+  NULL
+
+fticr_water_hcoc %>% 
+  mutate(Trtmt = recode(Trtmt, "CON" = "control",
+                        "FTC" = "freeze-thaw"),
+         Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) %>% 
+  ggplot(aes(x=OC, y=HC, color = Trtmt))+
+  geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  facet_grid(Material ~ Site)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  labs(x = "O/C",
+       y = "H/C")+
+  #ggtitle("Water extracted FTICR-MS")+
+  theme_er() +
+  #scale_color_manual (values = soil_palette("redox", 2))+
+  NULL
 
 
 # gg_all = fticr_water_hcoc %>% 
@@ -393,12 +416,12 @@ gg_fm = fticr_water_ftc_loss %>%
 
 ggMarginal(gg_fm,groupColour = TRUE, groupFill = TRUE)
 
-#Van Krevelin only
+#Van Krevelen only
 
 
 fticr_water_ftc_loss %>%
-  mutate(Trtmt = recode(Trtmt, "CON" = "control",
-                        "FTC" = "freeze-thaw"),
+  mutate(Trtmt = recode(Trtmt, "CON" = "lost",
+                        "FTC" = "gained"),
          Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy")) %>% 
   gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
@@ -408,8 +431,8 @@ fticr_water_ftc_loss %>%
   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  #labs(caption = "grey = common to both")+
-  scale_color_manual(values = pnw_palette("Winter", 2))+
+  labs(color = "")+
+  scale_color_manual(values = pnw_palette("Sailboat", 3))+
   facet_grid(Material ~ Site)+
   theme_er() 
   
