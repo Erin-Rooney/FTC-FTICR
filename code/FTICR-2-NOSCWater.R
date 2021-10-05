@@ -307,17 +307,18 @@ fticr_nosc_water_ftc_loss_common %>%
   filter(loss_gain != 'common') %>% 
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy"),
-         Trtmt = recode(Trtmt, "CON" = "control",
-                        "FTC" = "freeze-thaw")) %>%
+         Trtmt = recode(Trtmt, "CON" = "lost",
+                        "FTC" = "gained"),
+  ) %>% 
   ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
   geom_boxplot(alpha = 0.5)+
   geom_jitter(width = 0.2, alpha = 0.7, size = 0.5)+
   facet_grid(Site~Class)+
   labs(x = "")+
   ylim(-2,2)+
-  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Sailboat", 2)))+
   theme_er()+
-  theme(legend.position = "bottom", 
+  theme(legend.position = "none", 
         axis.text.x.bottom = element_text 
         (vjust = 0.5, hjust=0.6, angle = 0)
 )
@@ -326,8 +327,10 @@ fticr_nosc_water_ftc_loss_common %>%
   filter(loss_gain != 'common') %>% 
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy"),
-         Trtmt = recode(Trtmt, "CON" = "control",
-                        "FTC" = "freeze-thaw cycles")) %>%
+         Trtmt = recode(Trtmt, "CON" = "lost",
+                        "FTC" = "gained"),
+         ) %>% 
+  mutate(Trtmt = factor (Trtmt, levels = c("lost", "gained")))%>%
   ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
   geom_boxplot(alpha = 0.5)+
   geom_jitter(width = 0.2, alpha = 0.7, size = 0.5)+
@@ -335,9 +338,9 @@ fticr_nosc_water_ftc_loss_common %>%
   facet_grid(Material~Site)+
   ylim(-2,2)+
   labs(x = "")+
-  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Sailboat", 2)))+
   theme_er()+
-  theme(legend.position = "bottom")
+  theme(legend.position = "none")
 
 
 #common-loss stats--------------------
