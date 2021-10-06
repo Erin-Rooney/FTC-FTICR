@@ -477,28 +477,28 @@ ftc_max_gapfilled %>%
 
 #NEW COLOR SCHEME
 
-ftc_max_gapfilled %>%
+ftc_max_gapfilled_2site =
+  ftc_max_gapfilled %>% 
+  filter(seas_num < 5 & site_pos != c("BARR", 'BONA')) %>%  
+  mutate(site_pos = recode (site_pos, "TOOL" = "Toolik", 
+                            "HEAL" = "Healy"),
+         site_pos = factor(site_pos, levels = c("Utqiaġvik", "Toolik", "Caribou Poker", "Healy"))) %>% 
+  na.omit()
+  
+  
+ftc_max_gapfilled_2site %>%
   mutate(site_pos = recode (site_pos, "TOOL" = "Toolik", 
                             "HEAL" = "Healy",
                             "BARR" = "Utqiaġvik",
                             "BONA" = "Caribou Poker"))%>% 
   #mutate(season = factor(season, levels = c("fall", "winter", "spring", "summer"))) %>% 
-  mutate(site_pos = factor(site_pos, levels = c("Utqiaġvik", "Toolik", "Caribou Poker", "Healy"))) %>% 
-  filter(seas_num < 5) %>% 
   ggplot()+
   geom_rect(aes(xmin = seas_num -0.4, xmax = seas_num + 0.4, 
                 ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.numeric(max_ftc)))+
   ylim(80,0)+
   scale_x_continuous(breaks = 1:4,
                      labels = c("fall", "winter", "spring", "summer"))+
-  # annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
-  #          linetype = 2) +
   scale_fill_gradientn(colors = rev(PNWColors::pnw_palette("Winter")))+
-  #scale_fill_gradientn(colors = (wesanderson::wes_palette("Moonrise3")))+
-  # scale_fill_gradientn(option="rainbow", direction=-1, guide = guide_colourbar
-  #                      (barwidth=10, barheight=1, direction = "horizontal", 
-  #                        reverse = FALSE, title.position="top", ticks=FALSE, label=TRUE)) +  
-  
   labs(
     y = "depth, cm",
     x = "season",  
