@@ -268,13 +268,13 @@ neon_proc_DC %>%
   #                      "TOOL" = "Toolik",
   #                      "BONA" = "Caribou Poker",
   #                      "HEAL" = "Healy")) %>% 
-  mutate(siteID = factor(siteID, levels = c("TOOL", "HEAL")),
+  mutate(siteID = factor(siteID, levels = c("HEAL", "TOOL")),
          siteID = recode(siteID, "TOOL" = "Toolik",
                          "HEAL" = "Healy")) %>% 
   ggplot(aes(y=biogeoCenterDepth, x=DC_AO, fill=siteID)) +
   geom_point(alpha = 0.4, size = 5, color = "grey10", shape = c(21)) +
   theme_er() +
-  scale_fill_manual(values = rev(PNWColors::pnw_palette("Lake", 2)))+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
   labs(y = "Depth, cm", x = "crystalline Fe/Al: non-crystalline Fe/Al")+
   scale_y_reverse()+
  # scale_x_log10()+
