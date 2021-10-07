@@ -670,21 +670,21 @@ ghg_csv2 %>%
          site = recode(site, "healy" = "Healy",
                        "tool" = "Toolik")) %>% 
   #filter(mid > 0) %>% 
-  ggplot(aes(y = mid, x = gain_ug_g_oc, color = day, group = day))+
+  ggplot()+
   #geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=.1, 
   #                  )) +
-  geom_point(size = 3, alpha = 0.7)+
-  geom_line(orientation = "y", linetype = "dashed")+
+  geom_point(aes(y = mid, x = gain_ug_g_oc, group = day, fill = day), shape = 21, size = 3.5, alpha = 0.6, color = 'black')+
+  geom_line(aes(y = mid, x = gain_ug_g_oc, group = day, color = day), orientation = "y", linetype = "dashed")+
   #geom_jitter()+
   #geom_bar(position = "stack", stat= "identity")+
   scale_y_reverse() +
-  #coord_cartesian(ylim = c(70,0)) +
-  # scale_size_continuous()
+  scale_fill_manual(values = (PNWColors::pnw_palette("Sunset", 4)))+
   scale_color_manual(values = (PNWColors::pnw_palette("Sunset", 4)))+
   #ggtitle("Respiration (ug per g OC)") +
   labs(y = "depth, cm",
-       x = 'OC ug per g soil'
-       )+
+       x = 'OC ug per g soil',
+       fill = "",
+       color = "")+
   theme_er() +
   facet_grid(trmt~site)
 
