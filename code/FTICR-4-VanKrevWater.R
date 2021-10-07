@@ -435,4 +435,11 @@ fticr_water_ftc_loss %>%
   scale_color_manual(values = pnw_palette("Sailboat", 3))+
   facet_grid(Material ~ Site)+
   theme_er() 
-  
+
+fticr_water_ftc_loss %>% 
+  group_by(Site, Material, Trtmt) %>% 
+  dplyr::summarise(mean = mean(OC))
+
+fticr_water_ftc_loss %>% 
+  group_by(Site, Material, Trtmt) %>% 
+  dplyr::summarise(mean = mean(HC))
