@@ -13,6 +13,7 @@
 
 # 1. load packages and files -----------------------------------------------------------
 
+
 library(tidyverse)
 library(soilpalettes)
 library(PNWColors)
@@ -55,8 +56,8 @@ theme_kp <- function() {  # this for all the elements common across plots
 theme_kpnone <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
     theme(legend.position = "right",
-          legend.key=element_blank(),
-          legend.title = element_blank(),
+          #legend.key=element_blank(),
+          #legend.title = "top",
           legend.text = element_text(size = 12),
           legend.key.size = unit(1.5, 'lines'),
           panel.border = element_rect(color="white",size=1.5, fill = NA),
@@ -277,23 +278,23 @@ ftc_mean_seasnum =
 # anova(lb)
 
 
-ftc_mean_seasnum %>%
-  filter(seas_num < 5) %>% 
-  ggplot()+
-  geom_rect(aes(xmin = seas_num -0.4, xmax = seas_num + 0.4, 
-                ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.numeric(ftc)))+
-  scale_y_reverse()+
-  scale_x_continuous(breaks = 1:4,
-                     labels = c("fall", "winter", "spring", "summer"))+
-  # annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
-  #          linetype = 2) +
-  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
-  labs(
-    y = "depth, cm",
-    x = "season",  
-    fill = "freeze-thaw cycles, count")+
-  facet_grid(.~site)+
-  theme_kpnone()
+# ftc_mean_seasnum %>%
+#   filter(seas_num < 5) %>% 
+#   ggplot()+
+#   geom_rect(aes(xmin = seas_num -0.4, xmax = seas_num + 0.4, 
+#                 ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.numeric(ftc)))+
+#   scale_y_reverse()+
+#   scale_x_continuous(breaks = 1:4,
+#                      labels = c("fall", "winter", "spring", "summer"))+
+#   # annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
+#   #          linetype = 2) +
+#   scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
+#   labs(
+#     y = "depth, cm",
+#     x = "season",  
+#     fill = "freeze-thaw cycles, count")+
+#   facet_grid(.~site)+
+#   theme_kpnone()
 
 #####################################3
 ####ftc max instead of mean-----------------
@@ -432,23 +433,23 @@ ftc_max_nogapfill =
 
 #
 
-ftc_max_nogapfill %>%
-  filter(seas_num < 5) %>% 
-  ggplot()+
-  geom_rect(aes(xmin = seas_num -0.4, xmax = seas_num + 0.4, 
-                ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.numeric(max_ftc)))+
-  ylim(80,0)+
-  scale_x_continuous(breaks = 1:4,
-                     labels = c("fall", "winter", "spring", "summer"))+
-  # annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
-  #          linetype = 2) +
-  scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
-  labs(
-    y = "depth, cm",
-    x = "season",  
-    fill = "freeze-thaw cycles, count")+
-  facet_grid(.~site_pos)+
-  theme_kpnone()
+# ftc_max_nogapfill %>%
+#   filter(seas_num < 5) %>% 
+#   ggplot()+
+#   geom_rect(aes(xmin = seas_num -0.4, xmax = seas_num + 0.4, 
+#                 ymin = depth_start_cm, ymax = depth_stop_cm, fill = as.numeric(max_ftc)))+
+#   ylim(80,0)+
+#   scale_x_continuous(breaks = 1:4,
+#                      labels = c("fall", "winter", "spring", "summer"))+
+#   # annotate("segment", x = 0, xend = 4.9, y = 10, yend = 10, color = "black", size= 1.5,
+#   #          linetype = 2) +
+#   scale_fill_gradientn(colors = (PNWColors::pnw_palette("Bay")))+  
+#   labs(
+#     y = "depth, cm",
+#     x = "season",  
+#     fill = "freeze-thaw cycles, count")+
+#   facet_grid(.~site_pos)+
+#   theme_kpnone()
 
 
 ftc_max_gapfilled %>%
@@ -501,11 +502,12 @@ ftc_max_gapfilled_2site %>%
   scale_fill_gradientn(colors = rev(PNWColors::pnw_palette("Winter")))+
   labs(
     y = "depth, cm",
-    x = "season",  
-    fill = "freeze-thaw cycles, count")+
+    x = "",  
+    fill = "freeze-thaw cycles (count)")+
   facet_grid(.~site_pos)+
   theme_kpnone()+
   theme(legend.position = "bottom")
+
 
 
 
