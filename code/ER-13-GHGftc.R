@@ -665,23 +665,26 @@ ghg_csv2 %>%
 
 
 ghg_csv2 %>% 
-  mutate(day = factor(day, levels = c('day1', 'day4', 'day7', 'day14'))) %>% 
+  mutate(day = factor(day, levels = c('day1', 'day4', 'day7', 'day14'))) %>%
+  mutate(trmt = recode(trmt, 'ftc' = "freeze-thaw"),
+         site = recode(site, "healy" = "Healy",
+                       "tool" = "Toolik")) %>% 
   #filter(mid > 0) %>% 
   ggplot(aes(y = mid, x = gain_ug_g_oc, color = day, group = day))+
   #geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=.1, 
   #                  )) +
-  geom_point()+
-  geom_line(orientation = "y")+
+  geom_point(size = 3, alpha = 0.7)+
+  geom_line(orientation = "y", linetype = "dashed")+
   #geom_jitter()+
   #geom_bar(position = "stack", stat= "identity")+
   scale_y_reverse() +
   #coord_cartesian(ylim = c(70,0)) +
   # scale_size_continuous()
-  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 4)))+
-  ggtitle("Respiration (ug per g OC)") +
+  scale_color_manual(values = (PNWColors::pnw_palette("Sunset", 4)))+
+  #ggtitle("Respiration (ug per g OC)") +
   labs(y = "depth, cm",
-       x = 'OC ug/g soil',
-       title = "Respiration")+
+       x = 'OC ug per g soil'
+       )+
   theme_er() +
   facet_grid(trmt~site)
 
