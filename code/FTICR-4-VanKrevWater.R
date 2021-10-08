@@ -10,15 +10,15 @@ library(nord)
 
 # 1. Load files-----------------------------------
 
-fticr_data_water = read.csv("processed/fticr_data_water.csv")
-fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
-meta_hcoc_water  = read.csv("processed/fticr_meta_hcoc_water.csv") %>% select(-Mass)
+fticr_data_water = read.csv("fticr_data_water.csv")
+fticr_meta_water = read.csv("fticr_meta_water.csv")
+meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 ### ^^ the files above have aliph as well as aromatic for the same sample, which can be confusing/misleading
 ### create an index combining them
 
 fticr_water = 
   fticr_data_water %>% 
-  select(ID, formula, Site, Trtmt, Material) 
+  select(Core, formula, Site, Trtmt, Material) 
 
 fticr_data_water_summarized = 
   fticr_water %>% 
@@ -436,10 +436,13 @@ fticr_water_ftc_loss %>%
   facet_grid(Material ~ Site)+
   theme_er() 
 
-fticr_water_ftc_loss %>% 
+mean_oc = fticr_water_ftc_loss %>% 
   group_by(Site, Material, Trtmt) %>% 
   dplyr::summarise(mean = mean(OC))
 
-fticr_water_ftc_loss %>% 
+mean_hc = fticr_water_ftc_loss %>% 
   group_by(Site, Material, Trtmt) %>% 
   dplyr::summarise(mean = mean(HC))
+
+write.csv(mean_oc, "output/mean_oc.csv", row.names = FALSE)
+write.csv(mean_hc, "output/mean_hc.csv", row.names = FALSE)

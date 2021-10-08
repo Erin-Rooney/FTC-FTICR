@@ -1,25 +1,25 @@
-Site,Material,Class,CON,FTC
-HEAL,Organic,aliphatic,21.35 ± 6.27,17.61 ± 1.2
-,,aromatic,10.87 ± 1.39,13.73 ± 0.55
-,,condensed aromatic,1.25 ± 0.11,2.11 ± 0.12 *
-,,unsaturated/lignin,66.53 ± 4.9,66.54 ± 0.72
-,Upper Mineral,aliphatic,15.91 ± 0.64,15.01 ± 0.51
-,,aromatic,15.61 ± 0.65,17.26 ± 0.65
-,,condensed aromatic,7.28 ± 0.43,7.92 ± 1.14
-,,unsaturated/lignin,61.21 ± 1.17,59.81 ± 2.22
-,Lower Mineral,aliphatic,19.34 ± 0.84,10.37 ± 1.5 *
-,,aromatic,14.84 ± 0.94,12.46 ± 0.64
-,,condensed aromatic,6.2 ± 0.28,2.38 ± 0.18 *
-,,unsaturated/lignin,59.61 ± 0.85,75.27 ± 2.61 *
-TOOL,Organic,aliphatic,21.51 ± 1.13,22.47 ± 0.78
-,,aromatic,11.26 ± 0.79,14.1 ± 0.32 *
-,,condensed aromatic,1.76 ± 0.24,2.9 ± 0.24 *
-,,unsaturated/lignin,65.48 ± 0.55,60.53 ± 0.46 *
-,Upper Mineral,aliphatic,25.3 ± 4.88,22.53 ± 0.47
-,,aromatic,12.74 ± 1.79,15.83 ± 0.89
-,,condensed aromatic,2.6 ± 0.54,5.18 ± 0.76 *
-,,unsaturated/lignin,59.36 ± 2.56,56.45 ± 1.22
-,Lower Mineral,aliphatic,29.74 ± 1.21,23.5 ± 1.5 *
-,,aromatic,10.81 ± 0.26,13.47 ± 0.81 *
-,,condensed aromatic,3.1 ± 0.3,3.21 ± 0.21
-,,unsaturated/lignin,56.34 ± 1.42,59.81 ± 0.72
+"Site","Material","Class","CON","FTC"
+"HEAL","Organic","aliphatic","35.95 ± 6.74","35.01 ± 2.57"
+"HEAL","Organic","unsaturated/lignin","50.49 ± 5.41","49.09 ± 0.82"
+"HEAL","Organic","aromatic","10.76 ± 1.2","11.56 ± 0.92"
+"HEAL","Organic","condensed aromatic","2.8 ± 0.18","4.35 ± 1.2"
+"HEAL","Upper Mineral","aliphatic","23.02 ± 4.11","19.19 ± 3.11"
+"HEAL","Upper Mineral","unsaturated/lignin","54.06 ± 3.68","58.4 ± 7.08"
+"HEAL","Upper Mineral","aromatic","15.23 ± 0.97","15.9 ± 1.21"
+"HEAL","Upper Mineral","condensed aromatic","7.68 ± 0.54","6.5 ± 2.75"
+"HEAL","Lower Mineral","aliphatic","21.34 ± 3.06","12.29 ± 0.36 *"
+"HEAL","Lower Mineral","unsaturated/lignin","56.79 ± 1.01","63.63 ± 1.3 *"
+"HEAL","Lower Mineral","aromatic","15.37 ± 1.99","17.54 ± 0.52"
+"HEAL","Lower Mineral","condensed aromatic","6.5 ± 0.12","6.55 ± 0.42"
+"TOOL","Organic","aliphatic","33.99 ± 5.69","38.31 ± 1.07"
+"TOOL","Organic","unsaturated/lignin","48.29 ± 2.84","46.9 ± 1.64"
+"TOOL","Organic","aromatic","12.73 ± 1.8","10.75 ± 0.02"
+"TOOL","Organic","condensed aromatic","4.99 ± 1.32","4.04 ± 0.58"
+"TOOL","Upper Mineral","aliphatic","24.85 ± 3.39","26.15 ± 0.86"
+"TOOL","Upper Mineral","unsaturated/lignin","52.79 ± 1.43","52.9 ± 3.83"
+"TOOL","Upper Mineral","aromatic","16.04 ± 2.09","14.96 ± 2.54"
+"TOOL","Upper Mineral","condensed aromatic","6.32 ± 1.92","5.99 ± 2.11"
+"TOOL","Lower Mineral","aliphatic","27.1 ± 0.88","24.02 ± 4.8"
+"TOOL","Lower Mineral","unsaturated/lignin","54.15 ± 1.34","54.11 ± 1.53"
+"TOOL","Lower Mineral","aromatic","13.86 ± 1.33","15.59 ± 2.22"
+"TOOL","Lower Mineral","condensed aromatic","4.88 ± 0.85","6.28 ± 1.82"

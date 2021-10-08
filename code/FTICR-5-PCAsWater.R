@@ -8,8 +8,8 @@ source("code/FTICR-0-packages.R")
 
 # 1. load files -----------------------------------------------------------
 
-fticr_data_water = read.csv("processed/fticr_data_water.csv") %>% select(ID, formula, Site, Trtmt, Material) 
-fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
+fticr_data_water = read.csv("fticr_data_water.csv") %>% select(Core, formula, Site, Trtmt, Material) 
+fticr_meta_water = read.csv("fticr_meta_water.csv")
 # meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 ## fticr_data_water contains peaks for each sample, i.e. each replicate
@@ -23,10 +23,10 @@ fticr_water_relabund =
   fticr_data_water %>% 
   left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
   ## create a column for group counts
-  group_by(ID, Site, Trtmt, Material, Class) %>% 
+  group_by(Core, Site, Trtmt, Material, Class) %>% 
   dplyr::summarize(counts = n()) %>% 
   ## create a column for total counts
-  group_by(ID, Site, Trtmt, Material) %>%
+  group_by(Core, Site, Trtmt, Material) %>%
   dplyr::mutate(totalcounts = sum(counts)) %>% 
   ungroup() %>% 
   mutate(relabund = (counts/totalcounts)*100,

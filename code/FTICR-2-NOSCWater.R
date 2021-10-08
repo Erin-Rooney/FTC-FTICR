@@ -8,14 +8,14 @@ source("code/FTICR-0-packages.R")
 
 # 1. Load files-----------------------------------
 
-fticr_data_water = read.csv("processed/fticr_data_water.csv")
-fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
-meta_hcoc_water  = read.csv("processed/fticr_meta_hcoc_water.csv") %>% select(-Mass)
+fticr_data_water = read.csv("fticr_data_water.csv")
+fticr_meta_water = read.csv("fticr_meta_water.csv")
+meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 # 2. NOSC and AImod plots_water-------------------------------
 fticr_water = 
   fticr_data_water %>% 
-  select(ID, formula, Site, Trtmt, Material) 
+  select(Core, formula, Site, Trtmt, Material) 
 
 fticr_data_water_summarized = 
   fticr_water %>% 
@@ -90,69 +90,8 @@ library(viridis)
 #   theme(legend.position = "bottom")
 
 ######
-fticr_water_nosc %>% 
-  # mutate(Site = recode(Site, "TOOL" = "Toolik",
-  #                      "HEAL" = "Healy")) %>%
-  # ggplot(aes(x = Trtmt, y = NOSC, fill = Trtmt)) +
-  # geom_boxplot(alpha = 0.5)+
-  # geom_point()+
-  # facet_wrap(~Site)+
-  # scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
-  # theme_er()
 
 
-
-
-
-
-
-# NOSC by compound class
-fticr_water_nosc %>% 
-  filter(Site == "HEAL") %>% 
-  ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
-  geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
-  geom_boxplot(aes(y = 100), width = 20, fill = NA)+
-  facet_grid(Material ~ .) +
-  theme_er() +
-  scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
-  scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
-  ggtitle("Healy")+
-  facet_grid(Material~Class)
-
-# fticr_water_nosc %>% 
-#   filter(Site == "TOOL") %>% 
-#   ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
-#   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
-#   geom_boxplot(aes(y = 100), width = 20, fill = NA)+
-#   facet_grid(Material ~ .) +
-#   theme_er() +
-#   scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
-#   scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
-#   ggtitle("Toolik")+
-#   facet_grid(Material~Class)+
-#   ylim(0, 110)
-
-# fticr_water_nosc %>% 
-#   filter(Site == "HEAL") %>% 
-#   ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
-#   geom_histogram(alpha = 0.4, position = "identity", binwidth = 0.1) +
-#   geom_boxplot(aes(y = 250), width = 20, fill = NA)+
-#   theme_er() +
-#   scale_fill_manual(values = PNWColors::pnw_palette("Moth", 4))+
-#   scale_color_manual(values = PNWColors::pnw_palette("Moth", 4))+
-#   ggtitle("Healy")+
-#   facet_wrap(.~Class)
-
-# fticr_water_nosc %>% 
-#   filter(Site == "TOOL") %>% 
-#   ggplot(aes(NOSC, color = Trtmt, fill = Trtmt)) +
-#   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
-#   geom_boxplot(aes(y = 250), width = 20, fill = NA)+
-#   theme_er() +
-#   scale_fill_manual(values = PNWColors::pnw_palette("Winter", 2))+
-#   scale_color_manual(values = PNWColors::pnw_palette("Winter", 2))+
-#   ggtitle("Toolik")+
-#   facet_wrap(.~Class)
 
 
 ###########################################
@@ -254,15 +193,15 @@ nosc_uniqueonly =
 
 
 library(nlme)
-a = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL'))
-summary(a)
-print(a)
-anova(a)
+heal = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL'))
+summary(heal)
+print(heal)
+anova(heal)
 
-b = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL'))
-summary(b)
-print(b)
-anova(b)
+tool = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL'))
+summary(tool)
+print(tool)
+anova(tool)
 
 
 c = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
@@ -315,35 +254,48 @@ anova(i)
 
 j = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
                                                                                                    Class == 'unsaturated/lignin'))
+
 summary(j)
 print(j)
 anova(j)
 
 
-k = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
+healO = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
                                                                                                    Material == 'Organic'))
-summary(k)
-print(k)
-anova(k)
+summary(healO)
+print(healO)
+anova(healO)
 
-k = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
+healU = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
+                                                                                                Material == 'Upper Mineral'))
+summary(healU)
+print(healU)
+anova(healU)
+
+healL = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
                                                                                                 Material == 'Lower Mineral'))
-summary(k)
-print(k)
-anova(k)
+summary(healL)
+print(healL)
+anova(healL)
 
 
-l = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
+toolO = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
                                                                                                 Material == 'Organic'))
-summary(l)
-print(l)
-anova(l)
+summary(toolO)
+print(toolO)
+anova(toolO)
 
-m = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
+toolU = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
+                                                                                                Material == 'Upper Mineral'))
+summary(toolU)
+print(toolU)
+anova(toolU)
+
+toolL = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
                                                                                                 Material == 'Lower Mineral'))
-summary(m)
-print(m)
-anova(m)
+summary(toolL)
+print(toolL)
+anova(toolL)
 
 
 ############
