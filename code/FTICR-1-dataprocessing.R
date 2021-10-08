@@ -13,17 +13,19 @@ report_chcl3 = read.csv("processed/Lybrand Alaska CHCl3 Sept 2019 Report_Colorco
 # core key for fticr ------------------------------------------------------
 
 fticr_key = read.csv("processed/fticr_ms_ftmetadata.csv")
-fticr_reps = 
+fticr_key_cleaned = 
   fticr_key %>% 
   # remove extra spaces in Site names
   mutate(Site = str_replace(Site, " ", "")) %>% 
+  # rename rep to Core #
+  rename(Core = Rep) %>% 
   # calculate reps per treatment grouping
   group_by(Site, Material, Trtmt) %>% 
   dplyr::mutate(reps = n()) %>% 
   # separate ID column into many
   separate(ID, sep = " ", into = c("FT", "ID")) %>% 
   # keep only the necessary columns
-  select(ID, Site, Trtmt, Material, reps)
+  select(ID, Site, Trtmt, Core, Material, reps)
 
 
 
@@ -96,19 +98,15 @@ fticr_data_water =
   # filter only FT
   # filter(FT_col == "FT")
   filter(FT_col %in% "FT") %>% 
-  left_join(fticr_reps, by = "ID") %>% 
-  rename(max_reps = reps) %>% 
+  left_join(fticr_key_cleaned, by = "ID") %>% 
+  # rename(max_reps = reps) %>% 
+  dplyr::select(-reps, -ID, -Mass) %>% 
+  distinct() %>% 
   group_by(Site, Material, Trtmt, formula) %>% 
   dplyr::mutate(formulareps = n()) %>% 
-  # set up replication filter for 2/3 of max_rep
+  # set up replication filter for 2/3 of max_rep (= 3)
   ungroup() %>% 
-  mutate(include = formulareps >= (2/3)*max_reps) %>% 
-  
-  ## mutate(include = formulareps > 1,
-  ##        occurrence = case_when(formulareps == max_reps ~ "3/3",
-  ##                               formulareps < max_reps & formulareps >= (2/3)*max_reps ~ "2/3+",
-  ##                               formulareps >= (1/3)*max_reps ~ "1/3+",
-  ##                               formulareps < (1/3)*max_reps ~ "exclude")) %>% 
+  mutate(include = formulareps >= 2) %>% 
   filter(include)
 
 
@@ -195,7 +193,7 @@ fticr_data_chcl3 =
   # filter only FT
   # filter(FT_col == "FT")
   filter(FT_col %in% "FT") %>% 
-  left_join(fticr_reps, by = "ID") %>% 
+  left_join(fticr_key_cleaned, by = "ID") %>% 
   rename(max_reps = reps) %>% 
   group_by(Site, Material, Trtmt, formula) %>% 
   dplyr::mutate(formulareps = n()) %>% 
