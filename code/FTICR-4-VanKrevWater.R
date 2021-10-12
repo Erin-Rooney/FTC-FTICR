@@ -31,18 +31,6 @@ fticr_water_hcoc =
   left_join(fticr_meta_water) %>% 
   dplyr::select(formula, Site, Trtmt, Material, HC, OC)
 
-
-
-
-# fticr_water = 
-#   fticr_data_water %>% 
-#   select(formula, Site, Trtmt, Material) 
-# 
-# fticr_water_trt = 
-#   fticr_water %>% 
-#   distinct(Site, Trtmt, Material, formula) %>% 
-#   left_join(fticr_water_nosc_trt) %>% 
-#   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 # 
 gg_all = fticr_water_hcoc %>% 
   filter(Trtmt %in% "CON") %>% 
@@ -96,21 +84,6 @@ fticr_water_hcoc %>%
   NULL
 
 
-# gg_all = fticr_water_hcoc %>% 
-#   ggplot(aes(x=OC, y=HC, color = Trtmt))+
-#   geom_point(alpha = 0.2, size = 1)+
-#   stat_ellipse(show.legend = F)+
-#   facet_grid(. ~ Site)+
-#   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-#   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-#   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-#   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-#   ggtitle("Water extracted FTICR-MS")+
-#   theme_er() +
-#   scale_color_manual (values = soil_palette("redox", 2))
-# 
-# ggMarginal(gg_all,groupColour = TRUE, groupFill = TRUE)
-
 #van krevelen with all peaks compared by site and treatment
 
 fticr_water_hcoc %>%
@@ -131,33 +104,6 @@ fticr_water_hcoc %>%
        x="O/C")+
   theme_er() 
 
-
-
-# fticr_water_hcoc %>% 
-#   ggplot(aes(x=OC, y=HC, color = Site))+
-#   geom_point(alpha = 0.2, size = 1)+
-#   stat_ellipse(show.legend = F)+
-#   facet_grid(Material ~ Trtmt)+
-#   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-#   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-#   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-#   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-#   theme_bw()
-
-
-fticr_water_hcoc %>% 
-  ggplot(aes(x=OC, y=HC, color = Trtmt))+
-  geom_point(alpha = 0.2, size = 1)+
-  stat_ellipse(show.legend = F)+
-  facet_grid(Material ~.)+
-  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  ggtitle("Water extracted FTICR-MS")+
-  facet_grid(Material ~ Site)+
-  theme_er() +
-  scale_color_manual (values = soil_palette("redox", 2))
 
 ## calculate peaks lost/gained ---- 
 
@@ -213,90 +159,14 @@ fticr_water_ftc_loss %>%
   theme(legend.position = "bottom")
   #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
 
-healy = fticr_water_ftc_loss %>% 
-  mutate(Site = recode(Site, "TOOL" = "Toolik",
-                       "HEAL" = "Healy"),
-         loss_gain = recode(loss_gain, "lost" = "control",
-                            "gained" = "freeze-thaw")) %>% 
-  filter(Site == "Healy") %>% 
-  ggplot(aes(x = OC, y = HC, color = loss_gain))+
-  geom_point(alpha = 0.2, size = 1)+
-  stat_ellipse(show.legend = F)+
-  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  labs(
-    y = "H/C",
-    x = "O/C",
-    color = "peaks unique to:")+
-  theme_er() +
-  #scale_color_manual(values = pnw_palette("Bay", 2))+
-  #scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
-  theme(legend.position = "bottom")
-#scale_color_manual(values = wes_palette("GrandBudapest1", 2))
+#ggMarginal by site, currently not used so commented out
 
-a = ggMarginal(healy,groupColour = TRUE, groupFill = TRUE)
-a
-
-toolik = fticr_water_ftc_loss %>% 
-  mutate(Site = recode(Site, "TOOL" = "Toolik",
-                       "HEAL" = "Healy"),
-         loss_gain = recode(loss_gain, "lost" = "control",
-                            "gained" = "freeze-thaw")) %>% 
-  filter(Site == "Toolik") %>% 
-  ggplot(aes(x = OC, y = HC, color = loss_gain))+
-  geom_point(alpha = 0.2, size = 1)+
-  stat_ellipse(show.legend = F)+
-  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  labs(
-    y = "H/C",
-    x = "O/C",
-    color = "peaks unique to:")+
-  theme_er() +
-  #scale_color_manual(values = pnw_palette("Bay", 2))+
-  #scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
-  theme(legend.position = "bottom")
-#scale_color_manual(values = wes_palette("GrandBudapest1", 2))
-
-b = ggMarginal(toolik,groupColour = TRUE, groupFill = TRUE)
-
-b
-a
-
-library(cowplot)
-library(patchwork)
-a + b + plot_layout(guides = "collect")
-
-
-fticr_water_ftc_loss %>% 
-  mutate(Site = recode(Site, "TOOL" = "Toolik",
-                       "HEAL" = "Healy")) %>% 
-  ggplot(aes(x = OC, y = HC, color = loss_gain))+
-  geom_point(alpha = 0.2, size = 1)+
-  stat_ellipse(show.legend = F)+
-  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  labs(
-    y = "H:C",
-    x = "O:C")+
-  facet_grid(Material ~ Site)+
-  theme_er() +
-  #scale_color_manual(values = pnw_palette("Bay", 2))+
-  scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
-  theme(legend.position = "bottom")
-
-
-
-
-# fticr_water_ftc_loss %>% 
+# healy = fticr_water_ftc_loss %>% 
 #   mutate(Site = recode(Site, "TOOL" = "Toolik",
-#                        "HEAL" = "Healy")) %>% 
+#                        "HEAL" = "Healy"),
+#          loss_gain = recode(loss_gain, "lost" = "control",
+#                             "gained" = "freeze-thaw")) %>% 
+#   filter(Site == "Healy") %>% 
 #   ggplot(aes(x = OC, y = HC, color = loss_gain))+
 #   geom_point(alpha = 0.2, size = 1)+
 #   stat_ellipse(show.legend = F)+
@@ -305,58 +175,50 @@ fticr_water_ftc_loss %>%
 #   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
 #   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
 #   labs(
-#     y = "H:C",
-#     x = "O:C")+
-#   facet_grid(~ Site)+
+#     y = "H/C",
+#     x = "O/C",
+#     color = "peaks unique to:")+
 #   theme_er() +
 #   #scale_color_manual(values = pnw_palette("Bay", 2))+
-#   scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
+#   #scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
 #   theme(legend.position = "bottom")
 # #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
+# 
+# a = ggMarginal(healy,groupColour = TRUE, groupFill = TRUE)
+# a
 
-
-# plot common as well as lost/gained
-# fticr_water_ftc_loss_common %>% 
-#   filter(loss_gain == "common") %>% 
-#   ggplot()+
-#   geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
-#   geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
-#              aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
-#   #geom_point(alpha = 0.2, size = 1)+
-#   #stat_ellipse(show.legend = F)+
+# toolik = fticr_water_ftc_loss %>% 
+#   mutate(Site = recode(Site, "TOOL" = "Toolik",
+#                        "HEAL" = "Healy"),
+#          loss_gain = recode(loss_gain, "lost" = "control",
+#                             "gained" = "freeze-thaw")) %>% 
+#   filter(Site == "Toolik") %>% 
+#   ggplot(aes(x = OC, y = HC, color = loss_gain))+
+#   geom_point(alpha = 0.2, size = 1)+
+#   stat_ellipse(show.legend = F)+
 #   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
 #   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
 #   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
 #   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-#   ggtitle("Water extracted FTICR-MS")+
-#   labs(caption = "grey = common to both")+
-#   facet_grid(Material ~ Site)+
+#   labs(
+#     y = "H/C",
+#     x = "O/C",
+#     color = "peaks unique to:")+
 #   theme_er() +
-#   scale_color_manual (values = rev(soil_palette("redox", 2)))
-
+#   #scale_color_manual(values = pnw_palette("Bay", 2))+
+#   #scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
+#   theme(legend.position = "bottom")
+# #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
 # 
-# fticr_water_ftc_loss_common %>% 
-#   filter(loss_gain == "common") %>% 
-#   ggplot()+
-#   geom_point(aes(x = OC, y = HC), color = "grey80", alpha = 0.2, size = 1)+
-#   geom_point(data = fticr_water_ftc_loss_common %>% filter(loss_gain != "common"), 
-#              aes(x = OC, y = HC, color = loss_gain), alpha = 0.2, size = 1)+
-#   stat_ellipse(show.legend = F)+
-#   #geom_point(alpha = 0.2, size = 1)+
-#   #stat_ellipse(show.legend = F)+
-#   #geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-#   #geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-#   #geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-#   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-#   #ggtitle("Water extracted FTICR-MS")+
-#   labs(caption = "grey = common to both")+
-#   facet_grid(. ~ Site)+
-#   theme_er() +
-#   #scale_color_manual(values = c("#02c39a", "black"))+
-#   NULL
+# b = ggMarginal(toolik,groupColour = TRUE, groupFill = TRUE)
+# 
+# b
+# a
 
+# library(cowplot)
+# library(patchwork)
+# a + b + plot_layout(guides = "collect")
 
-  
 
 ## calculate peaks unique peaks by site ---- 
 

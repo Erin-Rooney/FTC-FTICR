@@ -48,6 +48,13 @@ neon_proc_DC = neon_proc %>%
   filter(DC>0 & AO>0) 
 
 
+neon_proc = neon_proc %>% 
+  mutate(siteID = factor (siteID, levels = c("BARR", "TOOL", "BONA", "HEAL"))) 
+
+neon_proc_DC = neon_proc_DC %>% 
+  mutate(siteID = factor (siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")))
+
+
 # ggplot set up-----------------------------------
 theme_er <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
@@ -105,84 +112,84 @@ theme_erclean <- function () {
 
 #aov_hsd---------------------------------------
 
-sommos_aov1 = aov(data = sommos_proc, SP_DC ~ site)
-summary(sommos_aov1)
+# sommos_aov1 = aov(data = sommos_proc, SP_DC ~ site)
+# summary(sommos_aov1)
+# 
+# SPDC_hsd = HSD.test(sommos_aov1,"site")
+# print(SPDC_hsd)
+# print(SPDC_hsd$groups)
+# 
+# dcao_aov1 = aov(data = neon_proc_DC, DC_AO ~ siteID)
+# summary(dcao_aov1)
+# 
+# dcao_hsd = HSD.test(dcao_aov1,"siteID")
+# print(dcao_hsd)
+# print(dcao_hsd$groups)
+# 
+# 
+# 
+# 
+# dcao_aov1 = aov(data = neon_proc_DC, DC_AO ~ siteID * biogeoCenterDepth)
+# summary(dcao_aov1)
+# 
+# dcao_hsd = HSD.test(dcao_aov1,"siteID")
+# print(dcao_hsd)
+# print(dcao_hsd$groups)
+# 
+# dcao2_hsd = HSD.test(dcao_aov1,"biogeoCenterDepth")
+# print(dcao2_hsd)
+# print(dcao2_hsd$groups)
+# 
+# neon_aov1 = aov(data = neon_proc, AO_DC * ctonRatio ~ siteID)
+# summary(neon_aov1)
+# 
+# neon_aov2 = aov(data = neon_proc, ctonRatio ~ siteID*depth)
+# summary(neon_aov2)
+# 
+# ctonneon_hsd = HSD.test(neon_aov2,"siteID")
+# print(ctonneon_hsd)
+# print(ctonneon_hsd$groups)
+# 
+# AODCneon_hsd = HSD.test(neon_aov2,"siteID")
+# print(AODCneon_hsd)
+# print(AODCneon_hsd$groups)
+# 
+# neon_aov3 = aov(data = neon_proc, nitrogenTot ~ siteID*depth)
+# summary(neon_aov3)
+# 
+# ntotneon_hsd = HSD.test(neon_aov3,"siteID")
+# print(ntotneon_hsd)
+# print(ntotneon_hsd$groups)
+# 
+# neon_aov4 = aov(data = neon_proc, acidity ~ siteID)
+# summary(neon_aov4)
+# 
+# acidity_hsd = HSD.test(neon_aov4,"siteID")
+# print(acidity_hsd)
+# print(acidity_hsd$groups)
+# 
+# neon_aov5 = aov(data = neon_proc, waterSatx ~ siteID)
+# summary(neon_aov5)
+# 
+# water_hsd = HSD.test(neon_aov5,"siteID")
+# print(water_hsd)
+# print(water_hsd$groups)
+# 
+# neon_aov6 = aov(data = neon_proc, estimatedOC ~ siteID*depth)
+# summary(neon_aov6)
+# 
+# oc_hsd = HSD.test(neon_aov6,"depth")
+# print(oc_hsd)
+# print(oc_hsd$groups)
+# 
+# neon_aov6 = aov(data = neon_proc, AO_DC * waterSatx ~ siteID*depth)
+# summary(neon_aov6)
+# 
+# oc_hsd = HSD.test(neon_aov6,"siteID")
+# print(oc_hsd)
+# print(oc_hsd$groups)
 
-SPDC_hsd = HSD.test(sommos_aov1,"site")
-print(SPDC_hsd)
-print(SPDC_hsd$groups)
-
-dcao_aov1 = aov(data = neon_proc_DC, DC_AO ~ siteID)
-summary(dcao_aov1)
-
-dcao_hsd = HSD.test(dcao_aov1,"siteID")
-print(dcao_hsd)
-print(dcao_hsd$groups)
-
-
-
-
-dcao_aov1 = aov(data = neon_proc_DC, DC_AO ~ siteID * biogeoCenterDepth)
-summary(dcao_aov1)
-
-dcao_hsd = HSD.test(dcao_aov1,"siteID")
-print(dcao_hsd)
-print(dcao_hsd$groups)
-
-dcao2_hsd = HSD.test(dcao_aov1,"biogeoCenterDepth")
-print(dcao2_hsd)
-print(dcao2_hsd$groups)
-
-neon_aov1 = aov(data = neon_proc, AO_DC * ctonRatio ~ siteID)
-summary(neon_aov1)
-
-neon_aov2 = aov(data = neon_proc, ctonRatio ~ siteID*depth)
-summary(neon_aov2)
-
-ctonneon_hsd = HSD.test(neon_aov2,"siteID")
-print(ctonneon_hsd)
-print(ctonneon_hsd$groups)
-
-AODCneon_hsd = HSD.test(neon_aov2,"siteID")
-print(AODCneon_hsd)
-print(AODCneon_hsd$groups)
-
-neon_aov3 = aov(data = neon_proc, nitrogenTot ~ siteID*depth)
-summary(neon_aov3)
-
-ntotneon_hsd = HSD.test(neon_aov3,"siteID")
-print(ntotneon_hsd)
-print(ntotneon_hsd$groups)
-
-neon_aov4 = aov(data = neon_proc, acidity ~ siteID)
-summary(neon_aov4)
-
-acidity_hsd = HSD.test(neon_aov4,"siteID")
-print(acidity_hsd)
-print(acidity_hsd$groups)
-
-neon_aov5 = aov(data = neon_proc, waterSatx ~ siteID)
-summary(neon_aov5)
-
-water_hsd = HSD.test(neon_aov5,"siteID")
-print(water_hsd)
-print(water_hsd$groups)
-
-neon_aov6 = aov(data = neon_proc, estimatedOC ~ siteID*depth)
-summary(neon_aov6)
-
-oc_hsd = HSD.test(neon_aov6,"depth")
-print(oc_hsd)
-print(oc_hsd$groups)
-
-neon_aov6 = aov(data = neon_proc, AO_DC * waterSatx ~ siteID*depth)
-summary(neon_aov6)
-
-oc_hsd = HSD.test(neon_aov6,"siteID")
-print(oc_hsd)
-print(oc_hsd$groups)
-
-#ggplots------------------------------------------------------------
+#ggplots initial processing------------------------------------------------------------
 neon_proc = neon_proc %>% 
   mutate(siteID = factor (siteID, levels = c("HEAL", "BONA", "TOOL", "BARR"))) %>% 
   rename(depth = biogeoCenterDepth)
@@ -190,76 +197,82 @@ neon_proc = neon_proc %>%
 library(ggthemes)
 library(gapminder)
 
-#these plots were used to determine means within certain depth ranges.
 
-# neon_tool_proc %>% 
-# ggplot() +
-#   geom_boxplot(aes(x = ctonRatio, y = biogeoCenterDepth)) +
-#   ylim(28, 38)+
-#   labs(y = "OC", x = "Depth")
-#   
-# neon_tool_proc %>% 
-#   ggplot() +
-#   geom_boxplot(aes(x = biogeoCenterDepth, y = carbonTot)) +
-#  # ylim(28, 38)+
-#   labs(y = "OC", x = "Depth")
+#SOMMOS plots-----------------
+
+sommos_twosite = 
+  sommos_csv %>% 
+  filter(X > 200)
+
+sommos_twosite %>% 
+  ggplot()+
+  geom_point(aes(x = DC_Mn.g100g, y = midpoint_depth.cm, fill = P.uggOC), size = 5, shape = 21)+
+  facet_grid(~site)+
+  ylim(100,0)+
+  labs(fill = "Phosphorus, ugg")+
+  scale_fill_gradientn(colors = PNWColors::pnw_palette("Bay"))+
+  theme_erclean()+
+  theme(legend.position = 'bottom')
+
+sommos_twosite %>% 
+  ggplot()+
+  geom_point(aes(x = DC_Mn.g100g, y = midpoint_depth.cm, fill = P.uggOC), size = 5, shape = 21)+
+  facet_grid(~site)+
+  ylim(100,0)+
+  scale_fill_gradientn(colors = PNWColors::pnw_palette("Sunset"))+
+  theme_erclean()+
+  theme(legend.position = 'bottom')
+  
+
+
+sommos_twosite %>% 
+  ggplot()+
+  geom_point(aes(x = SP_Mn.g100g , y = midpoint_depth.cm, fill = D14C), size = 5, shape = 21)+
+  facet_grid(~site)+
+  ylim(100,0)+
+  scale_fill_gradientn(colors = PNWColors::pnw_palette("Sunset"))+
+  theme_erclean()+
+  theme(legend.position = 'bottom')
+
+
+#These plots are combo figures from NEON metadata---------------
+
+#the next three plots are interesting but not currently in the manuscript. commented out but not deleted yet.
+# ggplot(neon_proc, aes(y=depth, x=nitrogenTot, size = carbonTot, color=siteID)) +
+#   geom_point(alpha = 0.7) +
+#   scale_size(range = c(1, 10), name = "AO:DC")+
+#   theme_erclean() +
+#   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+#   labs(y = "Depth, cm", x = "Total Nitrogen")+
+#   scale_y_reverse()+
+#   facet_grid(.~siteID)
 # 
-# neon_tool_proc %>% 
-#   ggplot() +
-#   geom_boxplot(aes(x = biogeoCenterDepth, y = ctonRatio)) +
-#   #ylim()+
-#   labs(y = "C:N", x = "Depth")
-
-#These plots are combo figures from NEON metadata
-
-ggplot(neon_proc, aes(y=depth, x=nitrogenTot, size = carbonTot, color=siteID)) +
-  geom_point(alpha = 0.7) +
-  scale_size(range = c(1, 10), name = "AO:DC")+
-  theme_erclean() +
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "Depth, cm", x = "Total Nitrogen")+
-  scale_y_reverse()+
-  facet_grid(.~siteID)
-
-ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = DC_AO, color=siteID)) +
-  geom_point(alpha = 0.4) +
-  scale_size(range = c(1, 24), name = "AO:DC")+
-  theme_erclean() +
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "Depth, cm", x = "C:N Ratio")+
-  scale_y_reverse()+
-  facet_grid(.~siteID)
-
-library(nord)
-
-neon_proc = neon_proc %>% 
-  mutate(siteID = factor (siteID, levels = c("BARR", "TOOL", "BONA", "HEAL"))) 
-
-neon_proc_DC = neon_proc_DC %>% 
-  mutate(siteID = factor (siteID, levels = c("BARR", "TOOL", "BONA", "HEAL"))) 
-
-neon_proc %>% 
-ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
-  geom_point(alpha = 0.4, size = 5) +
-  theme_erclean() +
-  scale_color_nord("afternoon_prarie", 4)+
-  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "Depth, cm", x = "C:N Ratio")+
-  scale_y_reverse()+
-  facet_grid(.~siteID)
-
-neon_proc %>% 
-  ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
-  geom_point(alpha = 0.4, size = 5) +
-  theme_erclean() +
-  scale_color_nord("afternoon_prarie", 4)+
-  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
-  labs(y = "Depth, cm", x = "C:N Ratio")+
-  scale_y_reverse()+
-  facet_grid(.~siteID)
+# ggplot(neon_proc, aes(y=depth, x=ctonRatio, size = DC_AO, color=siteID)) +
+#   geom_point(alpha = 0.4) +
+#   scale_size(range = c(1, 24), name = "AO:DC")+
+#   theme_erclean() +
+#   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+#   labs(y = "Depth, cm", x = "C:N Ratio")+
+#   scale_y_reverse()+
+#   facet_grid(.~siteID)
 
 
-#for manuscript! 7 29 2021
+ 
+
+# neon_proc %>% 
+# ggplot(aes(y=depth, x=ctonRatio, color=siteID)) +
+#   geom_point(alpha = 0.4, size = 5) +
+#   theme_erclean() +
+#   #scale_color_nord("afternoon_prarie", 4)+
+#   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+#   labs(y = "Depth, cm", x = "C:N Ratio")+
+#   scale_y_reverse()+
+#   facet_grid(.~siteID)
+
+#figures currrently in manuscript-----------------------
+#for manuscript! 10 12 2021
+
+#Healy and Toolik only, DC:AO ratios
 
 neon_proc_DC %>% 
   filter(siteID == c("TOOL", "HEAL")) %>% 
@@ -283,11 +296,12 @@ neon_proc_DC %>%
   
 
 neon_proc %>% 
-  ggplot(aes(y=depth, x=acidity, color=siteID)) +
-  geom_point(alpha = 0.4, size = 5) +
-  theme_erclean() +
-  scale_color_nord("afternoon_prarie", 4)+
-  #scale_color_manual(values = rev(PNWColors::pnw_palette("Bay")))+
+  filter(siteID == c("TOOL", "HEAL")) %>% 
+  ggplot(aes(y=depth, x=acidity, fill=siteID)) +
+  geom_point(alpha = 0.4, size = 5, color = "grey10", shape = c(21)) +
+  theme_er() +
+  #scale_color_nord("afternoon_prarie", 4)+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
   labs(y = "Depth, cm", x = "Acidity")+
   scale_y_reverse()+
   facet_grid(.~siteID)
@@ -361,7 +375,7 @@ b = neon_proc %>%
   #facet_grid(.~siteID)+
   NULL
 
-###manuscriptfigure####
+###manuscriptfigure####----------------------
 
 library(cowplot)
 library(patchwork)
@@ -629,43 +643,6 @@ sommos_csv %>%
 ###########
 
 
-# 
-# p <- ggplot() +
-#   
-#   geom_line(data = sommos_csv, aes(y=top_depth.cm, x=AO_Fe.g100g, color=site)) +
-#   
-#   #scale_y_continuous(trans = "reverse", breaks = (sommos_csv$top_depth.cm)) +
-#   
-#   scale_y_continuous()+
-#   
-#   scale_y_reverse +
-#   
-#   scale_x_continuous(position = "top")
-# 
-# p + facet_grid(. ~ site)
-
-
-
-# p <- ggplot() +
-#   geom_line(data = as.data.frame(barrow), aes(y = top_depth.cm, x= clay.gg, color = site))
-# 
-# p
-
-#Active layer ftc plot----------------------------
-
-# plot(activelayer_dat)
-# 
-# p <- ggplot() +
-#   
-#   geom_line(data = activelayer_dat, aes(x = Def1, y = depth_m, color = site_pos)) +
-#   
-#   scale_y_reverse()
-#   
-#  # scale_y_continuous(trans = "reverse", breaks = (activelayer_dat$depth_m))
-# 
-# p
-# 
-# p + facet_grid(. ~ site_pos)
 
 
 

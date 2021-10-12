@@ -35,63 +35,6 @@ fticr_water_nosc =
   fticr_water_nosc %>% 
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
-# ggplot(fticr_water_nosc, aes(NOSC, color = Site, fill = Site)) +
-#   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
-#   geom_boxplot(aes(y = 120), width = 20, fill = NA)+
-#   facet_grid(Material ~ .) +
-#   theme_er() +
-#   scale_fill_manual(values = rev(pnw_palette("Winter", 2))) +
-#   scale_color_manual(values = rev(pnw_palette("Winter", 2))) + 
-#   #scale_color_manual(values = rev(nord("afternoon_prarie", 2)))+
-#   #scale_fill_manual(values =rev(nord("afternoon_prarie", 2)))+
-#   # scale_color_manual(values = c("#e69b99", "#64a8a8"))+
-#   # scale_fill_manual(values = c("#e69b99", "#64a8a8"))+
-#   # scale_fill_nord("victory_bonds", 2)+
-#   # scale_color_nord("victory_bonds", 2)+
-#   labs(title = "NOSC, Water Extracted by Site",
-#        x = 'nominal oxidation state of carbon')+
-#   facet_grid(Material~Trtmt)+
-#   theme(legend.position = "bottom")
-# 
-# ggplot(fticr_water_nosc, aes(NOSC, color = Trtmt, fill = Trtmt)) +
-#   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
-#   geom_boxplot(aes(y = 120), width = 20, fill = NA)+
-#   facet_grid(Material ~ .) +
-#   theme_er() +
-#   scale_fill_manual(values = rev(pnw_palette("Mushroom", 2))) +
-#   scale_color_manual(values = rev(pnw_palette("Mushroom", 2))) + 
-#   #scale_color_manual(values = rev(nord("afternoon_prarie", 2)))+
-#   #scale_fill_manual(values =rev(nord("afternoon_prarie", 2)))+
-#   # scale_color_manual(values = c("#e69b99", "#64a8a8"))+
-#   # scale_fill_manual(values = c("#e69b99", "#64a8a8"))+
-#   # scale_fill_nord("victory_bonds", 2)+
-#   # scale_color_nord("victory_bonds", 2)+
-#   labs(title = "NOSC, Water Extracted by Site",
-#        x = 'nominal oxidation state of carbon')+
-#   facet_grid(Material~Site)+
-#   theme(legend.position = "bottom")
-
-
-library(viridis)
-
-# fticr_water_nosc %>% 
-#   mutate(Site = recode(Site, "TOOL" = "Toolik",
-#                        "HEAL" = "Healy")) %>% 
-#   filter(Trtmt == 'CON') %>% 
-#   ggplot(aes(NOSC, color = Site, fill = Site)) +
-#   geom_histogram(alpha = 0.3, position = "identity", binwidth = 0.1) +
-#   geom_boxplot(aes(y = 120), width = 20, fill = NA)+
-#   facet_grid(Material ~ .) +
-#   theme_er() +
-#   scale_color_manual(values = c("#e69b99", "#64a8a8"))+
-#   scale_fill_manual(values = c("#e69b99", "#64a8a8"))+
-#   labs(x = 'nominal oxidation state of carbon')+
-#   facet_grid(Material~.)+
-#   theme(legend.position = "bottom")
-
-######
-
-
 
 
 ###########################################
@@ -124,7 +67,7 @@ fticr_nosc_water_ftc_loss_common =
   left_join(fticr_meta_water) %>% 
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
-#Figure for manuscript
+#Figures for manuscript
 
 fticr_nosc_water_ftc_loss_common %>% 
   filter(loss_gain != 'common') %>% 
@@ -204,60 +147,60 @@ print(tool)
 anova(tool)
 
 
-c = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
-                                                                                                         Class == 'aliphatic'))
-summary(c)
-print(c)
-anova(c)
+HEALaliph = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% 
+              filter(Site == 'HEAL', Class == 'aliphatic'))
+summary(HEALaliph)
+print(HEALaliph)
+anova(HEALaliph)
 
-d = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
-                                                                                                   Class == 'aromatic'))
-summary(d)
-print(d)
-anova(d)
-
-
-e = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
-                                                                                                         Class == 'condensed aromatic'))
-summary(e)
-print(e)
-anova(e)
+HEALaro = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% 
+          filter(Site == 'HEAL', Class == 'aromatic'))
+summary(HEALaro)
+print(HEALaro)
+anova(HEALaro)
 
 
-f = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
-                                                                                                   Class == 'unsaturated/lignin'))
-summary(f)
-print(f)
-anova(f)
+HEALcaro = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% 
+        filter(Site == 'HEAL',Class == 'condensed aromatic'))
+summary(HEALcaro)
+print(HEALcaro)
+anova(HEALcaro)
+
+
+HEALlig = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% 
+          filter(Site == 'HEAL', Class == 'unsaturated/lignin'))
+summary(HEALlig)
+print(HEALlig)
+anova(HEALlig)
 
 
 
-g = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
-                                                                                                   Class == 'aliphatic'))
-summary(g)
-print(g)
-anova(g)
+TOOLaliph = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% 
+          filter(Site == 'TOOL', Class == 'aliphatic'))
+summary(TOOLaliph)
+print(TOOLaliph)
+anova(TOOLaliph)
 
 
-h = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
-                                                                                                   Class == 'aromatic'))
-summary(h)
-print(h)
-anova(h)
+TOOLaro = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% 
+                filter(Site == 'TOOL', Class == 'aromatic'))
+summary(TOOLaro)
+print(TOOLaro)
+anova(TOOLaro)
 
-i = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
-                                                                                                   Class == 'condensed aromatic'))
-summary(i)
-print(i)
-anova(i)
+TOOLcaro = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% 
+         filter(Site == 'TOOL', Class == 'condensed aromatic'))
+summary(TOOLcaro)
+print(TOOLcaro)
+anova(TOOLcaro)
 
 
-j = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'TOOL',
-                                                                                                   Class == 'unsaturated/lignin'))
+TOOLlig = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% 
+          filter(Site == 'TOOL', Class == 'unsaturated/lignin'))
 
-summary(j)
-print(j)
-anova(j)
+summary(TOOLlig)
+print(TOOLlig)
+anova(TOOLlig)
 
 
 healO = lme(NOSC ~ Trtmt, random = ~1|Class, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL',
