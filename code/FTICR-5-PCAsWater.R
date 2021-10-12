@@ -33,6 +33,26 @@ fticr_water_relabund =
          relabund = round(relabund, 2)) %>% 
   mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) 
 
+
+fticr_data_water_summarized = 
+  fticr_data_water %>% 
+  distinct(Core, Site, Trtmt, Material, formula) %>% mutate(presence = 1)
+
+# van krevelen plots_water------------------------------------------------------
+
+ 
+
+fticr_water_hcoc =
+  fticr_data_water_summarized %>% 
+  left_join(fticr_meta_water) %>% 
+  dplyr::select(Core, Site, Trtmt, Material, HC, OC, NOSC) %>% 
+  group_by(Core, Site, Trtmt, Material) %>% 
+  dplyr::summarize(OC_mean = mean(OC),
+                   HC_mean = mean(HC),
+                   NOSC_median = median(NOSC)) %>% 
+  ## create a column for total counts
+  group_by(Core, Site, Trtmt, Material)
+
 #
 # 3. PCA ---------------------------------------------------------------------
 ## you will need relative abundance data for PCA 
@@ -53,6 +73,12 @@ relabund_wide =
                 Site, Trtmt, Material) %>% 
   pivot_wider(names_from = "Class", values_from = "relabund") %>% 
   replace(is.na(.),0) 
+
+hcoc_wide =
+  fticr_water_hcoc %>% 
+  ungroup %>% 
+  replace(is.na(.),0)
+  
 
 ## step ii. split into numeric/factor dataframes, and run PCA on those
 num = 
@@ -261,6 +287,26 @@ library(vegan)
   adonis(relabund_wide %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
          (Site*Trtmt*Material), 
        data = relabund_wide) 
+  
+  adonis(hcoc_wide %>% select(c(OC_mean, HC_mean, NOSC_median)) ~ 
+           (Site*Trtmt*Material), 
+         data = hcoc_wide) 
+
+hcoc_wide_mineral_only =
+  hcoc_wide %>% 
+  filter(Material != "Organic")
+
+relabund_wide_mineral_only =
+  relabund_wide %>% 
+  filter(Material != "Organic")
+
+adonis(hcoc_wide_mineral_only %>% select(c(OC_mean, HC_mean, NOSC_median)) ~ 
+         (Site*Trtmt*Material), 
+       data = hcoc_wide_mineral_only) 
+
+adonis(relabund_wide_mineral_only %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
+         (Site*Trtmt*Material), 
+       data = relabund_wide_mineral_only) 
   
 relabund_wide2 =
     relabund_wide %>% 
