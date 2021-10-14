@@ -5,6 +5,7 @@
 
 # extract organic horizons
 # connect depths to FT horizons
+# not currently used for manuscript
 
 #KP Code Modified below
 
