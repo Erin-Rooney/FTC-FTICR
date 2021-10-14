@@ -1,9 +1,16 @@
+#Pedon figures for figure using Jennifer Fedenko AQP code
+
+#Packages
+
+source("code/1-method_characterization/0-method-packages.R")
+
+
+#code specific packages
+
 library(aqp)
 #library(plyr)
 library(RColorBrewer)
 library(latticeExtra)
-library(reshape)
-library(tidyverse)
 
 
 #load csv

@@ -3,9 +3,8 @@
 # AO:DC ratios for manuscript
 
 #load libraries-------------------------------
-library(tidyverse)
-library(PNWColors)
-library(agricolae)
+source("code/1-method_characterization/0-method-packages.R")
+
 
 #load data-------------------------------------
 sommos_csv = read.csv("processed/horizon_processed4.csv")

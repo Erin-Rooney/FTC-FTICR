@@ -4,7 +4,7 @@
 # NOSC
 
 #load packages
-source("code/FTICR-0-packages.R")
+source("code/2-FTICR/FTICR-0-packages.R")
 
 # 1. Load files-----------------------------------
 

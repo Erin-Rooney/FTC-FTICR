@@ -4,8 +4,8 @@
 
 # load packages
 
-library(neonUtilities)
-library(tidyverse)
+source("code/1-method_characterization/0-method-packages.R")
+
 
 #load NEON data files
 
