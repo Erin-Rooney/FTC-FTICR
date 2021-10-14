@@ -11,7 +11,9 @@
 
 #KP Code Modified below
 
-source("code/1-method_characterization/0-method-packages.R")
+source("code/0-method-packages.R")
+
+library(stringr)
 
 
 # Load data------------------------------------------

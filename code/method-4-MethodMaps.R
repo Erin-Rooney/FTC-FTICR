@@ -2,7 +2,7 @@
 #8 2 2021
 #Temp and Precip maps
 
-source("code/1-method_characterization/0-method-packages.R")
+source("code/0-method-packages.R")
 
 library(ggforce)
 library(ggrepel)

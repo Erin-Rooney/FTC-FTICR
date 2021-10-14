@@ -1,4 +1,4 @@
-# Sep-24-2020
+a# Sep-24-2020
 # FTICR
 #this is the right one
 
@@ -218,9 +218,9 @@ meta_formula_chcl3 =
 # Write reports csv output----------------------------------
 
 ## OUTPUTS
-write.csv(fticr_data_water,"fticr_data_water.csv", row.names = FALSE)
-write.csv(fticr_meta_water,"fticr_meta_water.csv", row.names = FALSE)
-write.csv(meta_hcoc_water,"fticr_meta_hcoc_water.csv", row.names = FALSE)
+write.csv(fticr_data_water,"processed/fticr_data_water.csv", row.names = FALSE)
+write.csv(fticr_meta_water,"processed/fticr_meta_water.csv", row.names = FALSE)
+write.csv(meta_hcoc_water,"processed/fticr_meta_hcoc_water.csv", row.names = FALSE)
 
 write.csv(fticr_data_chcl3,"fticr_data_chcl3.csv", row.names = FALSE)
 write.csv(fticr_meta_chcl3,"fticr_meta_chcl3.csv", row.names = FALSE)

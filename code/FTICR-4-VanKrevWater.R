@@ -4,7 +4,7 @@
 # Van Krevelin
 
 #load packages
-source("code/FTICR-0-packages.R")
+source("code/2-FTICR/FTICR-0-packages.R")
 library(wesanderson)
 library(nord)
 

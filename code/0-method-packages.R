@@ -11,6 +11,8 @@ library(neonUtilities)
 library(Rmisc)
 library(ggplot2)
 library(reshape)
+library(stringi)
+
 
 
 theme_kp <- function() {  # this for all the elements common across plots

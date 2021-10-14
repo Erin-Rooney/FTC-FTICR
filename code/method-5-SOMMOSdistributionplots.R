@@ -3,7 +3,7 @@
 # AO:DC ratios for manuscript
 
 #load libraries-------------------------------
-source("code/1-method_characterization/0-method-packages.R")
+source("code/0-method-packages.R")
 
 
 #load data-------------------------------------
