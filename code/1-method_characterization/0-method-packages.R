@@ -1,6 +1,5 @@
 #method packages
 
-# 1. load packages and files -----------------------------------------------------------
 
 
 library(tidyverse)
@@ -13,8 +12,6 @@ library(Rmisc)
 library(ggplot2)
 library(reshape)
 
-
-# 3. SET GGPLOT THEME -----------------------------------------------------
 
 theme_kp <- function() {  # this for all the elements common across plots
   theme_bw() %+replace%
