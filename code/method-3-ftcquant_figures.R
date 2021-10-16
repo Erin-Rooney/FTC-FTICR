@@ -13,7 +13,6 @@
 
 source("code/0-method-packages.R")
 
-library(stringr)
 
 
 # Load data------------------------------------------
