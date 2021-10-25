@@ -8,7 +8,7 @@ source("code/FTICR-0-packages.R")
 
 # 1. load files -----------------------------------------------------------
 
-fticr_data_water = read.csv("processed/fticr_data_water.csv") %>% select(formula, Core, Site, Trtmt, Material) 
+fticr_data_water = read.csv("processed/fticr_data_water.csv") %>% select(formula, Site, Trtmt, Material) 
 fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
 #meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
@@ -19,10 +19,10 @@ fticr_water_relabund =
   fticr_data_water %>% 
   left_join(select(fticr_meta_water, formula, Class), by = "formula") %>% 
   ## create a column for group counts
-  group_by(Core, Site, Trtmt, Material, Class) %>% 
+  group_by(ID, Site, Trtmt, Material, Class) %>% 
   dplyr::summarize(counts = n()) %>% 
   ## create a column for total counts
-  group_by(Core, Site, Trtmt, Material) %>%
+  group_by(ID, Site, Trtmt, Material) %>%
   dplyr::mutate(totalcounts = sum(counts)) %>% 
   ungroup() %>% 
   mutate(relabund = (counts/totalcounts)*100,
@@ -59,7 +59,7 @@ fticr_water_relabund_arom =
   mutate(aromatic_col = case_when(grepl("aromatic", Class) ~ "aromatic",
                                   Class == "aliphatic" ~ "aliphatic"),
                 aromatic_col = if_else(is.na(aromatic_col), "other", aromatic_col)) %>% 
-  group_by(Core, Site, Trtmt, Material, aromatic_col) %>% 
+  group_by(ID, Site, Trtmt, Material, aromatic_col) %>% 
   dplyr::summarize(relabund = sum(relabund)) %>% 
   mutate(Material = factor(Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
   

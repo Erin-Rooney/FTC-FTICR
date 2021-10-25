@@ -149,7 +149,7 @@ pas %>%
   scale_color_nord("afternoon_prarie", 4)+
   labs(y = "precipitation as snow, cm")
   
-
+sum(pas)
 
 
 #Temp

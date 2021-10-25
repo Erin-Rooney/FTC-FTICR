@@ -4,13 +4,13 @@
 # NOSC
 
 #load packages
-source("code/2-FTICR/FTICR-0-packages.R")
+source("code/FTICR-0-packages.R")
 
 # 1. Load files-----------------------------------
 
-fticr_data_water = read.csv("fticr_data_water.csv")
-fticr_meta_water = read.csv("fticr_meta_water.csv")
-meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
+fticr_data_water = read.csv("processed/fticr_data_water.csv")
+fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
+meta_hcoc_water  = read.csv("processed/fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 # 2. NOSC and AImod plots_water-------------------------------
 fticr_water = 
@@ -68,6 +68,21 @@ fticr_nosc_water_ftc_loss_common =
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 #Figures for manuscript
+
+fticr_water_nosc %>% 
+  filter(Trtmt == 'CON') %>% 
+  mutate(Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>%
+  #mutate(Trtmt = factor (Trtmt, levels = c("lost", "gained")))%>%
+  ggplot(aes(x = Site, y = NOSC, fill = Site)) +
+  geom_boxplot(alpha = 0.5)+
+  geom_jitter(width = 0.2, alpha = 0.7, size = 0.5)+
+  facet_grid(Material ~ .)+
+  labs(x = "")+
+  ylim(-2,2)+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
+  theme_er()+
+  theme(legend.position = "none")
 
 fticr_nosc_water_ftc_loss_common %>% 
   filter(loss_gain != 'common') %>% 
@@ -136,6 +151,27 @@ nosc_uniqueonly =
 
 
 library(nlme)
+
+
+allO = lme(NOSC ~ Site, random = ~1|Class, na.action = na.omit, data = fticr_water_nosc %>% filter(Trtmt == 'CON',
+                                                                                                    Material == 'Organic'))
+summary(allO)
+print(allO)
+anova(allO)
+
+allU = lme(NOSC ~ Site, random = ~1|Class, na.action = na.omit, data = fticr_water_nosc %>% filter(Trtmt == 'CON',
+                                                                                                    Material == 'Upper Mineral'))
+summary(allU)
+print(allU)
+anova(allU)
+
+allL = lme(NOSC ~ Site, random = ~1|Class, na.action = na.omit, data = fticr_water_nosc %>% filter(Trtmt == 'CON',
+                                                                                                    Material == 'Lower Mineral'))
+summary(allL)
+print(allL)
+anova(allL)
+
+
 heal = lme(NOSC ~ Trtmt, random = ~1|Material, na.action = na.omit, data = nosc_uniqueonly %>% filter(Site == 'HEAL'))
 summary(heal)
 print(heal)

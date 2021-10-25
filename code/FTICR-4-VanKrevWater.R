@@ -4,15 +4,15 @@
 # Van Krevelin
 
 #load packages
-source("code/2-FTICR/FTICR-0-packages.R")
+source("code/FTICR-0-packages.R")
 library(wesanderson)
 library(nord)
 
 # 1. Load files-----------------------------------
 
-fticr_data_water = read.csv("fticr_data_water.csv")
-fticr_meta_water = read.csv("fticr_meta_water.csv")
-meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
+fticr_data_water = read.csv("processed/fticr_data_water.csv")
+fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
+meta_hcoc_water  = read.csv("processed/fticr_meta_hcoc_water.csv") %>% select(-Mass)
 ### ^^ the files above have aliph as well as aromatic for the same sample, which can be confusing/misleading
 ### create an index combining them
 
