@@ -441,6 +441,7 @@ max_ftc_tabledata =
   
 knitr::kable(max_ftc_tabledata)
 
+
 write.csv(max_ftc_tabledata, "processed/max_ftc_tabledata.csv", row.names = FALSE)
   
 
