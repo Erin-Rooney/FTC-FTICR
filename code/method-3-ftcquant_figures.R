@@ -154,8 +154,9 @@ ftc_mean =
   
   mutate(depth_bins1 = case_when(depth_cm <= 10 ~ cut_width(depth_cm, width = 5, center=2.5)),
          depth_bins2 = case_when(depth_cm > 10 ~ cut_width(depth_cm, width = 10, center=5)),
-         depth_bins = paste0(depth_bins1, depth_bins2),
-         depth_bins = str_remove(depth_bins, "NA")) %>% 
+         depth_bins = paste0(depth_bins1, depth_bins2)) %>% 
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "NA","")) %>% 
+  
   dplyr::select(-depth_bins1, -depth_bins2) %>% 
   
   # now clean up
