@@ -126,6 +126,7 @@ ftc_fulldat = ftc_full %>%
 
 ftc_mean = 
   ftc_fulldat %>%
+  filter(site == "Toolik") %>% 
   #filter(mag.vec == 1.5 & duration == 4) %>% 
   mutate(depth_cm = depth_m*(-100)) %>% 
   #filter(!season %in% "activelayer") %>% 
