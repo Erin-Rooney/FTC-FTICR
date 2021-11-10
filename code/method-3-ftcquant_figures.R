@@ -124,6 +124,7 @@ ftc_fulldat = ftc_full %>%
 
 
 
+
 ftc_mean = 
   ftc_fulldat %>%
   filter(site == "Toolik") %>% 
