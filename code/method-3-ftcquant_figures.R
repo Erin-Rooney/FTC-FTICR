@@ -22,7 +22,7 @@ source("code/0-method-packages.R")
 ftc_full = read.csv("raw/FTC_1.5_4.csv")
 
 
-## 2.1 calculate mean ftc
+## 2.1 calculate mean ftc-------------------------
 
 # ftc_avg = 
 #   ftc_full %>% 
@@ -165,9 +165,9 @@ ftc_mean =
   # remove brackets of different types
   # I normally use the `stringr` package, but that doesn't like open brackets
   # so I use the `stringi` package for this. You'll have to install it first
-  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "]",""),
-         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "[",""),
-         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "(","")) %>% 
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "]","")) %>% 
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "[","")) %>% 
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "(","")) %>% 
   # now separate this into two different columns
   separate(depth_bins, sep = ",", into = c("depth_start_cm", "depth_stop_cm")) %>% 
   mutate(depth_start_cm = as.integer(depth_start_cm),
@@ -223,15 +223,15 @@ ftc_depth_bins =
   # bin top 10 cm into 5-cm bins, and the rest into 10-cm bins  
   mutate(depth_bins1 = case_when(depth_cm <= 10 ~ cut_width(depth_cm, width = 5, center=2.5)),
          depth_bins2 = case_when(depth_cm > 10 ~ cut_width(depth_cm, width = 10, center=5)),
-         depth_bins = paste0(depth_bins1, depth_bins2),
-         depth_bins = str_remove(depth_bins, "NA")) %>% 
+         depth_bins = paste0(depth_bins1, depth_bins2)) %>% 
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "NA","")) %>% 
   dplyr::select(-depth_bins1, -depth_bins2) %>% 
   
   # now clean up
   # remove brackets of different types
-  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "]",""),
-         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "[",""),
-         depth_bins = stringi::stri_replace_all_fixed(depth_bins, "(","")) %>% 
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "]","")) %>% 
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "[","")) %>% 
+  mutate(depth_bins = stringi::stri_replace_all_fixed(depth_bins, "(","")) %>% 
   # now separate this into two different columns
   separate(depth_bins, sep = ",", into = c("depth_start_cm", "depth_stop_cm"))
 
@@ -397,7 +397,7 @@ ftc_max_gapfilled %>%
 
 ftc_max_gapfilled_2site =
   ftc_max_gapfilled %>% 
-  filter(seas_num < 5 & site_pos != c("BARR", 'BONA')) %>%  
+  filter(seas_num < 5 & !site_pos %in% c("BARR", 'BONA')) %>%  
   mutate(site_pos = recode (site_pos, "TOOL" = "Toolik", 
                             "HEAL" = "Healy"),
          site_pos = factor(site_pos, levels = c("Utqiaġvik", "Toolik", "Caribou Poker", "Healy"))) %>% 
