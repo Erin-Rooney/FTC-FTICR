@@ -288,44 +288,22 @@ library(vegan)
          (Site*Trtmt*Material), 
        data = relabund_wide) 
   
-  adonis(hcoc_wide %>% select(c(OC_mean, HC_mean, NOSC_median)) ~ 
-           (Site*Trtmt*Material), 
-         data = hcoc_wide) 
-
-hcoc_wide_mineral_only =
-  hcoc_wide %>% 
-  filter(Material != "Organic")
 
 relabund_wide_mineral_only =
   relabund_wide %>% 
   filter(Material != "Organic")
 
-adonis(hcoc_wide_mineral_only %>% select(c(OC_mean, HC_mean, NOSC_median)) ~ 
-         (Site*Trtmt*Material), 
-       data = hcoc_wide_mineral_only) 
 
 adonis(relabund_wide_mineral_only %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
          (Site*Trtmt*Material), 
        data = relabund_wide_mineral_only) 
   
-relabund_wide2 =
+relabund_wide_controlonly =
     relabund_wide %>% 
     filter(Trtmt == "CON")
   
+  
 adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
-           (Site*Material), 
-         data = relabund_wide2) 
-  
-  
-  # relabund_wideHEAL =
-  #   relabund_wide %>% 
-  #   filter(Site == "HEAL")
-  # 
-  # relabund_wideTOOL =
-  #   relabund_wide %>% 
-  #   filter(Site == "TOOL")
-  
-  adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `unsaturated/lignin`)) ~ 
            (Site*Material), 
          data = relabund_wide2) 
   
@@ -338,3 +316,41 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
   #        data = relabund_wideTOOL) 
 
 # b = broom::tidy(permanova_fticr_all$aov.tab)
+  
+  
+# bray distance ----------------
+  
+  library(ape)
+  
+  bray_distance = vegdist(num_con, method="euclidean")
+  principal_coordinates = pcoa(bray_distance)
+  pcoa_plot = data.frame(principal_coordinates$vectors[,])
+  pcoa_plot_merged = merge(pcoa_plot, grp_con, by="row.names")
+
+  ####### Calculate percent variation explained by PC1, PC2
+  
+  PC1 <- 100*(principal_coordinates$values$Eigenvalues[1]/sum(principal_coordinates$values$Eigenvalues))
+  PC2 <- 100*(principal_coordinates$values$Eigenvalues[2]/sum(principal_coordinates$values$Eigenvalues))
+  PC3 <- 100*(principal_coordinates$values$Eigenvalues[3]/sum(principal_coordinates$values$Eigenvalues))
+
+#everything below this point is a mess.
+  
+  grp = 
+    relabund_wide_controlonly %>% 
+    dplyr::mutate(grp = paste0(Site,"-", Material))
+  #dplyr::select(row, grp)
+  matrix = as.matrix(bray_distance)   
+
+  matrix2 = 
+    matrix %>% 
+    melt() %>% 
+    left_join(grp, by = c("Var1"="row")) %>% 
+    #rename(grp1 = grp) %>% 
+    left_join(grp, by = c("Var2"="row")) %>% 
+    filter(grp.x==grp.y) %>% 
+    group_by(grp.x,grp.y,sat_level.x, texture.x,treatment.x,treatment.y) %>% 
+    dplyr::summarise(distance  =mean(value)) %>%
+    ungroup %>% 
+    dplyr::rename(sat_level = sat_level.x) %>% 
+    dplyr::mutate(sat_level = if_else(treatment.x=="FM","FM",sat_level),
+                  sat_level = factor(sat_level, levels = c(5,35,50,75,100,"FM")))    
