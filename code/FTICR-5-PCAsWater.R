@@ -105,7 +105,7 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1,
 ###
 
 
-ggbiplot(pca, obs.scale = 1, var.scale = 1,
+b = ggbiplot(pca, obs.scale = 1, var.scale = 1,
          groups = as.character(grp$Site),
          alpha = 0,
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
@@ -115,8 +115,8 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1,
   scale_shape_manual(values = c(21, 22, 25, 1, 0, 6))+
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
   scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
-  ylim(-3,5)+
-  xlim(-3,5)+
+  ylim(-4,4)+
+  xlim(-4,4)+
   theme_er()+
   guides(fill=guide_legend(override.aes=list(fill="black")))+
   NULL
@@ -334,10 +334,10 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
   
   library(ape)
   
-  bray_distance = vegdist(num_con, method="euclidean")
+  bray_distance = vegdist(num, method="euclidean")
   principal_coordinates = pcoa(bray_distance)
   pcoa_plot = data.frame(principal_coordinates$vectors[,])
-  pcoa_plot_merged = merge(pcoa_plot, grp_con, by="row.names")
+  pcoa_plot_merged = merge(pcoa_plot, grp, by="row.names")
 
   ####### Calculate percent variation explained by PC1, PC2
   
@@ -347,22 +347,53 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
 
 #everything below this point is a mess.
   
-  grp = 
-    relabund_wide_controlonly %>% 
-    dplyr::mutate(grp = paste0(Site,"-", Material))
+  grp_all = 
+    grp %>% 
+    dplyr::mutate(grp = paste0(Site,"-", Material, "-", Trtmt))
   #dplyr::select(row, grp)
   matrix = as.matrix(bray_distance)   
 
   matrix2 = 
     matrix %>% 
     melt() %>% 
-    left_join(grp, by = c("Var1"="row")) %>% 
+    left_join(grp_all, by = c("Var1"="row")) %>% 
     #rename(grp1 = grp) %>% 
-    left_join(grp, by = c("Var2"="row")) %>% 
+    left_join(grp_all, by = c("Var2"="row")) %>% 
     filter(grp.x==grp.y) %>% 
-    group_by(grp.x,grp.y,sat_level.x, texture.x,treatment.x,treatment.y) %>% 
+    group_by(grp.x,grp.y, Site.x, Material.x, Trtmt.x) %>% 
     dplyr::summarise(distance  =mean(value)) %>%
-    ungroup %>% 
-    dplyr::rename(sat_level = sat_level.x) %>% 
-    dplyr::mutate(sat_level = if_else(treatment.x=="FM","FM",sat_level),
-                  sat_level = factor(sat_level, levels = c(5,35,50,75,100,"FM")))    
+    ungroup()
+
+
+  matrix3 = 
+    matrix %>% 
+    melt() %>% 
+    left_join(grp_all, by = c("Var1"="row")) %>% 
+    #rename(grp1 = grp) %>% 
+    left_join(grp_all, by = c("Var2"="row")) %>% 
+    filter(!grp.x==grp.y) %>% 
+    filter(Site.x == Site.y) %>% 
+    filter(Material.x == Material.y) %>% 
+    group_by(grp.x,grp.y,Site.x, Material.x,Trtmt.x,Trtmt.y) %>% 
+    dplyr::summarise(distance  =mean(value)) %>%
+    ungroup()
+
+  ggplot(matrix3, aes(x = Material.x, y = distance))+
+    geom_point(size=3)+
+    geom_segment(aes(x = Material.x, xend = Material.x, y = 0, yend = distance))+
+    geom_point(data = matrix2, aes(color = Trtmt.x, shape = Trtmt.x), size = 3)+
+    facet_grid(.~Site.x)
+  
+    # ylim(0,80)+
+    # ylab("drying-rewetting \n Bray distance")+
+    # geom_hline(yintercept = 17.52, linetype = "dashed")+
+    # annotate("text", label = "avg within-group distance", x = 2, y = 15)+
+    # theme_kp()
+  
+  ggplot(matrix2, aes(x = Material.x, y = distance, color = Trtmt.x, shape = Site.x))+
+    geom_point(size = 3)+
+    facet_grid(Trtmt.x~Site.x)+
+    ylim(0,80)+
+    theme_kp()
+  mean(matrix2$distance)  
+  
