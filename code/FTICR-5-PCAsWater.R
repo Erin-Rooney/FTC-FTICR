@@ -143,11 +143,13 @@ grp_con =
 
 pca_con = prcomp(num_con, scale. = T)
 
-ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
+a = ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
          groups = as.character(grp_con$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(color = grp_con$Site, shape = grp_con$Material))+
-  labs(title = "Control only")+
+  #labs(title = "Control only")+
+  ylim(-4,4)+
+  xlim(-4,4)+
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
   theme_er()+
   NULL
@@ -177,6 +179,17 @@ ggbiplot(pca_ftc, obs.scale = 1, var.scale = 1,
   geom_point(size=3,stroke=1, aes(color = groups, shape = grp_ftc$Material))+
   labs(title = "FTC only")+
   scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
+  theme_er()+
+  NULL
+
+b = ggbiplot(pca_ftc, obs.scale = 1, var.scale = 1,
+         groups = as.character(grp_con$Site), 
+         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = grp_con$Site, shape = grp_con$Material))+
+  #labs(title = "Control only")+
+  ylim(-4,4)+
+  xlim(-4,4)+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
   theme_er()+
   NULL
 
@@ -269,9 +282,8 @@ b = ggbiplot(pca_tool, obs.scale = 1, var.scale = 1,
 library(cowplot)
 library(patchwork)
 
-a + b + plot_layout(guides = "collect")+
-  theme_er()# sets a common legend
-
+a + b + plot_layout()+
+  theme_er()  # sets a common legend 
 #
 # PERMANOVA ---------------------------------------------------------------
 ## use relabund_wide for PERMANOVA
