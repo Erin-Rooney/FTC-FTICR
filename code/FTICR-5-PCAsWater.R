@@ -364,7 +364,8 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
     dplyr::summarise(distance  =mean(value)) %>%
     ungroup()
 
-
+#TRTMT comparison
+  
   matrix3 = 
     matrix %>% 
     melt() %>% 
@@ -389,6 +390,43 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
     # geom_hline(yintercept = 17.52, linetype = "dashed")+
     # annotate("text", label = "avg within-group distance", x = 2, y = 15)+
     # theme_kp()
+  
+  ggplot(matrix2, aes(x = Material.x, y = distance, color = Trtmt.x, shape = Site.x))+
+    geom_point(size = 3)+
+    facet_grid(Trtmt.x~Site.x)+
+    ylim(0,80)+
+    theme_kp()
+  mean(matrix2$distance)  
+  
+  
+  
+  #Material comparison
+  
+  matrix4 = 
+    matrix %>% 
+    melt() %>% 
+    left_join(grp_all, by = c("Var1"="row")) %>% 
+    filter(Trtmt %in% 'CON') %>% 
+    #rename(grp1 = grp) %>% 
+    left_join(grp_all, by = c("Var2"="row")) %>% 
+    filter(!grp.x==grp.y) %>% 
+    filter(Material.x == Material.y) %>% 
+    filter(Trtmt.x == Trtmt.y) %>% 
+    group_by(grp.x,grp.y,Trtmt.x, Material.x, Site.x, Site.y) %>% 
+    dplyr::summarise(distance  =mean(value)) %>%
+    ungroup()
+  
+  ggplot(matrix4, aes(x = Material.x, y = distance))+
+    geom_point(size=3)+
+    geom_segment(aes(x = Material.x, xend = Material.x, y = 0, yend = distance))+
+    geom_point(data = matrix2, aes(color = Site.x), size = 3)+
+    facet_grid(.~Site.x)
+  
+  # ylim(0,80)+
+  # ylab("drying-rewetting \n Bray distance")+
+  # geom_hline(yintercept = 17.52, linetype = "dashed")+
+  # annotate("text", label = "avg within-group distance", x = 2, y = 15)+
+  # theme_kp()
   
   ggplot(matrix2, aes(x = Material.x, y = distance, color = Trtmt.x, shape = Site.x))+
     geom_point(size = 3)+
