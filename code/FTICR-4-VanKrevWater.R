@@ -281,6 +281,37 @@ ggMarginal(gg_fm,groupColour = TRUE, groupFill = TRUE)
 #Van Krevelen only
 
 
+#line segment plots
+
+library(tibble)
+gglabel = tribble(
+  ~Site, ~Material, ~x, ~y, ~label,
+  "Healy", "Organic", 0.45, 2.8, "lost = 410, gained = 441",
+  "Healy", "Upper Mineral", 0.45, 2.8, "lost = 211, gained = 477",
+  "Healy", "Lower Mineral", 0.45, 2.8, "lost = 646, gained = 84",
+  "Toolik", "Organic", 0.45, 2.8, "lost = 166, gained = 844",
+  "Toolik", "Upper Mineral", 0.45, 2.8, "lost = 356, gained = 239",
+  "Toolik", "Lower Mineral", 0.45, 2.8, "lost = 223, gained = 372"
+  
+)
+
+gglabel =
+  gglabel %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+gglabel2 = tribble(
+  ~Site, ~Material, ~x, ~y, ~label,
+  "Healy", "Lower Mineral", 0.2, 1.75, "aliphatic",
+  "Healy", "Lower Mineral", 0.2, 1.25, "lignin-like",
+  "Healy", "Lower Mineral", 0.2, 0.85, "aromatic",
+  "Healy", "Lower Mineral", 0.4, 0.35, "condensed aromatic",
+)
+
+gglabel2 =
+  gglabel2 %>% 
+  mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
+
+
 fticr_water_ftc_loss %>%
   mutate(Trtmt = recode(Trtmt, "CON" = "lost",
                         "FTC" = "gained"),
@@ -293,10 +324,18 @@ fticr_water_ftc_loss %>%
   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  geom_text(data = gglabel, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
   labs(color = "")+
+  ylim(0.0, 3.0)+
   scale_color_manual(values = pnw_palette("Sailboat", 3))+
   facet_grid(Material ~ Site)+
-  theme_er() 
+  theme_er() +
+  theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
+        )
+
+
+#ggsave()
 
 mean_oc = fticr_water_ftc_loss %>% 
   group_by(Site, Material, Trtmt) %>% 

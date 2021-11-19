@@ -362,7 +362,9 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
     filter(grp.x==grp.y) %>% 
     group_by(grp.x,grp.y, Site.x, Material.x, Trtmt.x) %>% 
     dplyr::summarise(distance  =mean(value)) %>%
-    ungroup()
+    ungroup() %>% 
+    mutate(Site.x = recode(Site.x, "TOOL" = "Toolik",
+                           "HEAL" = "Healy"))
 
 #TRTMT comparison
   
@@ -377,13 +379,20 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
     filter(Material.x == Material.y) %>% 
     group_by(grp.x,grp.y,Site.x, Material.x,Trtmt.x,Trtmt.y) %>% 
     dplyr::summarise(distance  =mean(value)) %>%
-    ungroup()
+    ungroup() %>% 
+    mutate(Site.x = recode(Site.x, "TOOL" = "Toolik",
+                                    "HEAL" = "Healy"))
+
 
   ggplot(matrix3, aes(x = Material.x, y = distance))+
-    geom_point(size=3)+
+    geom_point(size=4)+
     geom_segment(aes(x = Material.x, xend = Material.x, y = 0, yend = distance))+
-    geom_point(data = matrix2, aes(color = Trtmt.x, shape = Trtmt.x), size = 3)+
-    facet_grid(.~Site.x)
+    geom_point(data = matrix2, aes(shape = Trtmt.x), color = "black", fill = "yellow", alpha = 0.5, size = 3)+
+    facet_grid(.~Site.x)+
+    labs(x = "")+
+    scale_shape_manual(values = c(15, 22))+
+    theme_er()+
+    theme(axis.text.x.bottom = element_text (vjust = 0.5, hjust=1, angle = 90), legend.position = "NONE")
   
     # ylim(0,80)+
     # ylab("drying-rewetting \n Bray distance")+
@@ -391,16 +400,10 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
     # annotate("text", label = "avg within-group distance", x = 2, y = 15)+
     # theme_kp()
   
-  ggplot(matrix2, aes(x = Material.x, y = distance, color = Trtmt.x, shape = Site.x))+
-    geom_point(size = 3)+
-    facet_grid(Trtmt.x~Site.x)+
-    ylim(0,80)+
-    theme_kp()
-  mean(matrix2$distance)  
   
   
   
-  #Material comparison
+  #Site comparison
   
   matrix4 = 
     matrix %>% 
@@ -414,13 +417,34 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
     filter(Trtmt.x == Trtmt.y) %>% 
     group_by(grp.x,grp.y,Trtmt.x, Material.x, Site.x, Site.y) %>% 
     dplyr::summarise(distance  =mean(value)) %>%
-    ungroup()
+    ungroup() %>% 
+    mutate(Material.x = factor (Material.x, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) %>% 
+    mutate(Site.x = recode(Site.x, "TOOL" = "Toolik",
+                       "HEAL" = "Healy"),
+           Site.y =recode(Site.y, "TOOL" = "Toolik",
+                          "HEAL" = "Healy"))
+    #mutate(Material.x = as.character(Material.x))
   
+  matrix2plot = 
+    matrix2 %>% 
+    mutate(Material.x = factor (Material.x, levels = c("Organic", "Upper Mineral", "Lower Mineral"))) %>% 
+    mutate(Site.x = recode(Site.x, "TOOL" = "Toolik",
+                           "HEAL" = "Healy"))
+    #mutate(Material.x = as.character(Material.x))
+  
+
   ggplot(matrix4, aes(x = Material.x, y = distance))+
-    geom_point(size=3)+
+    geom_point(size=4)+
     geom_segment(aes(x = Material.x, xend = Material.x, y = 0, yend = distance))+
-    geom_point(data = matrix2, aes(color = Site.x), size = 3)+
-    facet_grid(.~Site.x)
+    geom_point(data = matrix2plot %>% filter(Trtmt.x == 'CON' & Site.x == "Healy"), size = 3, alpha = 0.4, color = "black", fill = 'black', shape = 22)+
+    # geom_segment(data = matrix2plot %>% filter(Trtmt.x == 'CON'), 
+    #              aes(x = (Material.x-0.25), xend = (Material.x+0.25), 
+    #                  y = distance, yend = distance, color = Material.x), size = 3)+
+    
+    #facet_grid(.~Site.x)+
+    labs(x = "")+
+    theme_er()+
+    theme(axis.text.x.bottom = element_text (vjust = 0.5, hjust=1, angle = 90), legend.position = "NONE")
   
   # ylim(0,80)+
   # ylab("drying-rewetting \n Bray distance")+
@@ -435,3 +459,6 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
     theme_kp()
   mean(matrix2$distance)  
   
+  
+  
+ 
