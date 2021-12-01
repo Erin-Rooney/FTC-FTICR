@@ -7,7 +7,6 @@
 source("code/FTICR-0-packages.R")
 
 # 1. load files -----------------------------------------------------------
-
 fticr_data_water = read.csv("processed/fticr_data_water.csv") %>% select(formula, Site, Trtmt, Material) 
 fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
 #meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
