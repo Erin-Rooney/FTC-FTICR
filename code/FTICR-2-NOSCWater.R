@@ -101,7 +101,7 @@ fticr_nosc_water_ftc_loss_common %>%
   theme_er()+
   theme(legend.position = "bottom")
 
-fticr_nosc_water_ftc_loss_common %>% 
+nosc_classes = fticr_nosc_water_ftc_loss_common %>% 
   filter(loss_gain != 'common') %>% 
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy"),
@@ -118,11 +118,16 @@ fticr_nosc_water_ftc_loss_common %>%
   scale_fill_manual(values = rev(PNWColors::pnw_palette("Sailboat", 2)))+
   theme_er()+
   theme(legend.position = "none", 
-        axis.text.x.bottom = element_text 
-        (vjust = 0.5, hjust=0.6, angle = 0)
-)
+         axis.text.x.bottom = element_text 
+        (vjust = 0.5, hjust=0.6, angle = 0),
+        panel.border = element_rect(color="black",size=0.5, fill = NA) 
+        )
 
-fticr_nosc_water_ftc_loss_common %>% 
+ggsave("output/nosc_class.tiff", plot = nosc_classes, height = 6, width = 10)
+ggsave("output/nosc_class.jpeg", plot = nosc_classes, height = 6, width = 10)
+
+
+nosc_site_depth_trtmt = fticr_nosc_water_ftc_loss_common %>% 
   filter(loss_gain != 'common') %>% 
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy"),
@@ -139,7 +144,11 @@ fticr_nosc_water_ftc_loss_common %>%
   labs(x = "")+
   scale_fill_manual(values = rev(PNWColors::pnw_palette("Sailboat", 2)))+
   theme_er()+
-  theme(legend.position = "none")
+  theme(legend.position = "none", 
+        panel.border = element_rect(color="black",size=0.5, fill = NA))
+
+ggsave("output/nosc_site_depth_trtmt.tiff", plot = nosc_site_depth_trtmt, height = 9, width = 6)
+ggsave("output/nosc_site_depth_trtmt.jpeg", plot = nosc_site_depth_trtmt, height = 9, width = 6)
 
 
 #common-loss stats--------------------

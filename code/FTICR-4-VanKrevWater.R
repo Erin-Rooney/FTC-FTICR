@@ -312,7 +312,7 @@ gglabel2 =
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 
-fticr_water_ftc_loss %>%
+vankrev = fticr_water_ftc_loss %>%
   mutate(Trtmt = recode(Trtmt, "CON" = "lost",
                         "FTC" = "gained"),
          Site = recode(Site, "TOOL" = "Toolik",
@@ -325,7 +325,7 @@ fticr_water_ftc_loss %>%
   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
   geom_text(data = gglabel, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
-  geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  #geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
   labs(color = "")+
   ylim(0.0, 3.0)+
   scale_color_manual(values = pnw_palette("Sailboat", 3))+
@@ -334,6 +334,8 @@ fticr_water_ftc_loss %>%
   theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
         )
 
+ggsave("output/vankrev.tiff", plot = vankrev, height = 9, width = 5.5)
+ggsave("output/vankrev.jpeg", plot = vankrev, height = 9, width = 5.5)
 
 #ggsave()
 
