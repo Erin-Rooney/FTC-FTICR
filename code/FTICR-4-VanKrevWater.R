@@ -29,7 +29,7 @@ fticr_data_water_summarized =
 fticr_water_hcoc =
   fticr_data_water_summarized %>% 
   left_join(fticr_meta_water) %>% 
-  dplyr::select(formula, Site, Trtmt, Material, HC, OC)
+  dplyr::select(formula, Site, Trtmt, Material, HC, OC, Class)
 
 # 
 gg_all = fticr_water_hcoc %>% 
@@ -304,7 +304,7 @@ gglabel2 = tribble(
   "Healy", "Lower Mineral", 0.2, 1.75, "aliphatic",
   "Healy", "Lower Mineral", 0.2, 1.25, "lignin-like",
   "Healy", "Lower Mineral", 0.2, 0.85, "aromatic",
-  "Healy", "Lower Mineral", 0.4, 0.35, "condensed aromatic",
+  "Healy", "Lower Mineral", 0.3, 0.35, "condensed aromatic",
 )
 
 gglabel2 =
@@ -336,6 +336,35 @@ vankrev = fticr_water_ftc_loss %>%
 
 ggsave("output/vankrev.tiff", plot = vankrev, height = 9, width = 5.5)
 ggsave("output/vankrev.jpeg", plot = vankrev, height = 9, width = 5.5)
+
+
+vankrev_method = 
+fticr_water_hcoc %>%
+  filter(Site %in% "TOOL" & Class != "other") %>% 
+  # mutate(Trtmt = recode(Trtmt, "CON" = "lost",
+  #                       "FTC" = "gained"),
+  #        Site = recode(Site, "TOOL" = "Toolik",
+  #                      "HEAL" = "Healy")) %>% 
+  gg_vankrev(aes(x = OC, y = HC, color = Class, alpha = 0.4))+
+  #stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  # guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  # geom_text(data = gglabel, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  labs(color = "")+
+  ylim(0.0, 2.25)+
+  scale_color_manual(values = wes_palette("Darjeeling1"))+
+  #facet_grid(Material ~ Site)+
+  theme_er() +
+  theme(panel.border = element_rect(color="black",size=0.5, fill = NA),
+          legend.position = "none" 
+  )
+
+ggsave("output/vankrev_method.tiff", plot = vankrev_method, height = 4, width = 4)
+ggsave("output/vankrev_method.jpeg", plot = vankrev_method, height = 4, width = 4)
+
 
 #ggsave()
 
