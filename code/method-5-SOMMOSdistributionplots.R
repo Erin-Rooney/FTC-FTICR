@@ -293,6 +293,52 @@ neon_proc_DC %>%
   #facet_grid(.~siteID, scales = "free_x")
   facet_grid(.~siteID)
   
+#new fig for manuscript 2021 12 06
+
+neon_proc_boxplot = 
+  neon_proc_DC %>% 
+  pivot_longer(-c(siteID, plotID, biogeoCenterDepth), names_to = "parameter", 
+               values_to = "data") %>% 
+  dplyr::mutate(depth = case_when(biogeoCenterDepth<=10 ~ "0-10", 
+         biogeoCenterDepth <= 20 ~ "10-20",
+         biogeoCenterDepth <= 30 ~ "20-30",
+         biogeoCenterDepth <= 40 ~ "30-40",
+         biogeoCenterDepth <= 50 ~ "40-50",
+         biogeoCenterDepth <= 60 ~ "50-60",
+         biogeoCenterDepth <= 70 ~ "60-70",
+         biogeoCenterDepth <= 80 ~ "70-80",
+         biogeoCenterDepth <= 90 ~ "80-90",
+         biogeoCenterDepth <= 100 ~ "90-100",
+         biogeoCenterDepth <= 113 ~ "100-112.5",
+         ))
+
+
+
+neon_proc_boxplot %>% 
+  filter(siteID %in% c("TOOL", "HEAL") & parameter %in% c("feOxalate", "feCitDithionate",
+                                                          'alOxalate', 'alCitDithionate')) %>%
+  # mutate(siteID = factor(siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")),
+  #        siteID = recode(siteID, "BARR" = "Utqiaġvik",
+  #                      "TOOL" = "Toolik",
+  #                      "BONA" = "Caribou Poker",
+  #                      "HEAL" = "Healy")) %>% 
+  mutate(siteID = factor(siteID, levels = c("HEAL", "TOOL")),
+         siteID = recode(siteID, "TOOL" = "Toolik",
+                         "HEAL" = "Healy")) %>% 
+  ggplot(aes(y=depth, x=data, fill=parameter)) +
+  geom_boxplot(horizontal = TRUE) +
+  scale_y_reverse()+
+  theme_er()+
+  facet_grid(.~siteID)+
+  NULL
+
+
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
+  labs(y = "Depth, cm", x = "crystalline Fe/Al: non-crystalline Fe/Al")+
+  scale_y_reverse()+
+  # scale_x_log10()+
+  #facet_grid(.~siteID, scales = "free_x")
+  facet_grid(.~siteID)
 
 neon_proc %>% 
   filter(siteID == c("TOOL", "HEAL")) %>% 
