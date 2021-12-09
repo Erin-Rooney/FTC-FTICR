@@ -29,13 +29,31 @@ texture_long =
   mutate(summary = paste(mean, "\u00b1", se)) %>% 
   dplyr::select(-mean, -se)
 
+
+properties_long = 
+  properties %>%
+  select(-c(Customer.ID, Lab.ID)) %>% 
+  mutate (material = factor(material, levels = c("Organic", "Upper Mineral",
+                                                           "Lower Mineral"))) %>%
+    pivot_longer(-c(Site, Trtmt, Rep, depth_top, depth_bottom,
+                  morph, material), names_to = "pH_EC",
+               values_to = "data") %>%
+  mutate (pH_EC = factor(pH_EC, levels = c("pH", "EC",
+                                           "Gravimetric.Moisture"))) %>%
+   na.omit() %>% 
+  group_by(Site, material, pH_EC) %>% 
+  dplyr::summarise(mean = round(mean(data), 2),
+                   se = round(sd(data)/sqrt(n()),2)) %>% 
+  mutate(summary = paste(mean, "\u00b1", se)) %>% 
+  dplyr::select(-mean, -se)
+
 #clean
 
-texture_long %>% knitr::kable() # prints a somewhat clean table in the console
+properties_long %>% knitr::kable() # prints a somewhat clean table in the console
 
 #export
 
-write.csv(texture_long, "output/texture_long.csv", row.names = FALSE)
+write.csv(properties_long, "output/properties_long.csv", row.names = FALSE)
 
   
 #ggplot----------

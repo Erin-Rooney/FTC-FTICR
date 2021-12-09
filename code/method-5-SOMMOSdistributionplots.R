@@ -297,6 +297,8 @@ neon_proc_DC %>%
 
 neon_proc_boxplot = 
   neon_proc_DC %>% 
+  mutate(siteID = recode(siteID, "TOOL" = "Toolik",
+                         "HEAL" = "Healy")) %>% 
   pivot_longer(-c(siteID, plotID, biogeoCenterDepth), names_to = "parameter", 
                values_to = "data") %>% 
   dplyr::mutate(depth = case_when(biogeoCenterDepth<=10 ~ "0-10", 
@@ -313,10 +315,81 @@ neon_proc_boxplot =
          ))
 
 
+#manuscript figure for Rebecca
+
+DCAO = neon_proc_boxplot %>% 
+  filter(siteID %in% c("Toolik", "Healy") & parameter %in% c("DC", "AO")) %>%
+  # mutate(siteID = factor(siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")),
+  #        siteID = recode(siteID, "BARR" = "Utqiaġvik",
+  #                      "TOOL" = "Toolik",
+  #                      "BONA" = "Caribou Poker",
+  #                      "HEAL" = "Healy")) %>% 
+  mutate(parameter = recode(parameter, "DC" = "Crystalline Fe/Al",
+                         "AO" = "Non-crystalline Fe/Al")) %>% 
+  mutate(depth = factor(depth, levels = c("100-112.5", "90-100", "80-90", "70-80", "60-70",
+                                          "50-60", "40-50", "30-40", "20-30", "10-20", "0-10"))) %>% 
+  ggplot(aes(y=depth, x=data, fill=parameter)) +
+  #geom_boxplot(horizontal = TRUE) +
+  geom_col(width = 0.7)+
+  labs(x = "weight % of total soil")+
+  scale_fill_manual(values = (PNWColors::pnw_palette("Mushroom", 2)))+
+  facet_grid(.~siteID)+
+  theme_er()+
+  theme(legend.position = "bottom", panel.border = element_rect(color="white",size=0.5, fill = NA) 
+  )+
+  NULL
+
+ggsave("output/DCAO.tiff", plot = DCAO, height = 8, width = 8)
+ggsave("output/DCAO.jpeg", plot = DCAO, height = 8, width = 8)
+
+
+neon_proc_boxplot %>% 
+  filter(siteID %in% c("Toolik", "Healy") & parameter %in% c("DC", "AO")) %>%
+  # mutate(siteID = factor(siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")),
+  #        siteID = recode(siteID, "BARR" = "Utqiaġvik",
+  #                      "TOOL" = "Toolik",
+  #                      "BONA" = "Caribou Poker",
+  #                      "HEAL" = "Healy")) %>% 
+  mutate(parameter = recode(parameter, "DC" = "Crystalline Fe/Al",
+                            "AO" = "Non-crystalline Fe/Al")) %>% 
+  mutate(depth = factor(depth, levels = c("100-112.5", "90-100", "80-90", "70-80", "60-70",
+                                          "50-60", "40-50", "30-40", "20-30", "10-20", "0-10"))) %>% 
+  ggplot(aes(y=depth, x=data, fill=parameter)) +
+  #geom_boxplot(horizontal = TRUE) +
+  geom_bar(stat="identity", width=.5, position = "dodge") +
+  #geom_col(width = 0.7)+
+  labs(x = "weight % of total soil")+
+  scale_fill_manual(values = (PNWColors::pnw_palette("Mushroom", 2)))+
+  facet_grid(.~siteID)+
+  theme_er()+
+  theme(legend.position = "bottom", panel.border = element_rect(color="white",size=0.5, fill = NA) 
+  )+
+  NULL
+
+
+neon_proc_boxplot %>% 
+  filter(siteID %in% c("TOOL", "HEAL") & parameter %in% c('alOxalate', 'alCitDithionate')) %>%
+  # mutate(siteID = factor(siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")),
+  #        siteID = recode(siteID, "BARR" = "Utqiaġvik",
+  #                      "TOOL" = "Toolik",
+  #                      "BONA" = "Caribou Poker",
+  #                      "HEAL" = "Healy")) %>% 
+  mutate(siteID = factor(siteID, levels = c("HEAL", "TOOL")),
+         siteID = recode(siteID, "TOOL" = "Toolik",
+                         "HEAL" = "Healy")) %>%
+  mutate(depth = factor(depth, levels = c("100-112.5", "90-100", "80-90", "70-80", "60-70",
+                                          "50-60", "40-50", "30-40", "20-30", "10-20", "0-10"))) %>% 
+  ggplot(aes(y=depth, x=data, fill=parameter)) +
+  geom_boxplot(horizontal = TRUE) +
+  scale_fill_manual(values = rev(PNWColors::pnw_palette("Mushroom", 2)))+
+  facet_grid(.~siteID)+
+  theme_er()+
+  NULL
 
 neon_proc_boxplot %>% 
   filter(siteID %in% c("TOOL", "HEAL") & parameter %in% c("feOxalate", "feCitDithionate",
                                                           'alOxalate', 'alCitDithionate')) %>%
+  # filter(siteID %in% c("TOOL", "HEAL") & parameter %in% c("feOxalate", "feCitDithionate")) %>%
   # mutate(siteID = factor(siteID, levels = c("BARR", "TOOL", "BONA", "HEAL")),
   #        siteID = recode(siteID, "BARR" = "Utqiaġvik",
   #                      "TOOL" = "Toolik",
@@ -327,7 +400,6 @@ neon_proc_boxplot %>%
                          "HEAL" = "Healy")) %>% 
   ggplot(aes(y=depth, x=data, fill=parameter)) +
   geom_boxplot(horizontal = TRUE) +
-  scale_y_reverse()+
   theme_er()+
   facet_grid(.~siteID)+
   NULL

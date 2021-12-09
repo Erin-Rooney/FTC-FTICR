@@ -340,7 +340,7 @@ ggsave("output/vankrev.jpeg", plot = vankrev, height = 9, width = 5.5)
 
 vankrev_method = 
 fticr_water_hcoc %>%
-  filter(Site %in% "TOOL" & Class != "other") %>% 
+  filter(Site %in% "TOOL " & Class != "other") %>% 
   # mutate(Trtmt = recode(Trtmt, "CON" = "lost",
   #                       "FTC" = "gained"),
   #        Site = recode(Site, "TOOL" = "Toolik",
