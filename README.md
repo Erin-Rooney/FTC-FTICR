@@ -1,4 +1,4 @@
-### Depth and previous freeze-thaw history may affect soil chemistry response to future freeze-thaw cycles
+### Previous freeze-thaw history and soil chemistry response to future freeze-thaw cycles
 
 ##### Authors: Erin C. Rooney, Vanessa L. Bailey, Kaizad F. Patel, Angela R. Possinger, Adrian Gallo, Michael SanClements, Jeffery Hatten, Rebecca A. Lybrand
 
