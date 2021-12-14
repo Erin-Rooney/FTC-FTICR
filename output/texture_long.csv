@@ -1,33 +1,17 @@
-"Site","Material","particle_size","summary"
-"HEAL","Lower Mineral","Clay_.2mm","0.23 ± 0.02"
-"HEAL","Lower Mineral","Silt_2to20mm","0.27 ± 0.02"
-"HEAL","Lower Mineral","Silt_20to50mm","0.13 ± 0.02"
-"HEAL","Lower Mineral","Sand_50to100mm","0.07 ± 0"
-"HEAL","Lower Mineral","Sand_100to250mm","0.11 ± 0.01"
-"HEAL","Lower Mineral","Sand_250to500mm","0.08 ± 0.01"
-"HEAL","Lower Mineral","Sand_500to1000mm","0.05 ± 0.01"
-"HEAL","Lower Mineral","Sand_1000to2000mm","0.05 ± 0.02"
-"HEAL","Upper Mineral","Clay_.2mm","0.31 ± 0.03"
-"HEAL","Upper Mineral","Silt_2to20mm","0.31 ± 0.02"
-"HEAL","Upper Mineral","Silt_20to50mm","0.14 ± 0.02"
-"HEAL","Upper Mineral","Sand_50to100mm","0.05 ± 0.01"
-"HEAL","Upper Mineral","Sand_100to250mm","0.08 ± 0"
-"HEAL","Upper Mineral","Sand_250to500mm","0.05 ± 0"
-"HEAL","Upper Mineral","Sand_500to1000mm","0.04 ± 0.01"
-"HEAL","Upper Mineral","Sand_1000to2000mm","0.02 ± 0.01"
-"TOOL","Lower Mineral","Clay_.2mm","0.25 ± 0.01"
-"TOOL","Lower Mineral","Silt_2to20mm","0.19 ± 0"
-"TOOL","Lower Mineral","Silt_20to50mm","0.08 ± 0"
-"TOOL","Lower Mineral","Sand_50to100mm","0.06 ± 0.01"
-"TOOL","Lower Mineral","Sand_100to250mm","0.12 ± 0.02"
-"TOOL","Lower Mineral","Sand_250to500mm","0.14 ± 0.01"
-"TOOL","Lower Mineral","Sand_500to1000mm","0.09 ± 0.01"
-"TOOL","Lower Mineral","Sand_1000to2000mm","0.07 ± 0.02"
-"TOOL","Upper Mineral","Clay_.2mm","0.25 ± 0.03"
-"TOOL","Upper Mineral","Silt_2to20mm","0.2 ± 0"
-"TOOL","Upper Mineral","Silt_20to50mm","0.09 ± 0.01"
-"TOOL","Upper Mineral","Sand_50to100mm","0.06 ± 0.01"
-"TOOL","Upper Mineral","Sand_100to250mm","0.12 ± 0.01"
-"TOOL","Upper Mineral","Sand_250to500mm","0.15 ± 0.03"
-"TOOL","Upper Mineral","Sand_500to1000mm","0.09 ± 0"
-"TOOL","Upper Mineral","Sand_1000to2000mm","0.05 ± 0.01"
+Material,particle_size, Healy %,Toolik %
+Upper Mineral,Clay_.2mm,0.31 ñ 0.03,0.25 ñ 0.03
+,Silt_2to20mm,0.31 ñ 0.02,0.2 ñ 0
+,Silt_20to50mm,0.14 ñ 0.02,0.09 ñ 0.01
+,Sand_50to100mm,0.05 ñ 0.01,0.06 ñ 0.01
+,Sand_100to250mm,0.08 ñ 0,0.12 ñ 0.01
+,Sand_250to500mm,0.05 ñ 0,0.15 ñ 0.03
+,Sand_500to1000mm,0.04 ñ 0.01,0.09 ñ 0
+,Sand_1000to2000mm,0.02 ñ 0.01,0.05 ñ 0.01
+Lower Mineral,Clay_.2mm,0.23 ñ 0.02,0.25 ñ 0.01
+,Silt_2to20mm,0.27 ñ 0.02,0.19 ñ 0
+,Silt_20to50mm,0.13 ñ 0.02,0.08 ñ 0
+,Sand_50to100mm,0.07 ñ 0,0.06 ñ 0.01
+,Sand_100to250mm,0.11 ñ 0.01,0.12 ñ 0.02
+,Sand_250to500mm,0.08 ñ 0.01,0.14 ñ 0.01
+,Sand_500to1000mm,0.05 ñ 0.01,0.09 ñ 0.01
+,Sand_1000to2000mm,0.05 ñ 0.02,0.07 ñ 0.02

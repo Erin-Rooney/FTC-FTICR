@@ -122,7 +122,7 @@ ghg_avg =
   
   # create a `total` ftc column for annual total ftc
   group_by(site, horizon, trmt, mid) %>% 
-  dplyr::mutate(total = sum(gain_ug_g_oc)) %>% 
+  dplyr::mutate(total = sum(gain_co2_ug_g_oc)) %>% 
   ungroup() %>% 
   
   # now, incorporate the `total` data into `season`
@@ -134,7 +134,7 @@ ghg_avg =
   
   # now, calculate mean FTC per site/depth/season
   group_by(site, horizon, trmt, mid) %>% 
-  dplyr::summarise(gain_ug_g_oc = as.integer(mean(gain_ug_g_oc))) %>% 
+  dplyr::summarise(gain_ug_g_oc = as.integer(mean(gain_co2_ug_g_oc))) %>% 
   ungroup() %>% 
   
   # create new columns for depth range
@@ -525,7 +525,7 @@ ftc_fulldat %>%
 # GHG bubble plot with depth on y axis--------------------------------------
 ghg_csv2 %>% 
   filter(mid > 0) %>% 
-  ggplot(aes(y = mid, x = site, size = gain_ug_g_oc, color = gain_ug_g_oc))+
+  ggplot(aes(y = mid, x = site, size = gain_co2_ug_g_oc, color = gain_co2_ug_g_oc))+
   #geom_jitter()+
   geom_point(position = position_jitter(width = 0.05))+
   scale_y_reverse() +
@@ -591,18 +591,18 @@ library(plyr)
 #Okay now I am creating a new data frame that has some statistical summaries
 
 ghg_summary = ddply(ghg_csv2, c("site", "trmt", "mid"), summarise,
-      N    = length(gain_ug_g_oc),
-      mean = mean(gain_ug_g_oc),
-      sd   = sd(gain_ug_g_oc),
+      N    = length(gain_co2_ug_g_oc),
+      mean = mean(gain_co2_ug_g_oc),
+      sd   = sd(gain_co2_ug_g_oc),
       se   = sd / sqrt(N)
 )
 
 # okay here's a second summary because I wanted to include the day info in the statistical summaries
 
 ghg_summary2 = ddply(ghg_csv2, c("site", "trmt", "mid", "day"), summarise,
-                     N    = length(gain_ug_g_oc),
-                     mean = mean(gain_ug_g_oc),
-                     sd   = sd(gain_ug_g_oc),
+                     N    = length(gain_co2_ug_g_oc),
+                     mean = mean(gain_co2_ug_g_oc),
+                     sd   = sd(gain_co2_ug_g_oc),
                      se   = sd / sqrt(N)
 )
 
@@ -630,7 +630,7 @@ ghg_summary %>%
 
 ghg_summary2 %>% 
   #filter(mid > 0) %>% 
-  ggplot(aes(y = mid, x = gain_ug_g_oc, color = day))+
+  ggplot(aes(y = mid, x = mean, color = day))+
   geom_point()+
   geom_line(orientation = "y")+
   #geom_jitter()+
@@ -638,7 +638,7 @@ ghg_summary2 %>%
   scale_y_reverse() +
   #coord_cartesian(ylim = c(70,0)) +
   # scale_size_continuous()
-  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 2)))+
+  scale_color_manual(values = (PNWColors::pnw_palette("Bay", 4)))+
   ggtitle("Respiration (ug per g OC)") +
   theme_er() +
   facet_grid(site~trmt)
@@ -648,7 +648,7 @@ ghg_summary2 %>%
 
 ghg_csv2 %>% 
   #filter(mid > 0) %>% 
-  ggplot(aes(y = mid, x = gain_ug_g_oc, color = trmt, group = trmt))+
+  ggplot(aes(y = mid, x = gain_co2_ug_g_oc, color = trmt, group = trmt))+
   #geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=.1, 
   #                  )) +
   geom_point()+
@@ -664,7 +664,7 @@ ghg_csv2 %>%
   facet_grid(day~site)
 
 
-ghg_csv2 %>% 
+ghg = ghg_csv2 %>% 
   mutate(day = factor(day, levels = c('day1', 'day4', 'day7', 'day14'))) %>%
   mutate(trmt = recode(trmt, 'ftc' = "freeze-thaw"),
          site = recode(site, "healy" = "Healy",
@@ -673,8 +673,8 @@ ghg_csv2 %>%
   ggplot()+
   #geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=.1, 
   #                  )) +
-  geom_point(aes(y = mid, x = gain_ug_g_oc, group = day, fill = day), shape = 21, size = 3.5, alpha = 0.6, color = 'black')+
-  geom_line(aes(y = mid, x = gain_ug_g_oc, group = day, color = day), orientation = "y", linetype = "dashed")+
+  geom_point(aes(y = mid, x = gain_co2_ug_g_oc, group = day, fill = day), shape = 21, size = 3.5, alpha = 0.6, color = 'black')+
+  geom_line(aes(y = mid, x = gain_co2_ug_g_oc, group = day, color = day), orientation = "y", linetype = "dashed")+
   #geom_jitter()+
   #geom_bar(position = "stack", stat= "identity")+
   scale_y_reverse() +
@@ -682,11 +682,15 @@ ghg_csv2 %>%
   scale_color_manual(values = (PNWColors::pnw_palette("Sunset", 4)))+
   #ggtitle("Respiration (ug per g OC)") +
   labs(y = "depth, cm",
-       x = 'OC ug per g soil',
+       x = 'gain in CO2 ug per g OC',
        fill = "",
        color = "")+
   theme_er() +
-  facet_grid(trmt~site)
+  facet_grid(trmt~site)+
+  theme(panel.border = element_rect(color="white",size=0.5, fill = NA))
+
+ggsave("output/ghg.tiff", plot = ghg, height = 10, width = 6)
+ggsave("output/ghg.jpeg", plot = ghg, height = 10, width = 6)
 
 #and now we're out of the ghg and into the ftc.
 
