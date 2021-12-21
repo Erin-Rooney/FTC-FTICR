@@ -128,12 +128,19 @@ theme_erclean <- function () {
 # 
 # 
 # 
-# dcao_aov1 = aov(data = neon_proc_DC, DC_AO ~ siteID * biogeoCenterDepth)
-# summary(dcao_aov1)
-# 
-# dcao_hsd = HSD.test(dcao_aov1,"siteID")
-# print(dcao_hsd)
-# print(dcao_hsd$groups)
+dcao_aov1 = aov(data = neon_proc_DC, DC_AO ~ siteID * biogeoCenterDepth)
+summary(dcao_aov1)
+
+dcao_hsd = HSD.test(dcao_aov1,"siteID")
+print(dcao_hsd)
+print(dcao_hsd$groups)
+
+neon_proc_DC2 =
+  neon_proc_DC %>% 
+  filter(siteID %in% c("HEAL", "TOOL"))
+
+dcao_aov2 = aov(data = neon_proc_DC2, DC_AO ~ siteID * biogeoCenterDepth)
+summary(dcao_aov2)
 # 
 # dcao2_hsd = HSD.test(dcao_aov1,"biogeoCenterDepth")
 # print(dcao2_hsd)
