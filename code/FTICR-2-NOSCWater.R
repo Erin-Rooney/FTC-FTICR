@@ -115,7 +115,7 @@ nosc_classes = fticr_nosc_water_ftc_loss_common %>%
   facet_grid(Site~Class)+
   labs(x = "")+
   ylim(-2,2)+
-  scale_fill_manual(values = rev(PNWColors::pnw_palette("Sailboat", 2)))+
+  scale_fill_manual(values = c("#EDC2CC", "#698DDB"))+
   theme_er()+
   theme(legend.position = "none", 
          axis.text.x.bottom = element_text 
@@ -142,7 +142,7 @@ nosc_site_depth_trtmt = fticr_nosc_water_ftc_loss_common %>%
   facet_grid(Material~Site)+
   ylim(-2,2)+
   labs(x = "")+
-  scale_fill_manual(values = rev(PNWColors::pnw_palette("Sailboat", 2)))+
+  scale_fill_manual(values = c("#EDC2CC", "#698DDB"))+
   theme_er()+
   theme(legend.position = "none", 
         panel.border = element_rect(color="black",size=0.5, fill = NA))

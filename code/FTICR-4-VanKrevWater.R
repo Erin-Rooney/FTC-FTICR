@@ -135,29 +135,28 @@ fticr_water_ftc_loss_common =
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
 # plot only lost/gained
-#fig currently used in manuscript
-fticr_water_ftc_loss %>% 
-  mutate(Site = recode(Site, "TOOL" = "Toolik",
-                       "HEAL" = "Healy"),
-         loss_gain = recode(loss_gain, "lost" = "control",
-                            "gained" = "freeze-thaw")) %>% 
-  filter(Site == "Healy") %>% 
-  ggplot(aes(x = OC, y = HC, color = loss_gain))+
-  geom_point(alpha = 0.2, size = 1)+
-  stat_ellipse(show.legend = F)+
-  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
-  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
-  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
-  labs(
-       y = "H:C",
-       x = "O:C")+
-  facet_grid(Material ~ Site)+
-  theme_er() +
-  #scale_color_manual(values = pnw_palette("Bay", 2))+
-  #scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
-  theme(legend.position = "bottom")
-  #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
+# fticr_water_ftc_loss %>% 
+#   mutate(Site = recode(Site, "TOOL" = "Toolik",
+#                        "HEAL" = "Healy"),
+#          loss_gain = recode(loss_gain, "lost" = "control",
+#                             "gained" = "freeze-thaw")) %>% 
+#   filter(Site == "Healy") %>% 
+#   ggplot(aes(x = OC, y = HC, color = loss_gain))+
+#   geom_point(alpha = 0.2, size = 1)+
+#   stat_ellipse(show.legend = F)+
+#   geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+#   geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+#   guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+#   labs(
+#        y = "H:C",
+#        x = "O:C")+
+#   facet_grid(Material ~ Site)+
+#   theme_er() +
+#   #scale_color_manual(values = pnw_palette("Bay", 2))+
+#   #scale_color_manual(values = c("#02c39a", "#b1a7a6"))+
+#   theme(legend.position = "bottom")
+#   #scale_color_manual(values = wes_palette("GrandBudapest1", 2))
 
 #ggMarginal by site, currently not used so commented out
 
@@ -311,6 +310,135 @@ gglabel2 =
   gglabel2 %>% 
   mutate(Material = factor (Material, levels = c("Organic", "Upper Mineral", "Lower Mineral")))
 
+color1 = fticr_water_ftc_loss %>%
+  mutate(Trtmt = recode(Trtmt, "CON" = "lost",
+                        "FTC" = "gained"),
+         Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
+  #geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  geom_text(data = gglabel, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  #geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  labs(color = "")+
+  ylim(0.0, 3.0)+
+  scale_color_manual(values = pnw_palette("Cascades", 2))+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
+  )
+
+color2 = fticr_water_ftc_loss %>%
+  mutate(Trtmt = recode(Trtmt, "CON" = "lost",
+                        "FTC" = "gained"),
+         Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
+  #geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  geom_text(data = gglabel, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  #geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  labs(color = "")+
+  ylim(0.0, 3.0)+
+  # scale_color_manual(values = c("#e69b99", "#64a8a8"))+
+  # scale_color_manual(values = c("#c67b6f", "#9e6374"))+
+  scale_color_manual(values = c("#c67b6f", "#efbc82"))+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
+  )
+
+color3 = fticr_water_ftc_loss %>%
+  mutate(Trtmt = recode(Trtmt, "CON" = "lost",
+                        "FTC" = "gained"),
+         Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
+  #geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  geom_text(data = gglabel, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  #geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  labs(color = "")+
+  ylim(0.0, 3.0)+
+  # scale_color_manual(values = c("#e69b99", "#64a8a8"))+
+  # scale_color_manual(values = c("#c67b6f", "#9e6374"))+
+  scale_color_manual(values = c("#c67b6f", "#fbdfa2"))+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
+  )
+
+color4 = fticr_water_ftc_loss %>%
+  mutate(Trtmt = recode(Trtmt, "CON" = "lost",
+                        "FTC" = "gained"),
+         Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
+  #geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  geom_text(data = gglabel, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  #geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  labs(color = "")+
+  ylim(0.0, 3.0)+
+  # scale_color_manual(values = c("#e69b99", "#64a8a8"))+
+  # scale_color_manual(values = c("#c67b6f", "#9e6374"))+
+  scale_color_manual(values = c("#537380", "#BCC2C6"))+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
+  )
+
+color6 = fticr_water_ftc_loss %>%
+  mutate(Trtmt = recode(Trtmt, "CON" = "lost",
+                        "FTC" = "gained"),
+         Site = recode(Site, "TOOL" = "Toolik",
+                       "HEAL" = "Healy")) %>% 
+  gg_vankrev(aes(x = OC, y = HC, color = Trtmt))+
+  #geom_point(alpha = 0.2, size = 1)+
+  stat_ellipse(show.legend = F)+
+  geom_segment(x = 0.0, y = 1.5, xend = 1.2, yend = 1.5,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 0.7, xend = 1.2, yend = 0.4,color="black",linetype="longdash") +
+  geom_segment(x = 0.0, y = 1.06, xend = 1.2, yend = 0.51,color="black",linetype="longdash") +
+  guides(colour = guide_legend(override.aes = list(alpha=1, size=2)))+
+  geom_text(data = gglabel, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  #geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  labs(color = "")+
+  ylim(0.0, 3.0)+
+  # scale_color_manual(values = c("#e69b99", "#64a8a8"))+
+  # scale_color_manual(values = c("#c67b6f", "#9e6374"))+
+  scale_color_manual(values = c("#698DDB", "#EDC2CC"))+
+  facet_grid(Material ~ Site)+
+  theme_er() +
+  theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
+  )
+
+
+ggsave("output/color1.jpeg", plot = color1, height = 9, width = 5.5)
+ggsave("output/color2.jpeg", plot = color2, height = 9, width = 5.5)
+ggsave("output/color3.jpeg", plot = color3, height = 9, width = 5.5)
+ggsave("output/color4.jpeg", plot = color4, height = 9, width = 5.5)
+ggsave("output/color5.jpeg", plot = color5, height = 9, width = 5.5)
+ggsave("output/color6.jpeg", plot = color6, height = 9, width = 5.5)
+
+
+
+
 
 vankrev = fticr_water_ftc_loss %>%
   mutate(Trtmt = recode(Trtmt, "CON" = "lost",
@@ -328,7 +456,7 @@ vankrev = fticr_water_ftc_loss %>%
   #geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
   labs(color = "")+
   ylim(0.0, 3.0)+
-  scale_color_manual(values = pnw_palette("Sailboat", 3))+
+  scale_color_manual(values = c("#698DDB", "#EDC2CC"))+
   facet_grid(Material ~ Site)+
   theme_er() +
   theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
