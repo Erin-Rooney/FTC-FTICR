@@ -422,7 +422,7 @@ color6 = fticr_water_ftc_loss %>%
   ylim(0.0, 3.0)+
   # scale_color_manual(values = c("#e69b99", "#64a8a8"))+
   # scale_color_manual(values = c("#c67b6f", "#9e6374"))+
-  scale_color_manual(values = c("#698DDB", "#EDC2CC"))+
+  scale_color_manual(values = c("#2f9bbf", "#f0a7a0"))+
   facet_grid(Material ~ Site)+
   theme_er() +
   theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
@@ -456,7 +456,8 @@ vankrev = fticr_water_ftc_loss %>%
   #geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
   labs(color = "")+
   ylim(0.0, 3.0)+
-  scale_color_manual(values = c("#698DDB", "#EDC2CC"))+
+  #scale_color_manual(values = c("#698DDB", "#EDC2CC"))+
+  scale_color_manual(values = c("#2f9bbf", "#f0a7a0"))+
   facet_grid(Material ~ Site)+
   theme_er() +
   theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
