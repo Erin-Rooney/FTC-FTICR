@@ -463,8 +463,8 @@ vankrev = fticr_water_ftc_loss %>%
   theme(panel.border = element_rect(color="black",size=0.5, fill = NA), 
         )
 
-ggsave("output/vankrev.tiff", plot = vankrev, height = 9, width = 5.5)
-ggsave("output/vankrev.jpeg", plot = vankrev, height = 9, width = 5.5)
+ggsave("output/vankrev.tiff", plot = vankrev, height = 8, width = 5.5)
+ggsave("output/vankrev.jpeg", plot = vankrev, height = 8, width = 5.5)
 
 
 vankrev_method = 

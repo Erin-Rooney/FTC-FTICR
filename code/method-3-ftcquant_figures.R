@@ -403,8 +403,10 @@ ftc_max_gapfilled_2site =
          site_pos = factor(site_pos, levels = c("Utqiaġvik", "Toolik", "Caribou Poker", "Healy"))) %>% 
   na.omit()
   
+
+# manuscript ftc figure 1/1/2022
   
-ftc_max_gapfilled_2site %>%
+ftc = ftc_max_gapfilled_2site %>%
   mutate(site_pos = recode (site_pos, "TOOL" = "Toolik", 
                             "HEAL" = "Healy",
                             "BARR" = "Utqiaġvik",
@@ -427,6 +429,10 @@ ftc_max_gapfilled_2site %>%
 
 
 
+ggsave("output/ftc.tiff", plot = ftc, height = 7.60, width = 6.50)
+ggsave("output/ftc.jpeg", plot = ftc, height = 7.60, width = 6.50)
+
+ 
 
 
 ###

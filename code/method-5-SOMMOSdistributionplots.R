@@ -308,6 +308,7 @@ neon_proc_boxplot =
                          "HEAL" = "Healy")) %>% 
   pivot_longer(-c(siteID, plotID, biogeoCenterDepth), names_to = "parameter", 
                values_to = "data") %>% 
+  filter(biogeoCenterDepth < 80) %>% 
   dplyr::mutate(depth = case_when(biogeoCenterDepth<=10 ~ "0-10", 
          biogeoCenterDepth <= 20 ~ "10-20",
          biogeoCenterDepth <= 30 ~ "20-30",
@@ -316,9 +317,6 @@ neon_proc_boxplot =
          biogeoCenterDepth <= 60 ~ "50-60",
          biogeoCenterDepth <= 70 ~ "60-70",
          biogeoCenterDepth <= 80 ~ "70-80",
-         biogeoCenterDepth <= 90 ~ "80-90",
-         biogeoCenterDepth <= 100 ~ "90-100",
-         biogeoCenterDepth <= 113 ~ "100-112.5",
          ))
 
 
@@ -333,7 +331,7 @@ DCAO = neon_proc_boxplot %>%
   #                      "HEAL" = "Healy")) %>% 
   mutate(parameter = recode(parameter, "DC" = "Crystalline Fe/Al",
                             "AO" = "Non-crystalline Fe/Al")) %>% 
-  mutate(depth = factor(depth, levels = c("100-112.5", "90-100", "80-90", "70-80", "60-70",
+  mutate(depth = factor(depth, levels = c("80-90", "70-80", "60-70",
                                           "50-60", "40-50", "30-40", "20-30", "10-20", "0-10"))) %>% 
   ggplot(aes(y=depth, x=data, fill=parameter)) +
   #geom_boxplot(horizontal = TRUE) +
@@ -346,8 +344,8 @@ DCAO = neon_proc_boxplot %>%
   )+
   NULL
 
-ggsave("output/DCAO.tiff", plot = DCAO, height = 8, width = 8)
-ggsave("output/DCAO.jpeg", plot = DCAO, height = 8, width = 8)
+ggsave("output/DCAO.tiff", plot = DCAO, height = 8, width = 9)
+ggsave("output/DCAO.jpeg", plot = DCAO, height = 8, width = 9)
 
 
 neon_proc_boxplot %>% 
