@@ -79,7 +79,7 @@ relabund = fticr_water_relabund_summarized %>%
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy"),
          Trtmt = recode(Trtmt, "CON" = "control",
-                        "FTC" = "freeze-thaw cycles")) %>% 
+                        "FTC" = "freeze-thaw \n cycles")) %>% 
   ggplot(aes(x = Trtmt, y = relabundance))+
   labs(x = " ",
        y = "relative abundance, %")+
@@ -88,9 +88,11 @@ relabund = fticr_water_relabund_summarized %>%
   facet_grid(Material ~ Site)+
   #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
   theme_er()+
-  theme(legend.position = "bottom", panel.border = element_rect(color="white",size=0.5, fill = NA) 
+  theme(legend.position = "bottom", panel.border = element_rect(color="white",size=0.5, fill = NA),  
   )+
   NULL
+
+
 
 
 ggsave("output/relabund.tiff", plot = relabund, height = 8, width = 6)
