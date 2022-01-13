@@ -96,6 +96,7 @@ xrd_data_tableanalysis %>%
 
 xrd_sitefig = 
   xrd_forfig %>% 
+  filter(mineral != "feldspar") %>% 
   ggplot(aes(x = mineral, y = mean, fill = site))+
   geom_bar(stat = "identity", position = position_dodge())+
   geom_errorbar(aes(ymin=(mean-se/2),ymax=(mean+se/2)),width=.2,position=position_dodge(.9))+
