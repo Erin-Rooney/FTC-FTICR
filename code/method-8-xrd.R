@@ -13,8 +13,12 @@ xrd_data = read.csv("processed/xrd_data_fticr.csv")
 # grepl for canopy and slope columns
 # LDC and LDA are typos from xrd analysis input, should be LOA and LOC, fixed with recode
 
-xrd_data_processed =
+xrd_deselect =
   xrd_data %>% 
+  select(-c(rwp, feldspar)) 
+
+xrd_data_processed =
+  xrd_deselect %>% 
   # mutate(quartz_stdev = stringi::stri_replace_all_fixed(quartz_stdev, "ñ",""),
   #        albite_stdev = stringi::stri_replace_all_fixed(albite_stdev, "ñ",""),
   #        #anorthite_stdev = stringi::stri_replace_all_fixed(anorthite_stdev, "ñ",""),
@@ -50,7 +54,7 @@ xrd_data_tableanalysis =
   # select(-c(quartz_stdev, albite_stdev, anorthite_stdev, microcline_stdev,
   #           chlorite_stdev, mica_stdev, hornblende_stdev, ankerite_stdev, feldspar_decimal)) %>% 
   pivot_longer(cols = c(quartz, albite, kaolinite, microcline, chlorite, mica, hornblende,
-                        rwp, feldspar), names_to = "mineral", values_to = "abundance") %>% 
+                        ), names_to = "mineral", values_to = "abundance") %>% 
   #group_by(slopepos, covertype, morph) %>% 
   group_by(site, material, mineral) %>% 
   dplyr::summarize(mean = round(mean(abundance), 3),
@@ -72,23 +76,26 @@ xrd_stats =
                 chlorite = as.numeric(chlorite),
                 mica = as.numeric(mica),
                 hornblende = as.numeric(hornblende),
-                rwp = as.numeric(rwp),
-                feldspar = as.numeric(feldspar),
   ) %>% 
+  #select(-c(rwp)) %>% 
   #mutate(feldspar = (feldspar_decimal * 100)) %>% 
   # select(-c(quartz_stdev, albite_stdev, anorthite_stdev, microcline_stdev,
   #           chlorite_stdev, mica_stdev, hornblende_stdev, ankerite_stdev, feldspar_decimal)) %>% 
   pivot_longer(cols = c(quartz, albite, kaolinite, microcline, chlorite, mica, hornblende,
-                        rwp, feldspar), names_to = "mineral", values_to = "abundance") %>% 
+                        ), names_to = "mineral", values_to = "abundance") %>% 
   na.omit() %>% 
   select(-c(siterep, upperdepth, lowerdepth, rep)) %>% 
   ungroup()
 
-xrd_site = 
+
+xrd_forfig =
 xrd_data_tableanalysis %>% 
   # mutate(slopepos = recode(slopepos, "low_backslope" = 'low backslope')) %>% 
   mutate(material = factor(material, levels = c("organic", "upper mineral", "lower mineral"))) %>%
-  filter(material != "organic") %>% 
+  filter(material != "organic") 
+
+xrd_sitefig = 
+  xrd_forfig %>% 
   ggplot(aes(x = mineral, y = mean, fill = site))+
   geom_bar(stat = "identity", position = position_dodge())+
   geom_errorbar(aes(ymin=(mean-se/2),ymax=(mean+se/2)),width=.2,position=position_dodge(.9))+
@@ -120,8 +127,8 @@ xrd_data_tableanalysis %>%
 #   facet_grid(.~covertype)+
 #   NULL
 
-ggsave("output/xrd_site.tiff", plot = xrd_site, height = 6, width = 10)
-ggsave("output/xrd_site.jpeg", plot = xrd_site, height = 6, width = 10)
+ggsave("output/xrd_site.tiff", plot = xrd_sitefig, height = 6, width = 10)
+ggsave("output/xrd_site.jpeg", plot = xrd_sitefig, height = 6, width = 10)
 ggsave("output/xrd_slope.tiff", plot = xrd_slope, height = 6, width = 10)
 ggsave("output/xrd_slope.jpeg", plot = xrd_slope, height = 6, width = 10)
 
@@ -186,9 +193,6 @@ summary(mica)
 
 hornblende = aov(abundance ~ site*material, data = xrd_stats %>% filter(mineral %in% "hornblende"))
 summary(hornblende)
-
-rwp = aov(abundance ~ site*material, data = xrd_stats %>% filter(mineral %in% "rwp"))
-summary(rwp)
 
 feldspar = aov(abundance ~ site*material, data = xrd_stats %>% filter(mineral %in% "microcline"))
 summary(feldspar)
