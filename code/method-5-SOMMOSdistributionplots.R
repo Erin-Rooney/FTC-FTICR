@@ -322,15 +322,16 @@ neon_proc_boxplot =
 
 #manuscript figure for Rebecca
 
-DCAO = neon_proc_boxplot %>% 
+DCAO = 
+  neon_proc_boxplot %>% 
   filter(siteID %in% c("Healy", "Toolik") & parameter %in% c("DC", "AO")) %>%
   mutate(siteID = factor(siteID, levels = c("Healy", "Toolik", "BONA"))) %>% 
   #        siteID = recode(siteID, "BARR" = "Utqiaġvik",
   #                      "TOOL" = "Toolik",
   #                      "BONA" = "Caribou Poker",
   #                      "HEAL" = "Healy")) %>% 
-  mutate(parameter = recode(parameter, "DC" = "Crystalline Fe/Al",
-                            "AO" = "Non-crystalline Fe/Al")) %>% 
+  mutate(parameter = recode(parameter, "DC" = "Crystalline Fe + Al",
+                            "AO" = "Non-crystalline Fe + Al")) %>% 
   mutate(depth = factor(depth, levels = c("80-90", "70-80", "60-70",
                                           "50-60", "40-50", "30-40", "20-30", "10-20", "0-10"))) %>% 
   ggplot(aes(y=depth, x=data, fill=parameter)) +
