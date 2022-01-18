@@ -433,10 +433,11 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
     #mutate(Material.x = as.character(Material.x))
   
 
+euc_dist = 
   ggplot(matrix4, aes(x = Material.x, y = distance))+
-    geom_point(size=4)+
+    geom_point(size=4, shape = 19, fill = "black")+
     geom_segment(aes(x = Material.x, xend = Material.x, y = 0, yend = distance))+
-    geom_point(data = matrix2plot %>% filter(Trtmt.x == 'CON' & Site.x == "Healy"), size = 3, alpha = 0.4, color = "black", fill = 'black', shape = 22)+
+    geom_point(data = matrix2plot %>% filter(Trtmt.x == 'CON' & Site.x == "Healy"), size = 3, color = "black", fill = 'black', shape = 8)+
     # geom_segment(data = matrix2plot %>% filter(Trtmt.x == 'CON'), 
     #              aes(x = (Material.x-0.25), xend = (Material.x+0.25), 
     #                  y = distance, yend = distance, color = Material.x), size = 3)+
@@ -445,6 +446,10 @@ adonis(relabund_wide2 %>% select(c(aliphatic, aromatic, `condensed aromatic`, `u
     labs(x = "")+
     theme_er()+
     theme(axis.text.x.bottom = element_text (vjust = 0.5, hjust=1, angle = 90), legend.position = "NONE")
+  
+
+ggsave("output/euclideandistances.tiff", plot = euc_dist, height = 4.3, width = 2.5)
+
   
   # ylim(0,80)+
   # ylab("drying-rewetting \n Bray distance")+
