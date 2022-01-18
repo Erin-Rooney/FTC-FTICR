@@ -8,8 +8,10 @@ source("code/FTICR-0-packages.R")
 
 # 1. load files -----------------------------------------------------------
 
-fticr_data_water = read.csv("processed/fticr_data_water.csv") %>% select(Core, formula, Site, Trtmt, Material) 
-fticr_meta_water = read.csv("processed/fticr_meta_water.csv")
+fticr_data_water = read.csv("processed/fticr_data_water.csv") %>% select(Core, formula, Site, Trtmt, Material) %>% 
+  mutate(Site = recode(Site, 'HEAL' = 'Healy',
+                       'TOOL' = 'Toolik'))
+fticr_meta_water = read.csv("processed/fticr_meta_water.csv") 
 # meta_hcoc_water  = read.csv("fticr_meta_hcoc_water.csv") %>% select(-Mass)
 
 ## fticr_data_water contains peaks for each sample, i.e. each replicate
@@ -36,7 +38,9 @@ fticr_water_relabund =
 
 fticr_data_water_summarized = 
   fticr_data_water %>% 
-  distinct(Core, Site, Trtmt, Material, formula) %>% mutate(presence = 1)
+  distinct(Core, Site, Trtmt, Material, formula) %>% mutate(presence = 1) %>% 
+  mutate(Site = recode(Site, 'HEAL' = 'Healy',
+                   'TOOL' = 'Toolik'))
 
 # van krevelen plots_water------------------------------------------------------
 
@@ -105,7 +109,8 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1,
 ###
 
 
-b = ggbiplot(pca, obs.scale = 1, var.scale = 1,
+all_pca = 
+  ggbiplot(pca, obs.scale = 1, var.scale = 1,
          groups = as.character(grp$Site),
          alpha = 0,
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
@@ -118,10 +123,13 @@ b = ggbiplot(pca, obs.scale = 1, var.scale = 1,
   ylim(-4,4)+
   xlim(-4,4)+
   theme_er()+
-  guides(fill=guide_legend(override.aes=list(fill="black")))+
+    guides(fill=guide_legend(override.aes=list(fill="black")))+
+    theme(legend.position = "NONE", 
+          panel.border = element_rect(color="white",size=0.5, fill = NA))+
   NULL
 
-
+ggsave("output/all_pca.tiff", plot = all_pca, height = 4.5, width = 4.5)
+  
 
 
 #
@@ -143,7 +151,8 @@ grp_con =
 
 pca_con = prcomp(num_con, scale. = T)
 
-a = ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
+con_pca = 
+  ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
          groups = as.character(grp_con$Site), 
          ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(color = grp_con$Site, shape = grp_con$Material))+
@@ -152,7 +161,28 @@ a = ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
   xlim(-4,4)+
   scale_color_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
   theme_er()+
+  theme(legend.position = "NONE", 
+        panel.border = element_rect(color="white",size=0.5, fill = NA))+
   NULL
+
+ggsave("output/con_pca.tiff", plot = con_pca, height = 4.5, width = 4.5)
+
+legend_only = 
+  ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
+           groups = as.character(grp_con$Site), 
+           ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+  geom_point(size=3,stroke=1, aes(color = grp_con$Site, shape = grp_con$Material))+
+  #labs(title = "Control only")+
+  ylim(-4,4)+
+  xlim(-4,4)+
+  scale_color_manual(values = rev(PNWColors::pnw_palette("Bay", 2)))+
+  theme_er()+
+  theme(
+        panel.border = element_rect(color="white",size=0.5, fill = NA))+
+  NULL
+
+ggsave("output/legend_only.tiff", plot = legend_only, height = 4.5, width = 9)
+
 
 #
 ## 3c. FTC only ---------------------------------------------------------
@@ -445,10 +475,11 @@ euc_dist =
     #facet_grid(.~Site.x)+
     labs(x = "")+
     theme_er()+
-    theme(axis.text.x.bottom = element_text (vjust = 0.5, hjust=1, angle = 90), legend.position = "NONE")
+    theme(axis.text.x.bottom = element_text (vjust = 0.5, hjust=1, angle = 90), legend.position = "NONE", 
+          panel.border = element_rect(color="white",size=0.5, fill = NA))
   
 
-ggsave("output/euclideandistances.tiff", plot = euc_dist, height = 4.3, width = 2.5)
+ggsave("output/euclideandistances.tiff", plot = euc_dist, height = 4.5, width = 2)
 
   
   # ylim(0,80)+
