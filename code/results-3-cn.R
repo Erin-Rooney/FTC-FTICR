@@ -6,31 +6,40 @@ source("code/FTICR-0-packages.R")
 
 # 1. Load files-----------------------------------
 
-xrd_data = read.csv("processed/xrd_data_fticr.csv") 
+cn_data = read.csv("processed/emsl_cn.csv") 
 
 # 2. Process data---------------------------------
 # remove n and separate sample IDs into multiple columns
-# grepl for canopy and slope columns
-# LDC and LDA are typos from xrd analysis input, should be LOA and LOC, fixed with recode
+# grepl for site and material columns
 
-xrd_deselect =
-  xrd_data %>% 
-  select(-c(rwp, feldspar)) 
-
-xrd_data_processed =
-  xrd_deselect %>% 
-  # mutate(quartz_stdev = stringi::stri_replace_all_fixed(quartz_stdev, "ñ",""),
-  #        albite_stdev = stringi::stri_replace_all_fixed(albite_stdev, "ñ",""),
-  #        #anorthite_stdev = stringi::stri_replace_all_fixed(anorthite_stdev, "ñ",""),
-  #        microcline_stdev = stringi::stri_replace_all_fixed(microcline_stdev, "ñ",""),
-  #        chlorite_stdev = stringi::stri_replace_all_fixed(chlorite_stdev, "ñ",""),
-  #        mica_stdev = stringi::stri_replace_all_fixed(mica_stdev, "ñ",""),
-  #        kaolinite_stdev = stringi::stri_replace_all_fixed(kaolinite_stdev, "ñ",""),
-  #        hornblende_stdev = stringi::stri_replace_all_fixed(hornblende_stdev, "ñ","")) %>% 
-  separate(sample, sep = " ", into = c("siterep", "depth")) %>% 
+cn_data_processed =
+  cn_data %>% 
+  separate(name, sep = " ", into = c("siterep", "depth")) %>% 
   separate(depth, sep = "-", into = c("upperdepth", "lowerdepth")) %>% 
-  dplyr::mutate(site = case_when(grepl("H", siterep)~"Healy",
-                                 grepl("T", siterep)~"Toolik"),
-                rep = case_when(grepl("1", siterep)~"1",
+  dplyr::mutate(rep = case_when(grepl("1", siterep)~"1",
                                 grepl("2", siterep)~"2",
-                                grepl("3", siterep)~"3")) 
+                                grepl("3", siterep)~"3")) %>% 
+  select(-c(siterep))
+
+cn_data_summarized = 
+  cn_data_processed %>% 
+  group_by(site, material) %>% 
+  dplyr::summarize(n_mean = round(mean(n_perc), 2),
+                   n_se = round(sd(n_perc)/sqrt(n()),2),
+                   c_mean = round(mean(c_perc), 2),
+                   c_se = round(sd(c_perc)/sqrt(n()),2)) %>%
+  # mutate(n_mean = n_mean*100,
+  #        n_se = n_se*100,
+  #        c_mean = c_mean*100,
+  #        c_se = c_se*100) %>% 
+  mutate(summary_n = paste(n_mean, "\u00b1", n_se)) %>% 
+  mutate(summary_c = paste(c_mean, "\u00b1", c_se)) %>% 
+  na.omit() %>% 
+  select(-c(n_mean, n_se, c_mean, c_se))
+
+cn_data_summarized %>% knitr::kable() # prints a somewhat clean table in the console
+
+write.csv(cn_data_summarized, "output/cn_data_summarized.csv", row.names = FALSE)
+
+
+
