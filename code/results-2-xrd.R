@@ -59,10 +59,11 @@ xrd_data_tableanalysis =
   group_by(site, material, mineral) %>% 
   dplyr::summarize(mean = round(mean(abundance), 3),
                    se = round(sd(abundance)/sqrt(n()),3)) %>% 
-  mutate(summary = paste(mean, "\u00b1", se)) %>% 
-  na.omit() %>% 
   mutate(mean = mean*100,
-         se = se*100)
+         se = se*100) %>% 
+  mutate(summary = paste(mean, "\u00b1", se)) %>% 
+  na.omit() 
+
 #dplyr::select(-mean, -se)
 
 
@@ -93,6 +94,10 @@ xrd_data_tableanalysis %>%
   # mutate(slopepos = recode(slopepos, "low_backslope" = 'low backslope')) %>% 
   mutate(material = factor(material, levels = c("organic", "upper mineral", "lower mineral"))) %>%
   filter(material != "organic") 
+
+xrd_data_tableanalysis %>% knitr::kable() # prints a somewhat clean table in the console
+
+write.csv(xrd_data_tableanalysis, "output/xrd_data_tableanalysis.csv", row.names = FALSE)
 
 xrd_sitefig = 
   xrd_forfig %>% 
