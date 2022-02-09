@@ -79,7 +79,7 @@ relabund = fticr_water_relabund_summarized %>%
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy"),
          Trtmt = recode(Trtmt, "CON" = "control",
-                        "FTC" = "freeze-thaw \n cycles")) %>% 
+                        "FTC" = "freeze-thaw \n treatment")) %>% 
   ggplot(aes(x = Trtmt, y = relabundance))+
   labs(x = " ",
        y = "relative abundance, %")+
