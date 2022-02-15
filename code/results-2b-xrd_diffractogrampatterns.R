@@ -3,6 +3,7 @@
 # Feb 9 2022
 
 source("code/0-method-packages.R")
+
 library(rxylib)
 library(magrittr)
 library(utils)
@@ -42,5 +43,217 @@ T35058data = read_xyData("processed/T3-50-58.xy")
 "T3_41_50dataframe" = data.frame(T34150data[["dataset"]][[1]][["data_block"]])
 "T3_50_58dataframe" = data.frame(T35058data[["dataset"]][[1]][["data_block"]])
 
+
+# soils = list('H1_24_33dataframe', "H1_33_50dataframe")
+# 
+# soils <- list(name = subset('H1_24_33dataframe', V1 = V1, V2 = V2))
+
+## OUTPUTS 1
+write.csv(H1_24_33dataframe,"output/H1_24_33dataframe.csv", row.names = FALSE)
+write.csv(H1_33_50dataframe,"output/H1_33_50dataframe.csv", row.names = FALSE)
+write.csv(H1_50_60dataframe,"output/H1_50_60dataframe.csv", row.names = FALSE)
+write.csv(H2_28_34dataframe,"output/H2_28_34dataframe.csv", row.names = FALSE)
+write.csv(H2_34_47dataframe,"output/H2_34_47dataframe.csv", row.names = FALSE)
+write.csv(H2_47_68dataframe,"output/H2_47_68dataframe.csv", row.names = FALSE)
+write.csv(H3_40_50dataframe,"output/H3_40_50dataframe.csv", row.names = FALSE)
+write.csv(H3_30_38dataframe,"output/H3_30_38dataframe.csv", row.names = FALSE)
+write.csv(T1_40_60dataframe,"output/T1_40_60dataframe.csv", row.names = FALSE)
+write.csv(T1_60_67dataframe,"output/T1_60_67dataframe.csv", row.names = FALSE)
+write.csv(T2_28_38dataframe,"output/T2_28_38dataframe.csv", row.names = FALSE)
+write.csv(T2_38_44dataframe,"output/T2_38_44dataframe.csv", row.names = FALSE)
+write.csv(T2_44_58dataframe,"output/T2_44_58dataframe.csv", row.names = FALSE)
+write.csv(T3_35_41dataframe,"output/T3_35_41dataframe.csv", row.names = FALSE)
+write.csv(T3_41_50dataframe,"output/T3_41_50dataframe.csv", row.names = FALSE)
+write.csv(T3_50_58dataframe,"output/T3_50_58dataframe.csv", row.names = FALSE)
+
+
+##start here in re-runs of this code-------------------------
+
+
+# H1_24_33dataframe2 = read.csv("output/H1_24_33dataframe.csv") %>%
+#   mutate(site = 'Healy',
+#        rep = "1",
+#        depth = "24-33",
+#        material = "upper mineral")
+# 
+# H1_33_50dataframe2 = read.csv("output/H1_33_50dataframe.csv") %>% 
+#   mutate(site = 'Healy',
+#          rep = "1",
+#          depth = "33-50",
+#          material = "upper mineral")
+# 
+# H1_50_60dataframe2 = read.csv("output/H1_50_60dataframe.csv") %>% 
+#   mutate(site = 'Healy',
+#          rep = "1",
+#          depth = "50-60",
+#          material = "lower mineral")
+# 
+# H2_28_34dataframe2 = read.csv("output/H2_28_34dataframe.csv") %>% 
+#   mutate(site = 'Healy',
+#          rep = "2",
+#          depth = "28-34",
+#          material = "upper mineral")
+# 
+# H2_34_47dataframe2 = read.csv("output/H2_34_47dataframe.csv") %>% 
+#   mutate(site = 'Healy',
+#          rep = "2",
+#          depth = "34-47",
+#          material = "upper mineral")
+# 
+# H2_47_68dataframe2 = read.csv("output/H2_47_68dataframe.csv") %>% 
+#   mutate(site = 'Healy',
+#          rep = "2",
+#          depth = "47-68",
+#          material = "lower mineral")
+# 
+# H3_40_50dataframe2 = read.csv("output/H3_40_50dataframe.csv") %>% 
+#   mutate(site = 'Healy',
+#          rep = "3",
+#          depth = "40-54",
+#          material = "lower mineral")
+# 
+# H3_30_38dataframe2 = read.csv("output/H3_30_38dataframe.csv") %>% 
+#   mutate(site = 'Healy',
+#          rep = "3",
+#          depth = "30-38",
+#          material = "upper mineral")
+# 
+# T1_40_60dataframe2 = read.csv("output/T1_40_60dataframe.csv") %>% 
+#   mutate(site = 'Toolik',
+#          rep = "1",
+#          depth = "40-60",
+#          material = "upper mineral")
+# 
+# T1_60_67dataframe2 = read.csv("output/T1_60_67dataframe.csv") %>% 
+#   mutate(site = 'Toolik',
+#          rep = "1",
+#          depth = "60-67",
+#          material = "lower mineral")
+# 
+# T2_28_38dataframe2 = read.csv("output/T2_28_38dataframe.csv") %>% 
+#   mutate(site = 'Toolik',
+#          rep = "2",
+#          depth = "28-38",
+#          material = "upper mineral")
+# 
+# T2_38_44dataframe2 = read.csv("output/T2_38_44dataframe.csv") %>% 
+#   mutate(site = 'Toolik',
+#          rep = "2",
+#          depth = "38-44",
+#          material = "upper mineral")
+# 
+# T2_44_58dataframe2 = read.csv("output/T2_44_58dataframe.csv") %>% 
+#   mutate(site = 'Toolik',
+#          rep = "2",
+#          depth = "44-58",
+#          material = "lower mineral")
+# 
+# T3_35_41dataframe2 = read.csv("output/T3_35_41dataframe.csv") %>% 
+#   mutate(site = 'Toolik',
+#          rep = "3",
+#          depth = "35-41",
+#          material = "upper mineral")
+# 
+# T3_41_50dataframe2 = read.csv("output/T3_41_50dataframe.csv") %>% 
+#   mutate(site = 'Toolik',
+#          rep = "3",
+#          depth = "41-50",
+#          material = "upper mineral")
+# 
+# T3_50_58dataframe2 = read.csv("output/T3_50_58dataframe.csv") %>% 
+#   mutate(site = 'Toolik',
+#          rep = "3",
+#          depth = "50-58",
+#          material = "lower mineral")
+
+
+
+
 allxrddata = 
-  rbind(H1_24_33dataframe, H1_33_50dataframe)
+  rbind(H1_24_33dataframe2, H1_33_50dataframe2, H1_50_60dataframe2,
+        H2_28_34dataframe2, H2_34_47dataframe2, H2_47_68dataframe2,
+        H3_40_50dataframe2, H3_30_38dataframe2, T1_40_60dataframe2,
+        T1_60_67dataframe2, T2_28_38dataframe2, T2_38_44dataframe2, 
+        T2_44_58dataframe2, T3_35_41dataframe2, T3_41_50dataframe2,
+        T3_50_58dataframe2) %>% 
+  dplyr::mutate(intensity = as.numeric(V1),
+                peaks = as.numeric(V2),
+                site = as.factor(site),
+                rep = as.factor(rep),
+                depth = as.factor(depth),
+                material = as.factor(material)) %>% 
+  select(-V1, -V2)
+
+write.csv(allxrddata, "output/allxrddata.csv")
+
+################################
+
+allxrddata = read.csv("output/allxrddata.csv")
+
+library(powdR)
+
+allxrddata_Healy = 
+  allxrddata %>% 
+  filter(site %in% "Healy")
+
+
+allxrddata_Healy %>% 
+  ggplot()+
+  #geom_point(aes(y = 'intensity', x = 'peaks')) +
+  geom_line(aes(y = intensity, x = peaks, color = depth), group = 'depth') +
+  #geom_histogram(aes(x = peaks, color = depth), alpha = 0.5, position = "identity", binwidth = 0.1)+
+  xlim(0, 1000)+
+  #ylim(0, 175)+
+  coord_trans(y = "log10")+
+  labs(x = "2-Theta",
+       y = "intensity, counts")+
+  facet_grid(material ~ rep)+
+  theme_er()
+
+data(minerals)
+data(soils)
+
+
+
+H1_24_33dataframe3 = read.csv("output/H1_24_33dataframe.csv") %>%  dplyr::mutate(x = "V1", y = "V2") %>% select(-V1, -V2)
+H1_33_50dataframe3 = read.csv("output/H1_33_50dataframe.csv") %>%  dplyr::mutate(x = "V1", y = "V2") %>% select(-V1, -V2)
+H1_50_60dataframe3 = read.csv("output/H1_50_60dataframe.csv") %>%  dplyr::mutate(x = "V1", y = "V2") %>% select(-V1, -V2)
+H2_28_34dataframe3 = read.csv("output/H2_28_34dataframe.csv") %>%  dplyr::mutate(x = "V1", y = "V2") %>% select(-V1, -V2)
+H2_34_47dataframe3 = read.csv("output/H2_34_47dataframe.csv") 
+H2_47_68dataframe3 = read.csv("output/H2_47_68dataframe.csv") 
+H3_40_50dataframe3 = read.csv("output/H3_40_50dataframe.csv") 
+H3_30_38dataframe3 = read.csv("output/H3_30_38dataframe.csv") 
+T1_40_60dataframe3 = read.csv("output/T1_40_60dataframe.csv") 
+T1_60_67dataframe3 = read.csv("output/T1_60_67dataframe.csv") 
+T2_28_38dataframe3 = read.csv("output/T2_28_38dataframe.csv") 
+T2_38_44dataframe3 = read.csv("output/T2_38_44dataframe.csv") 
+T2_44_58dataframe3 = read.csv("output/T2_44_58dataframe.csv") 
+T3_35_41dataframe3 = read.csv("output/T3_35_41dataframe.csv") 
+T3_41_50dataframe3 = read.csv("output/T3_41_50dataframe.csv") 
+T3_50_58dataframe3 = read.csv("output/T3_50_58dataframe.csv")
+
+soilslist = list(H1_24_33 = H1_24_33dataframe3, H1_33_50 = H1_33_50dataframe3, H1_50_60 = H1_50_60dataframe3)
+
+soilslist2 = as_multi_xy.list(soilslist)
+
+
+quartz <- data.frame(tth = minerals$tth,
+                     counts = minerals$xrd$QUA.1)
+
+
+plot(soilslist, wavelength = "Cu",
+     xlim = c(0,100),
+     normalise = TRUE)
+
+#need to make a list of each sample with V1 and V2. 
+#V1 and V2 may need to be switched
+
+aligned <- align_xy(H1_24_33dataframe2,
+                    std = quartz,
+                    xmin = 10,
+                    xmax = 60,
+                    xshift = 0.2)
+#replot data
+plot(aligned, wavelength = "Cu",
+     xlim = c(26,27),
+     normalise = TRUE)
