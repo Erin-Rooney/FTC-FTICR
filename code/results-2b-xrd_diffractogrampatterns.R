@@ -246,6 +246,7 @@ quartz <- data.frame(tth = minerals$tth,
 plot(healysoilslist2, wavelength = "Cu",
      xlim = c(0,100),
      normalise = TRUE)+
+  #text(x = 26, y = 0.9, "quartz")+
   labs(y = 'intensity (counts)',
        color="replicate and depth, cm")+
   theme_er()
@@ -254,6 +255,7 @@ healysoils =
   plot(healysoilslist2, wavelength = "Cu",
        xlim = c(0,100),
        normalise = TRUE)+
+  #text(x = 26, y = 0.9, "quartz")+
   labs(y = 'intensity (counts)',
        color="replicate and depth, cm")+
   theme_er()
