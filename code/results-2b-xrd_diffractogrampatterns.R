@@ -192,23 +192,23 @@ allxrddata = read.csv("output/allxrddata.csv")
 
 library(powdR)
 
-allxrddata_Healy = 
-  allxrddata %>% 
-  filter(site %in% "Healy")
+# allxrddata_Healy = 
+#   allxrddata %>% 
+#   filter(site %in% "Healy")
 
 
-allxrddata_Healy %>% 
-  ggplot()+
-  #geom_point(aes(y = 'intensity', x = 'peaks')) +
-  geom_line(aes(y = intensity, x = peaks, color = depth), group = 'depth') +
-  #geom_histogram(aes(x = peaks, color = depth), alpha = 0.5, position = "identity", binwidth = 0.1)+
-  xlim(0, 1000)+
-  #ylim(0, 175)+
-  coord_trans(y = "log10")+
-  labs(x = "2-Theta",
-       y = "intensity, counts")+
-  facet_grid(material ~ rep)+
-  theme_er()
+# allxrddata_Healy %>% 
+#   ggplot()+
+#   #geom_point(aes(y = 'intensity', x = 'peaks')) +
+#   geom_line(aes(y = intensity, x = peaks, color = depth), group = 'depth') +
+#   #geom_histogram(aes(x = peaks, color = depth), alpha = 0.5, position = "identity", binwidth = 0.1)+
+#   xlim(0, 1000)+
+#   #ylim(0, 175)+
+#   coord_trans(y = "log10")+
+#   labs(x = "2-Theta",
+#        y = "intensity, counts")+
+#   facet_grid(material ~ rep)+
+#   theme_er()
 
 data(minerals)
 data(soils)
@@ -245,7 +245,7 @@ quartz <- data.frame(tth = minerals$tth,
 
 plot(healysoilslist2, wavelength = "Cu",
      xlim = c(0,100),
-     normalise = TRUE)+
+     normalise = FALSE)+
   #text(x = 26, y = 0.9, "quartz")+
   labs(y = 'intensity (counts)',
        color="replicate and depth, cm")+
@@ -254,7 +254,7 @@ plot(healysoilslist2, wavelength = "Cu",
 healysoils = 
   plot(healysoilslist2, wavelength = "Cu",
        xlim = c(0,100),
-       normalise = TRUE)+
+       normalise = FALSE)+
   #text(x = 26, y = 0.9, "quartz")+
   labs(y = 'intensity (counts)',
        color="replicate and depth, cm")+
@@ -279,7 +279,7 @@ tooliksoilslist2 = as_multi_xy(tooliksoilslist)
 
 plot(tooliksoilslist2, wavelength = "Cu",
      xlim = c(0,100),
-     normalise = TRUE)+
+     normalise = FALSE)+
   labs(y = 'intensity (counts)',
        color="replicate and depth, cm")+
   theme_er()
@@ -287,7 +287,7 @@ plot(tooliksoilslist2, wavelength = "Cu",
 tooliksoils = 
   plot(tooliksoilslist2, wavelength = "Cu",
        xlim = c(0,100),
-       normalise = TRUE)+
+       normalise = FALSE)+
   labs(y = 'intensity (counts)',
        color="replicate and depth, cm")+
   theme_er()
