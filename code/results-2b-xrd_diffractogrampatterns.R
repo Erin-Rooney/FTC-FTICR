@@ -197,23 +197,54 @@ library(powdR)
 #   filter(site %in% "Healy")
 
 
-# allxrddata_Healy %>% 
-#   ggplot()+
-#   #geom_point(aes(y = 'intensity', x = 'peaks')) +
-#   geom_line(aes(y = intensity, x = peaks, color = depth), group = 'depth') +
-#   #geom_histogram(aes(x = peaks, color = depth), alpha = 0.5, position = "identity", binwidth = 0.1)+
-#   xlim(0, 1000)+
-#   #ylim(0, 175)+
-#   coord_trans(y = "log10")+
-#   labs(x = "2-Theta",
-#        y = "intensity, counts")+
-#   facet_grid(material ~ rep)+
-#   theme_er()
+allxrddata_Healy %>%
+  ggplot()+
+  #geom_point(aes(y = 'intensity', x = 'peaks')) +
+  geom_line(aes(y = intensity, x = peaks, color = depth), group = 'depth') +
+  #geom_histogram(aes(x = peaks, color = depth), alpha = 0.5, position = "identity", binwidth = 0.1)+
+  xlim(0, 1000)+
+  #ylim(0, 175)+
+ # coord_trans(y = "log10")+
+  labs(x = "2-Theta",
+       y = "intensity, counts")+
+  facet_grid(material ~ rep)+
+  theme_er()
 
 data(minerals)
 data(soils)
 
 
+
+d_spacings <- c(0.33,0.358,0.434,0.482,0.717,1,1.2,1.4,1.8)
+d_spacing_labels <- c(".33", ".36", ".43", ".48", ".7","1.0","1.2","1.4","1.8")
+  
+library(tibble)
+
+gglabel = tribble(
+  ~x, ~y, ~label,
+  26.65, 57000, "26.65",
+  19.54, 13000, "19.54",
+  50.06, 12000, "50.06",
+  45.46, 6000, "45.46",
+  56.48, 5000, "56.48",
+ # 66.23, 10000, "66.23",
+  75.29, 5000, "75.29",
+  83.98, 5000, "83.98"
+  
+)
+
+gglabel2 = tribble(
+  ~x, ~y, ~label,
+  26.65, 34000, "26.65",
+  19.54, 7700, "19.54",
+  50.06, 9000, "50.06",
+  45.46, 5000, "45.46",
+  56.48, 5000, "56.48",
+ # 66.23, 7000, "66.23",
+  75.29, 4050, "75.29",
+  83.98, 4050, "83.98"
+  
+)
 
 H1_24_33dataframe3 = read.csv("output/H1_24_33dataframe.csv") 
 H1_33_50dataframe3 = read.csv("output/H1_33_50dataframe.csv") 
@@ -243,15 +274,20 @@ quartz <- data.frame(tth = minerals$tth,
                      counts = minerals$xrd$QUA.1)
 
 
-plot(healysoilslist2, wavelength = "Cu",
+healysoils = 
+  plot(healysoilslist2, wavelength = "Cu",
      xlim = c(0,100),
      normalise = FALSE)+
-  #text(x = 26, y = 0.9, "quartz")+
+  geom_text(data = gglabel2, aes(x = x, y = y, label = label), color = "black", size = 3.5, angle = 90)+
   labs(y = 'intensity (counts)',
+       x = "Position, °2Theta",
        color="replicate and depth, cm")+
+  # scale_color_manual(values = c("#fd474d","#fdb678","#fcff9f","#91f698","#51fff9",
+  #                               "#4f52ef","#9c4bf8","#db4ffa"
+  # 
+  # ))+
   theme_er()
 
-healysoils = 
   plot(healysoilslist2, wavelength = "Cu",
        xlim = c(0,100),
        normalise = FALSE)+
@@ -277,10 +313,31 @@ tooliksoilslist = list(Rep1_40_60 = T1_40_60dataframe3, Rep1_60_67 = T1_60_67dat
 
 tooliksoilslist2 = as_multi_xy(tooliksoilslist)
 
-plot(tooliksoilslist2, wavelength = "Cu",
+ data(soils)
+# plot(minerals, wavelength = "Cu")
+
+
+ tooliksoils = 
+   plot(tooliksoilslist2, wavelength = "Cu",
      xlim = c(0,100),
      normalise = FALSE)+
+  geom_text(data = gglabel, aes(x = x, y = y, label = label), 
+            color = "black", size = 3.5, angle = 90)+
   labs(y = 'intensity (counts)',
+       x = "Position, °2Theta",
+       color="replicate and depth, cm")+
+  theme_er()
+
+
+
+
+
+tooliksoils_numbers = plot(tooliksoilslist2, wavelength = "Cu",
+     xlim = c(0,100),
+     normalise = FALSE)+
+  geom_text(data = gglabel, aes(x = x, y = y, label = label), color = "black", size = 3.5)+
+  labs(y = 'intensity (counts)',
+       x = "Position, °2Theta",
        color="replicate and depth, cm")+
   theme_er()
 
@@ -289,6 +346,7 @@ tooliksoils =
        xlim = c(0,100),
        normalise = FALSE)+
   labs(y = 'intensity (counts)',
+       x = "Position, °2Theta",
        color="replicate and depth, cm")+
   theme_er()
 
