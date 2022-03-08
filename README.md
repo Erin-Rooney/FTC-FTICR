@@ -13,7 +13,8 @@ Hypotheses: Healy and upper soil depths with greater freeze-thaw history would h
 
 ###### VISUAL HYPOTHESIS
 
-<img src="https://user-images.githubusercontent.com/61806923/150006697-001edaff-7ae5-48a2-927f-2d68c6d97d7a.png" width="600"/>
+<img src="https://user-images.githubusercontent.com/61806923/157269578-88bccdae-5532-4aad-98e2-7b40051acf9e.png" width="600"/>
+
 
 *All code should be able to be run without changing working directories. Please contact me if you find any issues or errors.*
 
