@@ -2,7 +2,7 @@
 
 ##### Authors: Erin C. Rooney, Vanessa L. Bailey, Kaizad F. Patel, Angela R. Possinger, Adrian C. Gallo, Michael SanClements, Jeffery Hatten, Rebecca A. Lybrand
 
-##### *Submitted to JGR Biogeosciences, March 7, 2022* 
+##### *In Review with JGR Biogeosciences, March 8, 2022* 
 
 Research Objective: Determine how freeze-thaw history influenced soil carbon response to additional, experimental freeze-thaw disturbance. 
 
