@@ -1,4 +1,4 @@
-### Previous freeze-thaw history and soil chemistry response to future freeze-thaw cycles
+### The impact of freeze-thaw history on soil carbon response to experimental freeze-thaw cycles
 
 ##### Authors: Erin C. Rooney, Vanessa L. Bailey, Kaizad F. Patel, Angela R. Possinger, Adrian C. Gallo, Maya Bergmann, Michael SanClements, Rebecca A. Lybrand
 
