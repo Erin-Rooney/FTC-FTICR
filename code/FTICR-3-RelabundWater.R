@@ -100,22 +100,61 @@ ggsave("output/relabund.jpeg", plot = relabund, height = 8, width = 6)
 ggsave("output/legendonly.jpeg", plot = relabund, height = 8, width = 10)
 
 
+###Revised figure April 18 2022
 
-fticr_water_relabund_summarized3 %>%
+#calculate difference following ftc
+
+relabund_con = 
+  fticr_water_relabund_summarized %>% 
+  filter(Trtmt == 'CON') %>% 
+  rename(rela_con = relabundance,
+         se_con = se)  %>% 
+  ungroup() %>% 
+  select(-Trtmt)
+
+
+
+relabund_ftc = 
+  fticr_water_relabund_summarized %>% 
+  filter(Trtmt == 'FTC') %>% 
+  rename(rela_ftc = relabundance,
+         se_ftc = se) %>% 
+  ungroup() %>% 
+  select(-Trtmt)
+
+relabund_diff = 
+  relabund_con %>% 
+  left_join(relabund_ftc) %>% 
+  mutate(diff = rela_con - rela_ftc) %>% 
+  mutate(diff_se = (se_con + se_ftc)/2)
+
+
+relabund_redo = relabund_diff %>% 
   mutate(Site = recode(Site, "TOOL" = "Toolik",
-                       "HEAL" = "Healy"),
-         Trtmt = recode(Trtmt, "CON" = "control",
-                        "FTC" = "freeze-thaw cycles")) %>%  
-  ggplot(aes(x = Trtmt, y = relabundance))+
-  labs(x = " ",
-       y = "relative abundance, %")+
-  geom_bar(aes(fill = Class), stat = "identity")+
-  scale_fill_manual(values = rev(pnw_palette("Shuksan",4)))+
-  facet_grid(. ~ Site)+
-  #geom_text(data = label, aes(x = Trtmt, y = y, label = label), size = 8, color = "white")+
+                       "HEAL" = "Healy")) %>% 
+  # mutate(parameter = recode(parameter, "DC" = "crystalline Fe + Al",
+  #                           "AO" = "poorly crystalline Fe + Al")) %>% 
+  # mutate(depth = factor(depth, levels = c("80-90", "70-80", "60-70",
+  #                                         "50-60", "40-50", "30-40", "20-30", "10-20", "0-10"))) %>% 
+  ggplot(aes(y=Class, x=diff, fill=Class)) +
+  #geom_boxplot(horizontal = TRUE) +
+  geom_col(width = 0.7)+
+  geom_errorbar(aes(xmin=(diff-diff_se/2),xmax=(diff+diff_se/2)),width=.2,position=position_dodge(.9), color = "gray60")+
+  labs(x = "Change in relative abundance following freeze-thaw cycles, %",
+       y = "Carbon Compound Class")+
+  scale_fill_manual(values = (PNWColors::pnw_palette("Sunset", 4)))+
+  facet_grid(Material~Site)+
   theme_er()+
-  theme(legend.position = "bottom")+
+  theme(legend.position = "bottom", panel.border = element_rect(color="white",size=0.5, fill = NA) 
+  )+
   NULL
+
+
+ggsave("output/relabund_redo.tiff", plot = relabund_redo, height = 6, width = 9)
+
+
+
+######
 
 # bar graph_control only
 fticr_water_relabund_summarized %>% 
