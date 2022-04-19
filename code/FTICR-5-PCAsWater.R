@@ -97,14 +97,6 @@ grp =
 
 pca = prcomp(num, scale. = T)
 
-ggbiplot(pca, obs.scale = 1, var.scale = 1,
-         groups = as.character(grp$Site), 
-         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
-  geom_point(size=3,stroke=1, aes(color = groups, shape = grp$Material))+
-  labs(title = "all samples, CON and FTC")+
-  scale_color_manual(values = rev(PNWColors::pnw_palette("Winter", 2)))+
-  theme_er()+
-  NULL
 
 ###
 
@@ -113,7 +105,7 @@ all_pca =
   ggbiplot(pca, obs.scale = 1, var.scale = 1,
          groups = as.character(grp$Site),
          alpha = 0,
-         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+         ellipse = FALSE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(fill = groups, color = groups, shape = interaction(grp$Material, grp$Trtmt)))+
   labs(shape = "", fill = "", color = "",
        caption = "solids = control")+
@@ -154,7 +146,7 @@ pca_con = prcomp(num_con, scale. = T)
 con_pca = 
   ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
          groups = as.character(grp_con$Site), 
-         ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+         ellipse = FALSE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(color = grp_con$Site, shape = grp_con$Material))+
   #labs(title = "Control only")+
   ylim(-4,4)+
@@ -170,7 +162,7 @@ ggsave("output/con_pca.tiff", plot = con_pca, height = 4.5, width = 4.5)
 legend_only = 
   ggbiplot(pca_con, obs.scale = 1, var.scale = 1,
            groups = as.character(grp_con$Site), 
-           ellipse = TRUE, circle = FALSE, var.axes = TRUE) +
+           ellipse = FALSE, circle = FALSE, var.axes = TRUE) +
   geom_point(size=3,stroke=1, aes(color = grp_con$Site, shape = grp_con$Material))+
   #labs(title = "Control only")+
   ylim(-4,4)+
