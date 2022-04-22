@@ -152,7 +152,8 @@ FTC_1.5_4 = function(x, #list of dataframes (element ST_30_minute from NEON data
   data.list = mapply(fun1,column_names,column_number)
   
   #The actual analysis function: this is where the parameters can be changed. 
-  #mag.vec = degrees above or below thres.vec (0 degrees C) to induce FTC
+  #mag.vec = degrees below thres.vec
+  #thres.vec = upper limit (0 degrees C) to induce FTC
   #dur.vec = duration of time (number of timesteps) above or below mag.vec to induce FTC
   FTC=freeze.thaw.analysis(data.list, mag.vec=1.5, dur.vec=8, thres.vec=0)
   

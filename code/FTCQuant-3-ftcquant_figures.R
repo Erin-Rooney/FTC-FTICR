@@ -3,8 +3,6 @@
 #6 17 2021
 # updated 7 29 2021
 
-#trying to fix some issues and use
-#for NSF postdoc proposal
 
 # extract organic horizons
 # connect depths to FT horizons

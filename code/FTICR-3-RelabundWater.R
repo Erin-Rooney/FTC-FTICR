@@ -44,6 +44,7 @@ fticr_water_relabund_summarized =
                    se = round(sd(relabund)/sqrt(n()),2))
 
 
+
 fticr_water_relabund_summarized3 = 
   fticr_water_relabund %>% 
   group_by(Site, Trtmt, Class) %>% 
@@ -125,18 +126,14 @@ relabund_ftc =
 relabund_diff = 
   relabund_con %>% 
   left_join(relabund_ftc) %>% 
-  mutate(diff = rela_con - rela_ftc) %>% 
-  mutate(diff_se = (se_con + se_ftc)/2)
+  mutate(diff = rela_ftc - rela_con) %>% 
+  mutate(diff_se = sqrt((se_con)^2 + (se_ftc)^2))
 
 
 relabund_redo = relabund_diff %>% 
   mutate(Site = recode(Site, "TOOL" = "Toolik",
                        "HEAL" = "Healy")) %>% 
-  # mutate(parameter = recode(parameter, "DC" = "crystalline Fe + Al",
-  #                           "AO" = "poorly crystalline Fe + Al")) %>% 
-  # mutate(depth = factor(depth, levels = c("80-90", "70-80", "60-70",
-  #                                         "50-60", "40-50", "30-40", "20-30", "10-20", "0-10"))) %>% 
-  ggplot(aes(y=Class, x=diff, fill=Class)) +
+    ggplot(aes(y=Class, x=diff, fill=Class)) +
   #geom_boxplot(horizontal = TRUE) +
   geom_col(width = 0.7)+
   geom_errorbar(aes(xmin=(diff-diff_se/2),xmax=(diff+diff_se/2)),width=.2,position=position_dodge(.9), color = "gray60")+
