@@ -272,7 +272,7 @@ ghg = ghg_csv2 %>%
   scale_fill_manual(values = (PNWColors::pnw_palette("Sunset2", 4)))+
   scale_color_manual(values = (PNWColors::pnw_palette("Sunset2", 4)))+
   labs(y = "depth, cm",
-       x = 'gain in CO2 μg per g OC',
+       x = 'gain in CO2 μg per g TC',
        fill = "",
        color = "")+
   theme_er() +
