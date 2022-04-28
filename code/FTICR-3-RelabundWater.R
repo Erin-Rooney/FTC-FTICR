@@ -136,6 +136,7 @@ relabund_redo = relabund_diff %>%
     ggplot(aes(y=Class, x=diff, fill=Class)) +
   #geom_boxplot(horizontal = TRUE) +
   geom_col(width = 0.7)+
+  xlim(-12,12)+
   geom_errorbar(aes(xmin=(diff-diff_se/2),xmax=(diff+diff_se/2)),width=.2,position=position_dodge(.9), color = "gray60")+
   labs(x = "Change in relative abundance following freeze-thaw cycles, %",
        y = "Carbon Compound Class")+

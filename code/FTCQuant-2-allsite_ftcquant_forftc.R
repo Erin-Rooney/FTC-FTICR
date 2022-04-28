@@ -235,10 +235,3 @@ final_FTC_1.5_4=combined_FTC_1.5_4[,-1]
 saveRDS(final_FTC_1.5_4, file = "FTC_1.5_4.RData") 
 write.csv(final_FTC_1.5_4, "FTC_1.5_4.csv")
 
-#Descriptive data of core number and exclusions##############
-
-allsite_FTC_avg = summarySE(final_FTC_1.5_4, measurevar = "Def1", groupvars = c("site", "season","year","depth"), na.rm = TRUE)
-
-allsite_FTC_avg
-
-write.csv(allsite_FTC_avg, "allsite_FTC_avg.csv")
