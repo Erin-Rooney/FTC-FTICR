@@ -1,10 +1,12 @@
 <a href="https://zenodo.org/badge/latestdoi/285718576"><img src="https://zenodo.org/badge/285718576.svg" alt="DOI"></a>
 
+<a href = https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2022JG006889>Publication Here</a> 
+
 ### The impact of freeze-thaw history on soil carbon response to experimental freeze-thaw cycles
 
 ##### Authors: Erin C. Rooney, Vanessa L. Bailey, Kaizad F. Patel, Angela R. Possinger, Adrian C. Gallo, Maya Bergmann, Michael SanClements, Rebecca A. Lybrand
 
-##### *In Review with JGR Biogeosciences, March 8, 2022* 
+##### *In Press with JGR Biogeosciences, May 2022* 
 
 Research Objective: Determine how freeze-thaw history influenced soil carbon response to additional, experimental freeze-thaw disturbance. 
 
