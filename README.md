@@ -1,6 +1,6 @@
 <a href="https://zenodo.org/badge/latestdoi/285718576"><img src="https://zenodo.org/badge/285718576.svg" alt="DOI"></a>
 
-<a href = https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2022JG006889>Publication Here</a> 
+<a href = https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2022JG006889>Link to Publication</a> 
 
 ### The impact of freeze-thaw history on soil carbon response to experimental freeze-thaw cycles
 
